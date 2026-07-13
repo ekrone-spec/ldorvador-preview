@@ -1,245 +1,259 @@
 <title>L'Dor Vador — Jewish Heritage Travel to Curaçao</title>
 <style>
-  :root{
-    --cobalt:#1150AB; --cobalt-deep:#0B2A5B; --cobalt-ink:#08203f;
-    --gold:#E0A43B; --gold-deep:#B9821F; --terra:#B4472E;
-    --cream:#F7F1E3; --cream-2:#EFE6D2; --paper:#FBF7EE;
-    --ink:#1C2432; --ink-soft:#4A5262;
-    --line:#E1D6BE;
-    --white:#ffffff;
-    --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,"Times New Roman",serif;
-    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    --cond:"Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;
-    --wrap:1160px;
-    --r:2px;
-    --hair:1px solid var(--line);
-  }
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{margin:0;background:var(--paper);color:var(--ink);
-    font-family:var(--sans);font-size:18px;line-height:1.65;-webkit-font-smoothing:antialiased;}
-  html[dir="rtl"] body{font-family:"Segoe UI","Arial Hebrew",var(--sans)}
-  img{max-width:100%;display:block}
-  h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.08;text-wrap:balance;margin:0}
-  p{margin:0}
-  a{color:inherit}
-  .wrap{max-width:var(--wrap);margin:0 auto;padding:0 28px}
-  .eyebrow{font-family:var(--cond);text-transform:uppercase;letter-spacing:.22em;
-    font-size:13px;font-weight:700;color:var(--gold-deep)}
-  .eyebrow.on-dark{color:var(--gold)}
+/*__FONTS__*/
+:root{
+  --blue:#002B7F;        /* Curaçao flag deep blue = Jewish blue */
+  --blue-2:#1150AB;      /* logo cobalt */
+  --blue-ink:#001233;    /* deep water */
+  --yellow:#F9E814;      /* Curaçao flag yellow */
+  --gold:#E0A21B;        /* accessible gold on light */
+  --white:#ffffff;
+  --paper:#F7FAFF;       /* cool white, chosen */
+  --ink:#0A1A38;
+  --ink-soft:#495a7d;
+  --line:#D9E2F2;
+  --coral:#E0623D; --teal:#159C8E; --pink:#E07E97; --mango:#F2A93B; --sand:#E9D4A0; --green:#6F9A55;
+  --display:'Fraunces',Georgia,'Times New Roman',serif;
+  --body:'Hanken Grotesk',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --heb:'Frank Ruhl Libre','Iowan Old Style',serif;
+  --wrap:1200px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.62;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.04;margin:0;text-wrap:balance;letter-spacing:-.015em}
+p{margin:0}
+a{color:inherit}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 32px}
+.eyebrow{font-family:var(--body);text-transform:uppercase;letter-spacing:.28em;font-size:12.5px;font-weight:700;color:var(--gold)}
+.eyebrow.light{color:var(--yellow)}
+.serif-i{font-family:var(--display);font-style:italic;font-weight:500}
 
-  /* buttons */
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:.7em;
-    min-height:56px;padding:0 36px;border-radius:var(--r);font-family:var(--cond);
-    font-size:13.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
-    text-decoration:none;cursor:pointer;border:1px solid transparent;
-    transition:background .2s ease, color .2s ease, border-color .2s ease;}
-  .btn-gold{background:var(--gold);color:#2c1f04}
-  .btn-gold:hover{background:#caa14a}
-  .btn-out{background:transparent;border-color:rgba(255,255,255,.55);color:var(--white)}
-  .btn-out:hover{border-color:#fff;background:rgba(255,255,255,.08)}
-  .btn-cobalt{background:var(--cobalt-deep);color:#fff}
-  .btn-cobalt:hover{background:var(--cobalt)}
-  .btn-ghost{background:transparent;border-color:var(--cobalt-deep);color:var(--cobalt-deep)}
-  .btn-ghost:hover{background:rgba(17,80,171,.06)}
-  .tlink{font-family:var(--cond);font-size:13.5px;font-weight:700;letter-spacing:.18em;
-    text-transform:uppercase;text-decoration:none;color:var(--cobalt-deep);
-    border-bottom:1px solid var(--gold);padding-bottom:6px}
-  .tlink:hover{border-color:var(--cobalt-deep)}
-  :focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:6px}
+/* flag stripe motif */
+.flagline{height:6px;display:flex}
+.flagline i{flex:1}
+.flagline i:nth-child(1){background:var(--blue)}
+.flagline i:nth-child(2){background:var(--white)}
+.flagline i:nth-child(3){background:var(--yellow)}
 
-  .skip{position:absolute;left:-9999px;top:0;background:var(--cobalt);color:#fff;padding:12px 18px;z-index:200;border-radius:0 0 8px 0}
-  .skip:focus{left:0}
+/* buttons — squared, letter-spaced caps */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.7em;min-height:58px;padding:0 34px;
+  font-family:var(--body);font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  text-decoration:none;cursor:pointer;border:1.5px solid transparent;border-radius:0;transition:.22s ease}
+.btn-yellow{background:var(--yellow);color:var(--blue-ink)}
+.btn-yellow:hover{background:#ffef4d}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-blue:hover{background:var(--blue-2)}
+.btn-linelight{border-color:rgba(255,255,255,.6);color:#fff}
+.btn-linelight:hover{border-color:#fff;background:rgba(255,255,255,.1)}
+.btn-linedark{border-color:var(--blue);color:var(--blue)}
+.btn-linedark:hover{background:var(--blue);color:#fff}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.skip{position:absolute;left:-9999px;background:var(--blue);color:#fff;padding:12px 18px;z-index:200}
+.skip:focus{left:0;top:0}
 
-  /* header */
-  header{position:sticky;top:0;z-index:100;background:rgba(251,247,238,.92);
-    backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-  .bar{display:flex;align-items:center;gap:22px;min-height:78px}
-  .brand{display:flex;align-items:center;gap:12px;text-decoration:none;flex-shrink:0}
-  .mark{width:46px;height:46px;background:var(--cobalt);color:#fff;border-radius:0;
-    display:grid;place-content:center;text-align:center;font-family:var(--cond);font-weight:800;
-    font-size:12.5px;line-height:.92;letter-spacing:.02em}
-  .brand-tx{font-family:var(--cond);text-transform:uppercase;letter-spacing:.14em;
-    font-weight:700;font-size:13px;color:var(--cobalt-deep);line-height:1.25}
-  .brand-tx span{display:block;color:var(--ink-soft);font-size:10px;letter-spacing:.2em}
-  nav.main{display:flex;gap:26px;margin-inline-start:auto;align-items:center}
-  nav.main a{text-decoration:none;font-weight:600;font-size:16px;color:var(--ink);padding:6px 2px;border-bottom:2px solid transparent}
-  nav.main a:hover{border-color:var(--gold)}
-  .header-cta{display:flex;align-items:center;gap:14px}
-  .lang{display:flex;align-items:center}
-  .lang button{border:0;background:transparent;font-family:var(--cond);font-weight:700;font-size:12.5px;
-    letter-spacing:.12em;padding:8px 10px;cursor:pointer;color:var(--ink-soft);min-height:40px;
-    border-bottom:1px solid transparent}
-  .lang button+button{border-inline-start:1px solid var(--line)}
-  .lang button[aria-pressed="true"]{color:var(--cobalt-deep);border-bottom-color:var(--gold)}
-  .menu-toggle{display:none}
-  @media(max-width:940px){
-    nav.main,.header-cta .btn{display:none}
-    .menu-toggle{display:inline-flex}
-  }
+/* header */
+header{position:sticky;top:0;z-index:100;background:rgba(247,250,255,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:24px;min-height:76px}
+.brand{display:flex;align-items:center;gap:13px;text-decoration:none;flex-shrink:0}
+.mark{width:44px;height:44px;background:var(--blue);color:#fff;display:grid;place-content:center;text-align:center;
+  font-family:var(--body);font-weight:800;font-size:12px;line-height:.9;letter-spacing:.02em}
+.brand-tx{font-family:var(--display);font-weight:600;font-size:19px;color:var(--blue);line-height:1;letter-spacing:-.01em}
+.brand-tx span{display:block;font-family:var(--body);font-weight:600;color:var(--ink-soft);font-size:10px;letter-spacing:.22em;text-transform:uppercase;margin-top:5px}
+nav.main{display:flex;gap:30px;margin-inline-start:auto;align-items:center}
+nav.main a{text-decoration:none;font-weight:600;font-size:16px;color:var(--ink);position:relative;padding:4px 0}
+nav.main a::after{content:"";position:absolute;left:0;bottom:-2px;width:0;height:2px;background:var(--yellow);transition:width .25s ease}
+nav.main a:hover::after{width:100%}
+.header-cta{display:flex;align-items:center;gap:16px}
+.lang{display:flex;align-items:center}
+.lang button{border:0;background:transparent;font-family:var(--body);font-weight:700;font-size:12.5px;letter-spacing:.1em;
+  padding:8px 9px;cursor:pointer;color:var(--ink-soft);min-height:40px;border-bottom:2px solid transparent}
+.lang button+button{border-inline-start:1px solid var(--line)}
+.lang button[aria-pressed="true"]{color:var(--blue);border-bottom-color:var(--yellow)}
+.menu-toggle{display:none}
+@media(max-width:960px){nav.main,.header-cta .btn{display:none}}
 
-  /* hero */
-  .hero{position:relative;min-height:88vh;display:flex;align-items:flex-end;color:#fff;overflow:hidden}
-  .hero-img{position:absolute;inset:0;background-size:cover;background-position:center 35%;transform:scale(1.06);
-    animation:heroPan 18s ease-out forwards}
-  @keyframes heroPan{to{transform:scale(1)}}
-  .hero::after{content:"";position:absolute;inset:0;
-    background:linear-gradient(180deg,rgba(8,32,63,.55) 0%,rgba(8,32,63,.15) 38%,rgba(8,32,63,.86) 100%)}
-  .hero-inner{position:relative;z-index:2;padding-bottom:74px;padding-top:120px;max-width:820px}
-  .hero h1{font-size:clamp(44px,7vw,86px);color:#fff;letter-spacing:-.01em}
-  .hero .heb{font-family:var(--serif);font-size:clamp(26px,4vw,44px);color:var(--gold);
-    direction:rtl;margin-bottom:14px;font-weight:600}
-  .hero p.lede{font-size:clamp(18px,2.2vw,23px);max-width:600px;margin:22px 0 32px;color:#f2eeE6;line-height:1.5}
-  .hero-actions{display:flex;gap:16px;flex-wrap:wrap}
-  .scrollcue{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:3;color:#fff;
-    font-family:var(--cond);text-transform:uppercase;letter-spacing:.2em;font-size:11px;font-weight:700;opacity:.85;
-    display:flex;flex-direction:column;align-items:center;gap:8px}
-  .scrollcue .dot{width:22px;height:36px;border:2px solid rgba(255,255,255,.7);border-radius:12px;position:relative}
-  .scrollcue .dot::after{content:"";position:absolute;left:50%;top:7px;width:3px;height:7px;background:#fff;border-radius:2px;transform:translateX(-50%);animation:cue 1.6s ease-in-out infinite}
-  @keyframes cue{0%,100%{opacity:0;transform:translate(-50%,0)}50%{opacity:1;transform:translate(-50%,7px)}}
+/* HERO — bold blue field + reflected waterfront */
+.hero{position:relative;background:linear-gradient(180deg,#003a9e 0%,var(--blue) 46%,var(--blue-ink) 100%);color:#fff;overflow:hidden;padding-top:96px}
+.sun{position:absolute;top:-140px;right:-120px;width:520px;height:520px;border-radius:50%;
+  background:radial-gradient(circle,rgba(249,232,20,.5) 0%,rgba(249,232,20,.15) 40%,transparent 68%);animation:sunbreathe 9s ease-in-out infinite}
+@keyframes sunbreathe{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.08);opacity:1}}
+.hero-inner{position:relative;z-index:3;max-width:960px;margin:0 auto;padding:0 32px 40px;text-align:center}
+.hero .heb{font-family:var(--heb);font-weight:500;font-size:clamp(30px,5vw,58px);color:var(--yellow);direction:rtl;margin-bottom:8px;
+  opacity:0;animation:rise .9s ease .1s forwards}
+.hero h1{font-size:clamp(48px,8.2vw,108px);font-weight:600;letter-spacing:-.025em;line-height:.98}
+.hero h1 .w{display:inline-block;opacity:0;transform:translateY(28px);animation:rise .85s cubic-bezier(.2,.7,.2,1) forwards}
+.hero h1 .accent{font-style:italic;font-weight:500;color:var(--yellow)}
+.hero p.lede{max-width:620px;margin:26px auto 34px;font-size:clamp(18px,2vw,21px);color:#dbe6ff;line-height:1.5;
+  opacity:0;animation:rise .9s ease .8s forwards}
+.hero-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;opacity:0;animation:rise .9s ease 1s forwards}
+@keyframes rise{to{opacity:1;transform:none}}
 
-  /* sections */
-  section{padding:120px 0}
-  .band-cream{background:var(--cream)}
-  .band-paper{background:var(--paper)}
-  .sec-head{max-width:720px;margin-bottom:64px}
-  .sec-head h2{font-size:clamp(30px,4.4vw,48px);margin-top:14px;color:var(--cobalt-deep)}
-  .sec-head p{color:var(--ink-soft);font-size:19px;margin-top:16px}
+/* reflected waterfront */
+.waterfront{position:relative;z-index:2;margin-top:44px;line-height:0}
+.waterfront svg{width:100%;height:auto;display:block}
+#reflection{opacity:.34;transform-origin:center top;animation:ripple 6s ease-in-out infinite}
+@keyframes ripple{0%,100%{transform:skewX(0deg) scaleY(1)}25%{transform:skewX(-1.4deg) scaleY(.985)}75%{transform:skewX(1.4deg) scaleY(1.015)}}
+.glint{animation:glint 7s linear infinite}
+@keyframes glint{0%{transform:translateX(-40%)}100%{transform:translateX(140%)}}
 
-  /* intro lead */
-  .lead{max-width:900px;margin:0 auto;text-align:center}
-  .lead .kicker{font-family:var(--serif);font-size:clamp(26px,3.6vw,40px);line-height:1.28;color:var(--cobalt-deep)}
-  .lead .kicker b{color:var(--terra);font-weight:600;font-style:normal}
-  .lead p.sub{margin-top:26px;font-size:19px;color:var(--ink-soft)}
+/* marquee */
+.ticker{background:var(--yellow);color:var(--blue-ink);overflow:hidden;white-space:nowrap;border-top:3px solid var(--blue-ink);border-bottom:3px solid var(--blue-ink)}
+.ticker .track{display:inline-flex;gap:0;padding:15px 0;animation:marq 34s linear infinite;will-change:transform}
+.ticker span{font-family:var(--display);font-style:italic;font-size:19px;padding:0 30px;position:relative}
+.ticker span::after{content:"\2726";position:absolute;right:-6px;top:50%;transform:translateY(-50%);font-style:normal;font-size:12px;color:var(--blue)}
+@keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-  /* map feature */
-  .mapsec{background:radial-gradient(120% 120% at 70% 10%,#12448a 0%,var(--cobalt-deep) 45%,var(--cobalt-ink) 100%);color:#fff;position:relative;overflow:hidden}
-  .mapsec .grid{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center}
-  .mapsec h2{color:#fff;font-size:clamp(30px,4.2vw,46px)}
-  .mapsec p{color:#d9e3f3;margin-top:18px;font-size:19px}
-  .stats{display:flex;gap:34px;flex-wrap:wrap;margin-top:34px}
-  .stat b{display:block;font-family:var(--serif);font-size:40px;color:var(--gold);line-height:1}
-  .stat span{font-family:var(--cond);text-transform:uppercase;letter-spacing:.14em;font-size:12px;color:#b9c9e4;margin-top:8px;display:block}
-  .mapwrap{position:relative;filter:drop-shadow(0 30px 40px rgba(0,0,0,.35))}
-  .mapwrap svg{width:100%;height:auto;overflow:visible}
-  #island{transform-box:fill-box;transform-origin:58% 62%;transition:transform 1.4s cubic-bezier(.16,.8,.28,1)}
-  .map-in #island{transform:scale(1.16)}
-  .pin{opacity:0;transition:opacity .6s ease .6s}
-  .map-in .pin{opacity:1}
-  .pin .ring{transform-box:fill-box;transform-origin:center;animation:pulse 2.6s ease-out infinite}
-  @keyframes pulse{0%{transform:scale(.6);opacity:.9}70%{transform:scale(2.6);opacity:0}100%{opacity:0}}
-  .pin-label{font-family:var(--cond);text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:700;fill:#fff}
-  @media(max-width:860px){.mapsec .grid{grid-template-columns:1fr;gap:36px}}
+/* generic sections */
+section{padding:112px 0}
+.sec-head{max-width:760px;margin-bottom:60px}
+.sec-head.center{margin-inline:auto;text-align:center}
+.sec-head h2{font-size:clamp(34px,5vw,58px);margin-top:16px;color:var(--blue)}
+.sec-head.on-blue h2{color:#fff}
+.sec-head p{color:var(--ink-soft);font-size:20px;margin-top:18px}
+.sec-head.on-blue p{color:#cfdcf7}
 
-  /* trips */
-  .trips{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
-  @media(max-width:900px){.trips{grid-template-columns:1fr}}
-  .trip{background:#fff;border:var(--hair);border-radius:var(--r);overflow:hidden;
-    display:flex;flex-direction:column;transition:border-color .2s ease}
-  .trip:hover{border-color:var(--cobalt-deep)}
-  .trip-img{aspect-ratio:3/2;background-size:cover;background-position:center;position:relative}
-  .trip-date{position:absolute;top:0;inset-inline-start:0;background:var(--cobalt-ink);color:#fff;
-    font-family:var(--cond);text-transform:uppercase;letter-spacing:.14em;font-size:11.5px;font-weight:700;
-    padding:10px 16px}
-  .trip-body{padding:24px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
-  .trip-body h3{font-size:25px;color:var(--cobalt-deep)}
-  .trip-body p{color:var(--ink-soft);font-size:16.5px}
-  .trip-meta{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:14px;border-top:1px solid var(--line)}
-  .price small{display:block;font-family:var(--cond);text-transform:uppercase;letter-spacing:.12em;font-size:11px;color:var(--ink-soft)}
-  .price b{font-family:var(--serif);font-size:26px;color:var(--ink)}
-  .chip{font-family:var(--cond);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
-    display:inline-flex;align-items:center;gap:.6em;color:var(--ink-soft)}
-  .chip::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
-  .chip.open{color:#2f6b34}
-  .chip.few{color:#a2560f}
-  .chip.wait{color:#666}
-  .trip .btn{margin:0 24px 26px}
+/* story */
+.story{display:grid;grid-template-columns:1.05fr .95fr;gap:64px;align-items:center}
+@media(max-width:860px){.story{grid-template-columns:1fr;gap:40px}}
+.story .big{font-family:var(--display);font-size:clamp(28px,3.6vw,42px);line-height:1.2;color:var(--ink)}
+.story .big em{font-style:italic;color:var(--coral)}
+.story p.sub{margin-top:24px;color:var(--ink-soft);font-size:18.5px}
+.story .photo{position:relative;aspect-ratio:4/5;background-size:cover;background-position:center;border-radius:0}
+.story .photo::after{content:"";position:absolute;inset:0;border:1px solid rgba(255,255,255,.5);outline:1px solid var(--line);outline-offset:10px}
+.story .cap{position:absolute;left:0;bottom:0;background:var(--blue);color:#fff;font-family:var(--body);font-size:12px;
+  letter-spacing:.16em;text-transform:uppercase;font-weight:700;padding:11px 16px}
 
-  /* services */
-  .svc{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
-  @media(max-width:900px){.svc{grid-template-columns:1fr 1fr}}
-  @media(max-width:600px){.svc{grid-template-columns:1fr}}
-  .svc .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:30px 26px}
-  .svc .ic{width:46px;height:46px;color:var(--cobalt);margin-bottom:16px}
-  .svc h3{font-size:22px;color:var(--cobalt-deep);margin-bottom:8px}
-  .svc p{color:var(--ink-soft);font-size:16.5px}
+/* map */
+.mapsec{background:linear-gradient(160deg,var(--blue) 0%,var(--blue-ink) 100%);color:#fff;position:relative;overflow:hidden}
+.mapsec .grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+@media(max-width:860px){.mapsec .grid{grid-template-columns:1fr;gap:40px}}
+.mapsec p{color:#cfdcf7;font-size:19px;margin-top:18px}
+.stats{display:flex;gap:40px;flex-wrap:wrap;margin-top:36px}
+.stat b{display:block;font-family:var(--display);font-size:44px;color:var(--yellow);line-height:1}
+.stat span{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#a9bde6;margin-top:8px;display:block;font-weight:700}
+.mapwrap svg{width:100%;height:auto;overflow:visible;filter:drop-shadow(0 24px 40px rgba(0,0,0,.35))}
+#island{transform-box:fill-box;transform-origin:60% 60%;transition:transform 1.5s cubic-bezier(.16,.8,.28,1)}
+.map-in #island{transform:scale(1.15)}
+.pin{opacity:0;transition:opacity .5s ease .7s}.map-in .pin{opacity:1}
+.pin .ring{transform-box:fill-box;transform-origin:center;animation:pulse 2.4s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.6);opacity:.9}70%{transform:scale(2.7);opacity:0}100%{opacity:0}}
+.pinlabel{font-family:var(--body);font-weight:700;font-size:13px;letter-spacing:.12em;text-transform:uppercase;fill:#fff}
 
-  /* testimonials */
-  .quotes{display:grid;grid-template-columns:1fr 1fr;gap:28px}
-  @media(max-width:800px){.quotes{grid-template-columns:1fr}}
-  .quote{background:#fff;border:var(--hair);border-radius:var(--r);padding:40px 38px}
-  .quote{border-top:2px solid var(--gold)}
-  .quote .mk{font-family:var(--serif);font-size:60px;color:var(--gold);line-height:.6;height:26px}
-  .quote blockquote{margin:0 0 18px;font-family:var(--serif);font-size:22px;line-height:1.45;color:var(--ink)}
-  .quote cite{font-style:normal;font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;font-size:13px;font-weight:700;color:var(--cobalt-deep)}
-  .quote cite span{display:block;color:var(--ink-soft);letter-spacing:.06em;font-size:12px;margin-top:4px}
+/* trips */
+.trips{display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+@media(max-width:940px){.trips{grid-template-columns:1fr}}
+.trip{background:#fff;border:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden;transition:.22s ease}
+.trip:hover{border-color:var(--blue);transform:translateY(-3px)}
+.trip .top{height:5px}
+.trip:nth-child(1) .top{background:var(--coral)}
+.trip:nth-child(2) .top{background:var(--teal)}
+.trip:nth-child(3) .top{background:var(--mango)}
+.trip-img{aspect-ratio:3/2;background-size:cover;background-position:center;overflow:hidden}
+.trip-img i{display:block;width:100%;height:100%;background:inherit;transition:transform .5s ease}
+.trip:hover .trip-img i{transform:scale(1.05)}
+.trip-body{padding:26px 26px 8px;display:flex;flex-direction:column;gap:12px;flex:1}
+.trip .date{font-family:var(--body);font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.trip h3{font-size:27px;color:var(--blue);line-height:1.08}
+.trip p{color:var(--ink-soft);font-size:16.5px}
+.trip .meta{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0 0;border-top:1px solid var(--line)}
+.price small{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);font-weight:700}
+.price b{font-family:var(--display);font-size:27px;color:var(--ink)}
+.status{font-family:var(--body);font-weight:700;font-size:12px;letter-spacing:.13em;text-transform:uppercase;display:inline-flex;align-items:center;gap:.55em}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.status.few{color:var(--coral)}.status.open{color:var(--green)}.status.wait{color:var(--ink-soft)}
+.trip .btn{margin:22px 26px 26px}
 
-  /* faq */
-  .faq{max-width:860px;margin:0 auto}
-  details{border-bottom:1px solid var(--line)}
-  details summary{cursor:pointer;list-style:none;padding:24px 40px 24px 4px;position:relative;
-    font-family:var(--serif);font-size:21px;color:var(--cobalt-deep);font-weight:600}
-  details summary::-webkit-details-marker{display:none}
-  details summary::after{content:"+";position:absolute;inset-inline-end:6px;top:20px;font-size:28px;color:var(--gold-deep);font-family:var(--sans);transition:transform .2s}
-  details[open] summary::after{content:"–"}
-  details .a{padding:0 4px 26px;color:var(--ink-soft);font-size:17.5px;max-width:760px}
+/* services */
+.svc{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+@media(max-width:860px){.svc{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.svc{grid-template-columns:1fr}}
+.svc .card{background:#fff;padding:38px 30px;transition:background .2s ease}
+.svc .card:hover{background:#fff}
+.svc .ic{width:44px;height:44px;color:var(--teal);margin-bottom:18px}
+.svc .card:nth-child(2) .ic{color:var(--coral)}
+.svc .card:nth-child(3) .ic{color:var(--blue-2)}
+.svc .card:nth-child(4) .ic{color:var(--mango)}
+.svc .card:nth-child(5) .ic{color:var(--pink)}
+.svc .card:nth-child(6) .ic{color:var(--green)}
+.svc h3{font-size:22px;color:var(--blue);margin-bottom:9px}
+.svc p{color:var(--ink-soft);font-size:16.5px}
 
-  /* contact */
-  .contact{background:linear-gradient(160deg,var(--cobalt-deep),var(--cobalt-ink));color:#fff}
-  .contact .grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px}
-  @media(max-width:860px){.contact .grid{grid-template-columns:1fr;gap:36px}}
-  .contact h2{color:#fff;font-size:clamp(30px,4.2vw,46px)}
-  .contact p.sub{color:#cfd9ec;margin-top:16px;font-size:19px}
-  .contact .direct{margin-top:30px;display:flex;flex-direction:column;gap:14px}
-  .contact .direct a{color:#fff;text-decoration:none;font-size:18px;display:flex;align-items:center;gap:12px}
-  .contact .direct a b{font-family:var(--cond);letter-spacing:.06em}
-  form{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.18);border-radius:var(--r);padding:36px}
-  .field{margin-bottom:18px}
-  .field label{display:block;font-family:var(--cond);text-transform:uppercase;letter-spacing:.1em;font-size:12px;font-weight:700;color:#cdd9ef;margin-bottom:8px}
-  .field input,.field select,.field textarea{width:100%;background:rgba(255,255,255,.97);border:1px solid transparent;border-radius:var(--r);
-    padding:14px 15px;font-size:17px;font-family:var(--sans);color:var(--ink);min-height:52px}
-  .field textarea{min-height:110px;resize:vertical}
-  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--gold)}
-  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  @media(max-width:520px){.two{grid-template-columns:1fr}}
-  form .btn{width:100%;margin-top:6px}
-  .formnote{font-size:13.5px;color:#aeb9d4;margin-top:14px;text-align:center}
+/* testimonials on blue */
+.voices{background:var(--blue);color:#fff}
+.quotes{display:grid;grid-template-columns:1fr 1fr;gap:30px}
+@media(max-width:820px){.quotes{grid-template-columns:1fr}}
+.quote{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);border-top:3px solid var(--yellow);padding:40px 38px}
+.quote blockquote{margin:0 0 20px;font-family:var(--display);font-size:23px;line-height:1.42}
+.quote cite{font-style:normal;font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--yellow)}
+.quote cite span{display:block;color:#b9c9ec;letter-spacing:.05em;font-size:12px;margin-top:5px;font-weight:600}
 
-  /* footer */
-  footer{background:var(--cobalt-ink);color:#c6d2e8;padding:64px 0 30px;font-size:15.5px}
-  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px;padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,.12)}
-  @media(max-width:760px){.foot-grid{grid-template-columns:1fr 1fr}}
-  @media(max-width:480px){.foot-grid{grid-template-columns:1fr}}
-  footer h4{font-family:var(--cond);text-transform:uppercase;letter-spacing:.14em;font-size:12px;color:#fff;margin:0 0 16px}
-  footer a{color:#c6d2e8;text-decoration:none;display:block;padding:5px 0}
-  footer a:hover{color:var(--gold)}
-  .foot-brand .brand-tx{color:#fff}.foot-brand .brand-tx span{color:#9fb0d0}
-  .foot-brand p{margin-top:16px;color:#9fb0d0;max-width:320px;font-size:15px}
-  .colophon{padding-top:26px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:#8ea1c4;font-size:14px}
-  .colophon a{display:inline;color:#fff;text-decoration:underline;text-underline-offset:3px}
+/* faq */
+.faq{max-width:880px;margin:0 auto}
+details{border-bottom:1px solid var(--line)}
+summary{cursor:pointer;list-style:none;padding:26px 44px 26px 2px;position:relative;font-family:var(--display);font-size:22px;color:var(--blue);font-weight:600}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";position:absolute;inset-inline-end:6px;top:22px;font-size:30px;color:var(--gold);font-family:var(--body);font-weight:400;transition:transform .2s}
+details[open] summary::after{content:"\2013"}
+details .a{padding:0 2px 28px;color:var(--ink-soft);font-size:17.5px;max-width:780px}
 
-  .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease, transform .7s ease}
-  .reveal.in{opacity:1;transform:none}
-  @media(prefers-reduced-motion:reduce){
-    *{animation:none!important;transition:none!important}
-    .reveal{opacity:1;transform:none}
-    .hero-img{transform:none}
-    #island{transform:scale(1.1)}
-  }
+/* contact */
+.contact{background:linear-gradient(160deg,var(--blue),var(--blue-ink));color:#fff}
+.contact .grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:60px}
+@media(max-width:860px){.contact .grid{grid-template-columns:1fr;gap:40px}}
+.contact p.sub{color:#cfdcf7;font-size:20px;margin-top:18px}
+.contact .direct{margin-top:32px;display:flex;flex-direction:column;gap:16px}
+.contact .direct a{color:#fff;text-decoration:none;display:flex;align-items:center;gap:13px;font-size:18px}
+.contact .direct a b{font-weight:700}
+form{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.18);padding:38px}
+.field{margin-bottom:20px}
+.field label{display:block;font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#cdd9ef;margin-bottom:9px}
+.field input,.field select,.field textarea{width:100%;background:#fff;border:1.5px solid transparent;padding:15px;font-size:17px;font-family:var(--body);color:var(--ink);min-height:54px}
+.field textarea{min-height:120px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--yellow)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:520px){.two{grid-template-columns:1fr}}
+form .btn{width:100%;margin-top:4px}
+.formnote{font-size:14px;color:#aebada;margin-top:14px;text-align:center}
+
+/* footer */
+footer{background:var(--blue-ink);color:#c3d1ee;padding:0 0 34px}
+.foot-water{line-height:0;opacity:.5}
+.foot-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:44px;padding:60px 0 40px;border-bottom:1px solid rgba(255,255,255,.12)}
+@media(max-width:760px){.foot-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.foot-grid{grid-template-columns:1fr}}
+footer h4{font-family:var(--body);text-transform:uppercase;letter-spacing:.16em;font-size:12px;color:#fff;margin:0 0 18px}
+footer a{color:#c3d1ee;text-decoration:none;display:block;padding:6px 0}
+footer a:hover{color:var(--yellow)}
+.foot-brand .brand-tx{color:#fff}.foot-brand .brand-tx span{color:#93a8d4}
+.foot-brand p{margin-top:16px;color:#93a8d4;max-width:330px;font-size:15px}
+.colophon{padding-top:26px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:#7f95c4;font-size:14px}
+.colophon a{color:#fff;text-decoration:underline;text-underline-offset:3px}
+
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease}
+.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+  .hero .heb,.hero h1 .w,.hero p.lede,.hero-actions{opacity:1;transform:none}
+  #island{transform:scale(1.12)}
+}
 </style>
 
 <a class="skip" href="#main">Skip to content</a>
+<div class="flagline" aria-hidden="true"><i></i><i></i><i></i></div>
 
 <header>
   <div class="wrap bar">
     <a class="brand" href="#top" aria-label="L'Dor Vador, Jewish Heritage Travel, home">
       <span class="mark">L'DOR<br>VADOR</span>
-      <span class="brand-tx" data-i18n="brand">L'Dor Vador<span>Jewish Heritage Travel</span></span>
+      <span class="brand-tx">L'Dor Vador<span data-i18n="brand_sub">Jewish Heritage Travel</span></span>
     </a>
     <nav class="main" aria-label="Primary">
-      <a href="#journeys" data-i18n="nav_journeys">Journeys</a>
+      <a href="#story" data-i18n="nav_journeys">Journeys</a>
       <a href="#trips" data-i18n="nav_trips">Upcoming Trips</a>
-      <a href="#about" data-i18n="nav_about">About</a>
+      <a href="#story" data-i18n="nav_about">About</a>
       <a href="#faq" data-i18n="nav_faq">FAQ</a>
     </nav>
     <div class="header-cta">
@@ -249,43 +263,58 @@
         <button data-lang="nl" aria-pressed="false">NL</button>
         <button data-lang="he" aria-pressed="false" lang="he">עב</button>
       </div>
-      <a class="btn btn-cobalt" href="#contact" data-i18n="cta_plan">Plan Your Journey</a>
+      <a class="btn btn-blue" href="#contact" data-i18n="cta_plan">Plan Your Journey</a>
     </div>
   </div>
 </header>
 
 <main id="main">
-<section class="hero" id="top" style="padding:0">
-  <div class="hero-img" style="background-image:url('__IMG_facade__')" role="img" aria-label="Historic Dutch-colonial gabled houses in Willemstad, Curaçao, at golden hour"></div>
-  <div class="wrap hero-inner">
+<section class="hero" id="top">
+  <div class="sun" aria-hidden="true"></div>
+  <div class="hero-inner">
     <p class="heb" lang="he">לְדוֹר וָדוֹר</p>
-    <h1 data-i18n="hero_h1">From generation to generation, across the sea.</h1>
-    <p class="lede" data-i18n="hero_lede">Curated Jewish heritage journeys to Curaçao — home to one of the oldest, most enduring Jewish communities in the Americas. We plan every detail so you can simply arrive, and belong.</p>
+    <h1><span class="w" style="animation-delay:.15s">From</span> <span class="w" style="animation-delay:.28s">generation</span> <span class="w accent" style="animation-delay:.42s">to&nbsp;generation,</span><br><span class="w" style="animation-delay:.58s">across</span> <span class="w" style="animation-delay:.68s">the</span> <span class="w" style="animation-delay:.78s">sea.</span></h1>
+    <p class="lede" data-i18n="hero_lede">Jewish heritage journeys to Curaçao — where a community has prayed on a sand-strewn synagogue floor since 1732. We arrange every detail, so you simply arrive, and belong.</p>
     <div class="hero-actions">
-      <a class="btn btn-gold" href="#trips" data-i18n="hero_cta1">See Upcoming Trips</a>
-      <a class="btn btn-out" href="#contact" data-i18n="hero_cta2">Plan a Private Journey</a>
+      <a class="btn btn-yellow" href="#trips" data-i18n="hero_cta1">See Upcoming Trips</a>
+      <a class="btn btn-linelight" href="#contact" data-i18n="hero_cta2">Plan a Private Journey</a>
     </div>
   </div>
-  <div class="scrollcue" aria-hidden="true"><div class="dot"></div><span data-i18n="scroll">Scroll</span></div>
+  <div class="waterfront" aria-hidden="true">__WATERFRONT__</div>
 </section>
 
-<!-- intro lead -->
-<section class="band-cream" id="journeys">
-  <div class="wrap lead reveal">
-    <p class="eyebrow" data-i18n="intro_eyebrow">Willemstad · Since 1651</p>
-    <p class="kicker" style="margin-top:18px" data-i18n="intro_kicker">For more than <b>375 years</b>, Jewish families have prayed, traded, and built a home on this island. We help you walk into that living story — not as a tourist, but as family returning.</p>
-    <p class="sub" data-i18n="intro_sub">Airport welcome and transfers · hand-picked hotels · community-connected guides · custom itineraries · kosher catering in the Sephardic and Ashkenazi traditions.</p>
+<div class="ticker" aria-hidden="true">
+  <div class="track" id="tick">
+    <span>Willemstad since 1651</span><span>The sand-floor synagogue</span><span>Shabbat by the sea</span><span>Kosher, Sephardic &amp; Ashkenazi</span><span>Community-connected guides</span><span>375 years, unbroken</span>
+    <span>Willemstad since 1651</span><span>The sand-floor synagogue</span><span>Shabbat by the sea</span><span>Kosher, Sephardic &amp; Ashkenazi</span><span>Community-connected guides</span><span>375 years, unbroken</span>
+  </div>
+</div>
+
+<!-- story -->
+<section id="story">
+  <div class="wrap story">
+    <div class="reveal">
+      <p class="eyebrow" data-i18n="story_eyebrow">One of the oldest Jewish stories in the Americas</p>
+      <p class="big" style="margin-top:20px" data-i18n="story_big">For more than <em>375 years</em>, Jewish families have traded, prayed, and built a home on this island. We help you walk into that living story — not as a visitor, but as family returning.</p>
+      <p class="sub" data-i18n="story_sub">L'Dor Vador — "from generation to generation" — arranges heritage travel to Curaçao end to end: airport welcome, hand-picked hotels, guides with real ties to the community, custom itineraries, and kosher catering for Shabbat and the festivals.</p>
+      <div style="margin-top:32px"><a class="btn btn-linedark" href="#trips" data-i18n="story_cta">Explore the journeys</a></div>
+    </div>
+    <div class="reveal">
+      <div class="photo" style="background-image:url('__IMG_c__')">
+        <span class="cap" data-i18n="story_cap">"Blessed are you in your coming" — the synagogue gate</span>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- signature map -->
+<!-- map -->
 <section class="mapsec" id="map">
   <div class="wrap">
     <div class="grid">
       <div class="reveal">
-        <p class="eyebrow on-dark" data-i18n="map_eyebrow">One island · One story</p>
-        <h2 data-i18n="map_h2">A short sail from Venezuela, an ocean of history within.</h2>
-        <p data-i18n="map_p">In the heart of Willemstad stands Mikvé Israel-Emanuel — the oldest synagogue in continuous use anywhere in the Americas, its sand floor unbroken since 1732. Everything we plan orbits this square mile of cobalt harbours, ochre walls, and Hebrew inscriptions worn smooth by generations.</p>
+        <p class="eyebrow light" data-i18n="map_eyebrow">One island · one square mile of history</p>
+        <h2 style="color:#fff;font-size:clamp(32px,4.6vw,52px);margin-top:16px" data-i18n="map_h2">A short sail from Venezuela, an ocean of history within.</h2>
+        <p data-i18n="map_p">In the heart of Willemstad stands Mikvé Israel-Emanuel — the oldest synagogue in continuous use anywhere in the Americas, its sand floor unbroken since 1732. Everything we plan orbits this bright square mile of cobalt water and ochre walls.</p>
         <div class="stats">
           <div class="stat"><b>1651</b><span data-i18n="stat1">Community founded</span></div>
           <div class="stat"><b>1732</b><span data-i18n="stat2">Synagogue built</span></div>
@@ -293,28 +322,14 @@
         </div>
       </div>
       <div class="mapwrap reveal" id="mapwrap">
-        <svg viewBox="0 0 560 360" role="img" aria-label="Stylized map of Curaçao with Willemstad marked on the south coast">
-          <defs>
-            <linearGradient id="isl" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#f0d79a"/><stop offset="1" stop-color="#d99e37"/>
-            </linearGradient>
-          </defs>
-          <!-- sea rings -->
-          <g stroke="rgba(255,255,255,.10)" fill="none">
-            <ellipse cx="300" cy="215" rx="250" ry="150"/>
-            <ellipse cx="300" cy="215" rx="185" ry="112"/>
-          </g>
-          <!-- Curaçao stylized crescent (NW top-left to SE bottom-right) -->
-          <path id="island" fill="url(#isl)" stroke="#fff" stroke-width="2" stroke-opacity=".5"
-            d="M70,96 C104,70 150,74 176,96 C204,118 214,140 250,150 C300,164 342,150 388,168
-               C436,188 478,214 486,250 C492,278 470,300 440,300 C410,300 392,282 360,272
-               C322,260 300,268 262,256 C214,240 190,214 152,196 C120,180 84,178 68,152
-               C58,134 56,108 70,96 Z"/>
-          <!-- Willemstad pin (south-central) -->
-          <g class="pin" transform="translate(322,250)">
-            <circle class="ring" r="9" fill="none" stroke="#fff" stroke-width="2"/>
-            <circle r="7" fill="var(--terra)" stroke="#fff" stroke-width="2.5"/>
-            <text class="pin-label" x="16" y="5">Willemstad</text>
+        <svg viewBox="0 0 560 380" role="img" aria-label="Stylized map of Curaçao with Willemstad marked on the south coast">
+          <g stroke="rgba(255,255,255,.12)" fill="none"><ellipse cx="300" cy="220" rx="255" ry="150"/><ellipse cx="300" cy="220" rx="185" ry="108"/></g>
+          <path id="island" fill="var(--sand)" stroke="#fff" stroke-width="2" stroke-opacity=".55"
+            d="M70,100 C104,74 150,78 176,100 C204,122 214,144 250,154 C300,168 342,154 388,172 C436,192 478,218 486,254 C492,282 470,304 440,304 C410,304 392,286 360,276 C322,264 300,272 262,260 C214,244 190,218 152,200 C120,184 84,182 68,156 C58,138 56,112 70,100 Z"/>
+          <g class="pin" transform="translate(322,254)">
+            <circle class="ring" r="9" fill="none" stroke="var(--yellow)" stroke-width="2"/>
+            <circle r="7" fill="var(--coral)" stroke="#fff" stroke-width="2.5"/>
+            <text class="pinlabel" x="16" y="5">Willemstad</text>
           </g>
         </svg>
       </div>
@@ -322,8 +337,8 @@
   </div>
 </section>
 
-<!-- upcoming trips -->
-<section class="band-cream" id="trips">
+<!-- trips -->
+<section id="trips">
   <div class="wrap">
     <div class="sec-head reveal">
       <p class="eyebrow" data-i18n="trips_eyebrow">Join a planned departure</p>
@@ -331,100 +346,75 @@
       <p data-i18n="trips_sub">Small groups, fixed dates, everything arranged. See live availability and hold your place — final payment is never taken on this site.</p>
     </div>
     <div class="trips">
-      <article class="trip reveal">
-        <div class="trip-img" style="background-image:url('__IMG_d__')"><span class="trip-date">Nov 9–15, 2026</span></div>
+      <article class="trip reveal"><div class="top"></div>
+        <div class="trip-img"><i style="background-image:url('__IMG_d__')"></i></div>
         <div class="trip-body">
+          <span class="date">Nov 9–15, 2026 · 7 days</span>
           <h3 data-i18n="trip1_t">Sukkot in the Sand Synagogue</h3>
-          <p data-i18n="trip1_p">Seven days across the festival — services at Mikvé Israel-Emanuel, the Jewish quarter, Beth Haim cemetery, and Shabbat with the community.</p>
-          <div class="trip-meta">
-            <div class="price"><small data-i18n="from">From</small><b>$2,940</b></div>
-            <span class="chip few" data-i18n="chip_few">2 places left</span>
-          </div>
+          <p data-i18n="trip1_p">Services at Mikvé Israel-Emanuel, the Jewish quarter, Beth Haim cemetery, and Shabbat with the community.</p>
+          <div class="meta"><div class="price"><small data-i18n="from">From</small><b>$2,940</b></div><span class="status few" data-i18n="st_few">2 places left</span></div>
         </div>
-        <a class="btn btn-cobalt" href="#contact" data-i18n="reserve">Reserve a place</a>
+        <a class="btn btn-blue" href="#contact" data-i18n="reserve">Reserve a place</a>
       </article>
-
-      <article class="trip reveal">
-        <div class="trip-img" style="background-image:url('__IMG_a__')"><span class="trip-date">Jan 18–24, 2027</span></div>
+      <article class="trip reveal"><div class="top"></div>
+        <div class="trip-img"><i style="background-image:url('__IMG_a__')"></i></div>
         <div class="trip-body">
-          <h3 data-i18n="trip2_t">Sephardic Roots & Waterfront</h3>
-          <p data-i18n="trip2_p">A gentler pace: the Handelskade waterfront, the Jewish Cultural Museum, guided archive time for family-history seekers, and kosher dining.</p>
-          <div class="trip-meta">
-            <div class="price"><small data-i18n="from">From</small><b>$2,610</b></div>
-            <span class="chip open" data-i18n="chip_open">7 places left</span>
-          </div>
+          <span class="date">Jan 18–24, 2027 · 7 days</span>
+          <h3 data-i18n="trip2_t">Sephardic Roots &amp; Waterfront</h3>
+          <p data-i18n="trip2_p">The Handelskade waterfront, the Jewish Cultural Museum, guided archive time for family-history seekers, kosher dining.</p>
+          <div class="meta"><div class="price"><small data-i18n="from">From</small><b>$2,610</b></div><span class="status open" data-i18n="st_open">7 places left</span></div>
         </div>
-        <a class="btn btn-cobalt" href="#contact" data-i18n="reserve">Reserve a place</a>
+        <a class="btn btn-blue" href="#contact" data-i18n="reserve">Reserve a place</a>
       </article>
-
-      <article class="trip reveal">
-        <div class="trip-img" style="background-image:url('__IMG_b__')"><span class="trip-date">Mar 22–28, 2027</span></div>
+      <article class="trip reveal"><div class="top"></div>
+        <div class="trip-img"><i style="background-image:url('__IMG_b__')"></i></div>
         <div class="trip-body">
+          <span class="date">Mar 22–28, 2027 · 7 days</span>
           <h3 data-i18n="trip3_t">Pesach on the Island</h3>
-          <p data-i18n="trip3_p">Community seders, guided walks through 375 years of history, and warm island Shabbat — a Passover to remember, fully hosted.</p>
-          <div class="trip-meta">
-            <div class="price"><small data-i18n="from">From</small><b>$3,180</b></div>
-            <span class="chip wait" data-i18n="chip_wait">Join waitlist</span>
-          </div>
+          <p data-i18n="trip3_p">Community seders, guided walks through 375 years of history, and warm island Shabbat — fully hosted.</p>
+          <div class="meta"><div class="price"><small data-i18n="from">From</small><b>$3,180</b></div><span class="status wait" data-i18n="st_wait">Join waitlist</span></div>
         </div>
-        <a class="btn btn-cobalt" href="#contact" data-i18n="waitlist">Join the waitlist</a>
+        <a class="btn btn-blue" href="#contact" data-i18n="waitlist">Join the waitlist</a>
       </article>
     </div>
   </div>
 </section>
 
 <!-- services -->
-<section class="band-paper" id="services">
+<section style="background:#fff" id="services">
   <div class="wrap">
-    <div class="sec-head reveal">
-      <p class="eyebrow" data-i18n="svc_eyebrow">Every detail, handled</p>
-      <h2 data-i18n="svc_h2">What we arrange for you</h2>
-    </div>
-    <div class="svc">
-      <div class="card reveal"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 11l14-4v10l-14-4z"/><path d="M5 11v6M12 9v9"/></svg><h3 data-i18n="s1t">Airport welcome & transfers</h3><p data-i18n="s1p">Met at arrivals and driven anywhere on the island — from private cars to full motorcoaches for groups.</p></div>
-      <div class="card reveal"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-6h6v6"/></svg><h3 data-i18n="s2t">Hotels & group allotments</h3><p data-i18n="s2p">Hand-picked stays near the synagogue, with reserved room blocks for synagogues and families travelling together.</p></div>
-      <div class="card reveal"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg><h3 data-i18n="s3t">Community-connected guides</h3><p data-i18n="s3p">Multilingual guides with real ties to the community — history told by the people who live it.</p></div>
-      <div class="card reveal"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v16H4z"/><path d="M8 4v16M4 9h4M4 15h4"/></svg><h3 data-i18n="s4t">Custom itineraries</h3><p data-i18n="s4p">Journeys shaped around your synagogue, your family, or your own heritage questions — as full or as restful as you wish.</p></div>
-      <div class="card reveal"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3v7a3 3 0 006 0V3M9 3v18M15 3c-1 3-1 6 0 9v9"/></svg><h3 data-i18n="s5t">Kosher catering</h3><p data-i18n="s5p">Meals in both the Sephardic and Ashkenazi traditions, arranged for Shabbat, festivals, and every day in between.</p></div>
-      <div class="card reveal"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M15 20c0-2.5 1-4.5 3.5-4.5S22 17.5 22 20"/></svg><h3 data-i18n="s6t">Groups & institutions</h3><p data-i18n="s6p">Turnkey planning for synagogues, federations, and heritage organisations — one point of contact, start to finish.</p></div>
+    <div class="sec-head center reveal"><p class="eyebrow" data-i18n="svc_eyebrow">Every detail, handled</p><h2 data-i18n="svc_h2">What we arrange for you</h2></div>
+    <div class="svc reveal">
+      <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 11l14-4v10l-14-4z"/><path d="M5 11v6M12 9v9"/></svg><h3 data-i18n="s1t">Airport welcome &amp; transfers</h3><p data-i18n="s1p">Met at arrivals and driven anywhere on the island — from private cars to full motorcoaches for groups.</p></div>
+      <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-6h6v6"/></svg><h3 data-i18n="s2t">Hotels &amp; group allotments</h3><p data-i18n="s2p">Hand-picked stays near the synagogue, with reserved room blocks for congregations and families.</p></div>
+      <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg><h3 data-i18n="s3t">Community-connected guides</h3><p data-i18n="s3p">Multilingual guides with real ties to the community — history told by the people who live it.</p></div>
+      <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v16H4z"/><path d="M8 4v16M4 9h4M4 15h4"/></svg><h3 data-i18n="s4t">Custom itineraries</h3><p data-i18n="s4p">Journeys shaped around your synagogue, family, or heritage questions — as full or as restful as you wish.</p></div>
+      <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3v7a3 3 0 006 0V3M9 3v18M15 3c-1 3-1 6 0 9v9"/></svg><h3 data-i18n="s5t">Kosher catering</h3><p data-i18n="s5p">Meals in both Sephardic and Ashkenazi traditions, for Shabbat, festivals, and every day between.</p></div>
+      <div class="card"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M15 20c0-2.5 1-4.5 3.5-4.5S22 17.5 22 20"/></svg><h3 data-i18n="s6t">Groups &amp; institutions</h3><p data-i18n="s6p">Turnkey planning for synagogues, federations, and heritage organisations — one point of contact.</p></div>
     </div>
   </div>
 </section>
 
 <!-- testimonials -->
-<section class="band-cream" id="voices">
+<section class="voices" id="voices">
   <div class="wrap">
-    <div class="sec-head reveal">
-      <p class="eyebrow" data-i18n="voices_eyebrow">In their words</p>
-      <h2 data-i18n="voices_h2">Travellers who felt at home</h2>
-    </div>
+    <div class="sec-head center on-blue reveal"><p class="eyebrow light" data-i18n="voices_eyebrow">In their words</p><h2 data-i18n="voices_h2">Travellers who felt at home</h2></div>
     <div class="quotes">
-      <figure class="quote reveal">
-        <div class="mk">&ldquo;</div>
-        <blockquote data-i18n="q1">Standing on the sand floor where my ancestors stood — Hannah arranged everything so all we had to do was feel it. The most meaningful week of our lives.</blockquote>
-        <cite data-i18n="q1c">Marilyn &amp; David R.<span>Boca Raton, Florida</span></cite>
-      </figure>
-      <figure class="quote reveal">
-        <div class="mk">&ldquo;</div>
-        <blockquote data-i18n="q2">We brought a congregation of twenty-six, ages nine to eighty-eight. Every transfer, meal, and service ran without a single worry. Flawless and deeply warm.</blockquote>
-        <cite data-i18n="q2c">Rabbi S. Weiss<span>Congregation Beth Shalom</span></cite>
-      </figure>
+      <figure class="quote reveal"><blockquote data-i18n="q1">Standing on the sand floor where my ancestors stood — Hannah arranged everything so all we had to do was feel it. The most meaningful week of our lives.</blockquote><cite data-i18n="q1c">Marilyn &amp; David R.<span>Boca Raton, Florida</span></cite></figure>
+      <figure class="quote reveal"><blockquote data-i18n="q2">We brought a congregation of twenty-six, ages nine to eighty-eight. Every transfer, meal, and service ran without a single worry. Flawless and deeply warm.</blockquote><cite data-i18n="q2c">Rabbi S. Weiss<span>Congregation Beth Shalom</span></cite></figure>
     </div>
   </div>
 </section>
 
 <!-- faq -->
-<section class="band-paper" id="faq">
+<section style="background:#fff" id="faq">
   <div class="wrap">
-    <div class="sec-head reveal" style="margin:0 auto 44px;text-align:center">
-      <p class="eyebrow" data-i18n="faq_eyebrow">Good to know</p>
-      <h2 data-i18n="faq_h2">Frequently asked questions</h2>
-    </div>
+    <div class="sec-head center reveal" style="margin-bottom:48px"><p class="eyebrow" data-i18n="faq_eyebrow">Good to know</p><h2 data-i18n="faq_h2">Frequently asked questions</h2></div>
     <div class="faq reveal">
-      <details open><summary data-i18n="faq1q">Is Curaçao easy to reach?</summary><div class="a" data-i18n="faq1a">Yes. Curaçao has direct flights from Miami, New York, and Amsterdam, and is served by major carriers. We meet you at the airport and handle every transfer from the moment you land.</div></details>
-      <details><summary data-i18n="faq2q">Do you cater to kosher and Shabbat observance?</summary><div class="a" data-i18n="faq2a">Absolutely. We arrange kosher catering in both Sephardic and Ashkenazi traditions, plan around Shabbat and festivals, and place you within walking distance of the synagogue when you wish.</div></details>
-      <details><summary data-i18n="faq3q">Is this suitable for older travellers?</summary><div class="a" data-i18n="faq3a">It is our specialty. Itineraries are paced gently, distances are short, transport is private and comfortable, and we adapt every day to your energy. Mobility needs are planned for in advance.</div></details>
-      <details><summary data-i18n="faq4q">Can you plan for a synagogue or private group?</summary><div class="a" data-i18n="faq4a">Yes — group planning is at the heart of what we do. We handle room blocks, motorcoaches, group meals, and services for congregations, families, and heritage organisations of any size.</div></details>
+      <details open><summary data-i18n="faq1q">Is Curaçao easy to reach?</summary><div class="a" data-i18n="faq1a">Yes. Curaçao has direct flights from Miami, New York, and Amsterdam. We meet you at the airport and handle every transfer from the moment you land.</div></details>
+      <details><summary data-i18n="faq2q">Do you cater to kosher and Shabbat observance?</summary><div class="a" data-i18n="faq2a">Absolutely. We arrange kosher catering in both Sephardic and Ashkenazi traditions, plan around Shabbat and the festivals, and place you within walking distance of the synagogue when you wish.</div></details>
+      <details><summary data-i18n="faq3q">Is this suitable for older travellers?</summary><div class="a" data-i18n="faq3a">It is our specialty. Itineraries are paced gently, distances are short, transport is private and comfortable, and we adapt each day to your energy. Mobility needs are planned in advance.</div></details>
+      <details><summary data-i18n="faq4q">Can you plan for a synagogue or private group?</summary><div class="a" data-i18n="faq4a">Yes — group planning is at the heart of what we do. We handle room blocks, motorcoaches, group meals, and services for congregations and families of any size.</div></details>
       <details><summary data-i18n="faq5q">How do payments work?</summary><div class="a" data-i18n="faq5a">You reserve your place through us and we send a secure invoice from our trusted booking partner. No card details are ever entered on this website.</div></details>
     </div>
   </div>
@@ -435,12 +425,12 @@
   <div class="wrap">
     <div class="grid">
       <div class="reveal">
-        <p class="eyebrow on-dark" data-i18n="contact_eyebrow">Plan your journey</p>
-        <h2 data-i18n="contact_h2">Tell us who's travelling. We'll take it from there.</h2>
+        <p class="eyebrow light" data-i18n="contact_eyebrow">Plan your journey</p>
+        <h2 style="color:#fff;font-size:clamp(32px,4.4vw,50px);margin-top:16px" data-i18n="contact_h2">Tell us who's travelling. We'll take it from there.</h2>
         <p class="sub" data-i18n="contact_sub">Share a few details and we'll reply personally, usually within two business days — with ideas, dates, and a plan shaped around you.</p>
         <div class="direct">
-          <a href="mailto:connect@ldorvadortravel.com"><svg class="ic" style="width:22px;color:var(--gold)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><b>connect@ldorvadortravel.com</b></a>
-          <a href="#top"><svg class="ic" style="width:22px;color:var(--gold)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 16.5v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.1 4.7 2 2 0 0 1 3 2.5h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L7.1 10a16 16 0 0 0 6 6l.9-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg><b data-i18n="prefer_call">Prefer to talk? Request a call back</b></a>
+          <a href="mailto:connect@ldorvadortravel.com"><svg style="width:22px;color:var(--yellow)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="0"/><path d="m3 7 9 6 9-6"/></svg><b>connect@ldorvadortravel.com</b></a>
+          <a href="#top"><svg style="width:22px;color:var(--yellow)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 16.5v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.1 4.7 2 2 0 0 1 3 2.5h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L7.1 10a16 16 0 0 0 6 6l.9-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg><b data-i18n="prefer_call">Prefer to talk? Request a call back</b></a>
         </div>
       </div>
       <form class="reveal" onsubmit="event.preventDefault();this.querySelector('.formnote').textContent='Demo only — this form is not yet connected.';">
@@ -450,13 +440,11 @@
         </div>
         <div class="two">
           <div class="field"><label for="fd" data-i18n="f_dates">Travel dates (approx.)</label><input id="fd" name="dates" type="text" placeholder="e.g. Spring 2027"></div>
-          <div class="field"><label for="fg" data-i18n="f_group">Group size</label>
-            <select id="fg" name="group"><option>Just the two of us</option><option>Family (3–6)</option><option>Small group (7–15)</option><option>Congregation / 16+</option></select>
-          </div>
+          <div class="field"><label for="fg" data-i18n="f_group">Group size</label><select id="fg" name="group"><option>Just the two of us</option><option>Family (3–6)</option><option>Small group (7–15)</option><option>Congregation / 16+</option></select></div>
         </div>
         <div class="field"><label for="fm" data-i18n="f_msg">What kind of journey are you dreaming of?</label><textarea id="fm" name="message"></textarea></div>
         <input type="text" name="company" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
-        <button class="btn btn-gold" type="submit" data-i18n="f_submit">Send my enquiry</button>
+        <button class="btn btn-yellow" type="submit" data-i18n="f_submit">Send my enquiry</button>
         <p class="formnote"></p>
       </form>
     </div>
@@ -465,68 +453,52 @@
 </main>
 
 <footer>
+  <div class="foot-water" aria-hidden="true">__WATERFRONT_FOOT__</div>
   <div class="wrap">
     <div class="foot-grid">
       <div class="foot-brand">
-        <span class="brand-tx">L'Dor Vador<span>Jewish Heritage Travel</span></span>
+        <span class="brand-tx" style="font-size:22px">L'Dor Vador<span data-i18n="brand_sub">Jewish Heritage Travel</span></span>
         <p data-i18n="foot_blurb">Heritage travel to Curaçao, from generation to generation. Willemstad, Curaçao · KvK 148736.</p>
       </div>
-      <div>
-        <h4 data-i18n="foot_explore">Explore</h4>
-        <a href="#journeys" data-i18n="nav_journeys">Journeys</a>
-        <a href="#trips" data-i18n="nav_trips">Upcoming Trips</a>
-        <a href="#services" data-i18n="foot_services">What we arrange</a>
-        <a href="#faq" data-i18n="nav_faq">FAQ</a>
-      </div>
-      <div>
-        <h4 data-i18n="foot_contact">Contact</h4>
-        <a href="mailto:connect@ldorvadortravel.com">connect@ldorvadortravel.com</a>
-        <a href="#contact" data-i18n="cta_plan">Plan Your Journey</a>
-        <a href="#top" data-i18n="foot_top">Back to top ↑</a>
-      </div>
+      <div><h4 data-i18n="foot_explore">Explore</h4>
+        <a href="#story" data-i18n="nav_journeys">Journeys</a><a href="#trips" data-i18n="nav_trips">Upcoming Trips</a><a href="#services" data-i18n="foot_services">What we arrange</a><a href="#faq" data-i18n="nav_faq">FAQ</a></div>
+      <div><h4 data-i18n="foot_contact">Contact</h4>
+        <a href="mailto:connect@ldorvadortravel.com">connect@ldorvadortravel.com</a><a href="#contact" data-i18n="cta_plan">Plan Your Journey</a><a href="#top" data-i18n="foot_top">Back to top ↑</a></div>
     </div>
     <div class="colophon">
-      <span id="copy"></span>
       <span>© <span id="yr"></span> L'Dor Vador. Site by <a href="https://tcstudio.io">Tree Crown Studio</a>.</span>
+      <span data-i18n="foot_lang">Available in English · Español · Nederlands · עברית</span>
     </div>
   </div>
 </footer>
 
 <script>
-  document.getElementById('yr').textContent=new Date().getFullYear();
+document.getElementById('yr').textContent=new Date().getFullYear();
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
+var mio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)document.getElementById('map').classList.add('map-in')})},{threshold:.3});
+mio.observe(document.getElementById('mapwrap'));
 
-  // reveal on scroll
-  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.14});
-  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
-
-  // map zoom trigger
-  var mio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){document.getElementById('map').classList.add('map-in')}})},{threshold:.3});
-  mio.observe(document.getElementById('mapwrap'));
-
-  // language switch (demo of the 4-language plan incl. Hebrew RTL)
-  var i18n={
-    en:{},
-    es:{brand:'L’Dor Vador<span>Viajes de Herencia Judía</span>',nav_journeys:'Viajes',nav_trips:'Próximas Salidas',nav_about:'Nosotros',nav_faq:'Preguntas',cta_plan:'Planifica tu Viaje',
-      hero_h1:'De generación en generación, al otro lado del mar.',hero_lede:'Viajes de herencia judía a Curazao, hogar de una de las comunidades judías más antiguas y duraderas de las Américas. Lo organizamos todo para que solo tengas que llegar y sentirte en casa.',hero_cta1:'Ver Próximas Salidas',hero_cta2:'Planear un Viaje Privado',scroll:'Desliza',
-      intro_eyebrow:'Willemstad · Desde 1651',trips_h2:'Próximos viajes con plazas disponibles',reserve:'Reservar plaza',from:'Desde',svc_h2:'Lo que organizamos para ti',faq_h2:'Preguntas frecuentes',contact_h2:'Cuéntanos quién viaja. Del resto nos encargamos nosotros.',f_submit:'Enviar consulta'},
-    nl:{brand:'L’Dor Vador<span>Joodse Erfgoedreizen</span>',nav_journeys:'Reizen',nav_trips:'Komende Reizen',nav_about:'Over ons',nav_faq:'Vragen',cta_plan:'Plan uw Reis',
-      hero_h1:'Van generatie op generatie, over de zee.',hero_lede:'Joodse erfgoedreizen naar Curaçao, thuis van een van de oudste en meest duurzame Joodse gemeenschappen van Amerika. Wij regelen elk detail, zodat u alleen hoeft aan te komen.',hero_cta1:'Bekijk Komende Reizen',hero_cta2:'Plan een Privéreis',scroll:'Scroll',
-      intro_eyebrow:'Willemstad · Sinds 1651',trips_h2:'Komende reizen met nog vrije plaatsen',reserve:'Plaats reserveren',from:'Vanaf',svc_h2:'Wat wij voor u regelen',faq_h2:'Veelgestelde vragen',contact_h2:'Vertel ons wie er reist. Wij doen de rest.',f_submit:'Aanvraag versturen'},
-    he:{brand:'לְדוֹר וָדוֹר<span>מורשת יהודית</span>',nav_journeys:'מסעות',nav_trips:'טיולים קרובים',nav_about:'אודות',nav_faq:'שאלות',cta_plan:'תכננו את המסע',
-      hero_h1:'לדור ודור, מעבר לים.',hero_lede:'מסעות מורשת יהודית לקורסאו — ביתם של אחת הקהילות היהודיות העתיקות ביותר ביבשת אמריקה. אנחנו מתכננים הכל — כדי שתוכלו פשוט להגיע.',hero_cta1:'טיולים קרובים',hero_cta2:'מסע פרטי',scroll:'גלול',
-      intro_eyebrow:'וילמסטאד · מאז 1651',trips_h2:'טיולים קרובים עם מקומות פנויים',reserve:'לשמור מקום',from:'החל מ-',svc_h2:'מה אנחנו מסדירים עבורכם',faq_h2:'שאלות נפוצות',contact_h2:'ספרו לנו מי מגיע. את השאר נעשה אנחנו.',f_submit:'שלחו פנייה'}
-  };
-  var enStore={};
-  document.querySelectorAll('[data-i18n]').forEach(function(el){enStore[el.getAttribute('data-i18n')]=el.innerHTML});
-  function setLang(l){
-    var dict=i18n[l]||{};
-    document.querySelectorAll('[data-i18n]').forEach(function(el){
-      var k=el.getAttribute('data-i18n');
-      el.innerHTML=(l==='en')?enStore[k]:(dict[k]!==undefined?dict[k]:enStore[k]);
-    });
-    document.documentElement.setAttribute('lang',l);
-    document.documentElement.setAttribute('dir', l==='he'?'rtl':'ltr');
-    document.querySelectorAll('.lang button').forEach(function(b){b.setAttribute('aria-pressed', b.getAttribute('data-lang')===l)});
-  }
-  document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setLang(b.getAttribute('data-lang'))})});
+var i18n={
+ en:{},
+ es:{brand_sub:'Viajes de Herencia Judía',nav_journeys:'Viajes',nav_trips:'Próximas Salidas',nav_about:'Nosotros',nav_faq:'Preguntas',cta_plan:'Planifica tu Viaje',
+   hero_lede:'Viajes de herencia judía a Curazao — donde una comunidad reza sobre el suelo de arena de su sinagoga desde 1732. Organizamos cada detalle, para que solo tengas que llegar.',hero_cta1:'Ver Próximas Salidas',hero_cta2:'Planear un Viaje Privado',
+   story_eyebrow:'Una de las historias judías más antiguas de las Américas',story_big:'Durante más de <em>375 años</em>, las familias judías han comerciado, rezado y construido un hogar en esta isla. Te ayudamos a entrar en esa historia viva — no como visitante, sino como familia que regresa.',story_cta:'Descubre los viajes',trips_h2:'Próximos viajes con plazas disponibles',reserve:'Reservar plaza',from:'Desde',svc_h2:'Lo que organizamos para ti',voices_h2:'Viajeros que se sintieron en casa',faq_h2:'Preguntas frecuentes',contact_h2:'Cuéntanos quién viaja. Del resto nos encargamos nosotros.',f_submit:'Enviar consulta',foot_lang:'Disponible en English · Español · Nederlands · עברית'},
+ nl:{brand_sub:'Joodse Erfgoedreizen',nav_journeys:'Reizen',nav_trips:'Komende Reizen',nav_about:'Over ons',nav_faq:'Vragen',cta_plan:'Plan uw Reis',
+   hero_lede:'Joodse erfgoedreizen naar Curaçao — waar een gemeenschap sinds 1732 bidt op de zandvloer van de synagoge. Wij regelen elk detail, zodat u alleen hoeft aan te komen.',hero_cta1:'Bekijk Komende Reizen',hero_cta2:'Plan een Privéreis',
+   story_eyebrow:'Een van de oudste Joodse verhalen van Amerika',story_big:'Al meer dan <em>375 jaar</em> handelen, bidden en wonen Joodse families op dit eiland. Wij helpen u dat levende verhaal binnen te stappen — niet als bezoeker, maar als familie die terugkeert.',story_cta:'Ontdek de reizen',trips_h2:'Komende reizen met nog vrije plaatsen',reserve:'Plaats reserveren',from:'Vanaf',svc_h2:'Wat wij voor u regelen',voices_h2:'Reizigers die zich thuis voelden',faq_h2:'Veelgestelde vragen',contact_h2:'Vertel ons wie er reist. Wij doen de rest.',f_submit:'Aanvraag versturen',foot_lang:'Beschikbaar in English · Español · Nederlands · עברית'},
+ he:{brand_sub:'מורשת יהודית',nav_journeys:'מסעות',nav_trips:'טיולים קרובים',nav_about:'אודות',nav_faq:'שאלות',cta_plan:'תכננו את המסע',
+   hero_lede:'מסעות מורשת יהודית לקורסאו — שם קהילה מתפללת על רצפת החול של בית הכנסת מאז 1732. אנחנו מסדירים כל פרט, כדי שתוכלו פשוט להגיע.',hero_cta1:'טיולים קרובים',hero_cta2:'מסע פרטי',
+   story_eyebrow:'אחד הסיפורים היהודיים העתיקים ביבשת אמריקה',story_big:'במשך יותר מ־<em>375 שנה</em> משפחות יהודיות סחרו, התפללו ובנו בית באי הזה. אנחנו עוזרים לכם להיכנס אל הסיפור החי הזה — לא כאורחים, אלא כמשפחה ששבה הביתה.',story_cta:'גלו את המסעות',trips_h2:'טיולים קרובים עם מקומות פנויים',reserve:'לשמור מקום',from:'החל מ־',svc_h2:'מה אנחנו מסדירים עבורכם',voices_h2:'מטיילים שהרגישו בבית',faq_h2:'שאלות נפוצות',contact_h2:'ספרו לנו מי מגיע. את השאר נעשה אנחנו.',f_submit:'שלחו פנייה',foot_lang:'זמין באנגלית · ספרדית · הולנדית · עברית'}
+};
+var enStore={};
+document.querySelectorAll('[data-i18n]').forEach(function(el){enStore[el.getAttribute('data-i18n')]=el.innerHTML});
+function setLang(l){
+ var d=i18n[l]||{};
+ document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.getAttribute('data-i18n');el.innerHTML=(l==='en')?enStore[k]:(d[k]!==undefined?d[k]:enStore[k])});
+ document.documentElement.setAttribute('lang',l);
+ document.documentElement.setAttribute('dir',l==='he'?'rtl':'ltr');
+ document.querySelectorAll('.lang button').forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-lang')===l)});
+}
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setLang(b.getAttribute('data-lang'))})});
 </script>
