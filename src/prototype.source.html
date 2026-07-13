@@ -3,6 +3,7 @@
 /*__FONTS__*/
 :root{
   --hero:url('__IMG_hero__');
+  --arch:url('__IMG_arch__');
   --blue:#002B7F; --blue-2:#123FA6; --yellow:#F9E814; --gold:#B8860B;
   --ink:#1B2436; --ink-soft:#5C6577;
   --white:#fff; --paper:#FAF7F0; --stone:#EFE6D3; --line:#E6DECB;
@@ -42,14 +43,18 @@ a{color:inherit}
 .skip{position:absolute;left:-9999px;background:var(--blue);color:#fff;padding:12px 18px;z-index:2000}
 .skip:focus{left:0;top:0}
 
-/* ===== tablet intro reveal ===== */
-.intro{position:fixed;inset:0;z-index:1500;animation:introFade .55s ease 2.75s forwards}
-.intro-photo{position:absolute;inset:0;background:var(--hero) center 42%/cover}
-.intro-cover{position:absolute;inset:0;background:#0b0f16;
-  -webkit-mask:url('__TABLETMASK__') center/100% no-repeat; mask:url('__TABLETMASK__') center/100% no-repeat;
-  animation:introOpen 1.2s cubic-bezier(.66,0,.24,1) 1.7s forwards}
-@keyframes introOpen{from{-webkit-mask-size:100%;mask-size:100%}to{-webkit-mask-size:380%;mask-size:380%}}
-@keyframes introFade{to{opacity:0;visibility:hidden}}
+/* ===== intro: two synagogue arches (the tablets) part like doors to reveal the hero ===== */
+.intro{position:fixed;inset:0;z-index:1500;overflow:hidden;background:#0b0f16;animation:introEnd 0s linear 3.05s forwards}
+@keyframes introEnd{to{visibility:hidden;pointer-events:none}}
+.intro .door{position:absolute;top:0;bottom:0;width:50.5%;background:var(--arch) center/cover;will-change:transform,opacity}
+.intro .door.left{left:0;animation:doorL 2.95s cubic-bezier(.5,0,.16,1) forwards}
+.intro .door.right{right:0;animation:doorR 2.95s cubic-bezier(.5,0,.16,1) forwards}
+@keyframes doorL{0%{transform:translateX(0) scale(1.06);opacity:0}9%{opacity:1}52%{transform:translateX(0) scale(1)}100%{transform:translateX(-101%) scale(1)}}
+@keyframes doorR{0%{transform:translateX(0) scale(1.06);opacity:0}9%{opacity:1}52%{transform:translateX(0) scale(1)}100%{transform:translateX(101%) scale(1)}}
+.intro .seam{position:absolute;top:0;bottom:0;left:50%;width:2px;margin-left:-1px;z-index:2;
+  background:linear-gradient(180deg,transparent 4%,rgba(249,232,20,.85) 50%,transparent 96%);animation:seamOut 2.95s ease forwards}
+@keyframes seamOut{0%{opacity:0}12%{opacity:.9}48%{opacity:.9}60%{opacity:0}100%{opacity:0}}
+.intro .glow{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(60% 50% at 50% 46%,rgba(0,0,0,0) 60%,rgba(6,9,16,.55) 100%)}
 
 /* ===== header (transparent over hero) ===== */
 header{position:fixed;top:0;left:0;right:0;z-index:1000;transition:background .35s ease,box-shadow .35s ease;padding:6px 0}
@@ -80,14 +85,14 @@ header.scrolled .lang button+button{border-color:var(--line)}
 
 /* ===== hero ===== */
 .hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;overflow:hidden}
-.hero .bg{position:absolute;inset:0;background:var(--hero) center 42%/cover;transform:scale(1.05);animation:kb 14s ease-out forwards}
+.hero .bg{position:absolute;inset:0;background:var(--hero) center 54%/cover;transform:scale(1.05);animation:kb 14s ease-out forwards}
 @keyframes kb{to{transform:scale(1)}}
-.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,15,25,.42) 0%,rgba(10,15,25,.12) 32%,rgba(10,15,25,.16) 62%,rgba(10,15,25,.6) 100%)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,12,26,.52) 0%,rgba(6,12,26,.16) 28%,rgba(6,12,26,.42) 60%,rgba(6,12,26,.78) 100%)}
 .hero-inner{position:relative;z-index:2;max-width:900px;padding:120px 34px 90px}
 .hero .heb{font-family:var(--heb);font-weight:500;font-size:clamp(26px,4vw,46px);color:#fff;direction:rtl;margin-bottom:14px;opacity:0;animation:fade 1s ease 2.5s forwards}
-.hero h1{font-size:clamp(46px,7.4vw,96px);font-weight:500;line-height:1;letter-spacing:-.02em;opacity:0;transform:translateY(20px);animation:rise 1.1s cubic-bezier(.2,.7,.2,1) 2.6s forwards}
+.hero h1{font-size:clamp(46px,7.4vw,96px);font-weight:500;line-height:1;letter-spacing:-.02em;text-shadow:0 2px 24px rgba(4,10,22,.45);opacity:0;transform:translateY(20px);animation:rise 1.1s cubic-bezier(.2,.7,.2,1) 2.6s forwards}
 .hero h1 em{font-style:italic;font-weight:400}
-.hero p.lede{max-width:590px;margin:26px auto 34px;font-size:clamp(17px,1.8vw,20px);line-height:1.55;color:#f3eee6;opacity:0;animation:fade 1s ease 3s forwards}
+.hero p.lede{max-width:590px;margin:26px auto 34px;font-size:clamp(17px,1.8vw,20px);line-height:1.55;color:#f6f2ea;text-shadow:0 1px 16px rgba(4,10,22,.65);opacity:0;animation:fade 1s ease 3s forwards}
 .hero-actions{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;opacity:0;animation:fade 1s ease 3.2s forwards}
 @keyframes rise{to{opacity:1;transform:none}}
 @keyframes fade{to{opacity:1}}
@@ -233,7 +238,7 @@ footer a:hover{color:var(--yellow)}
 </style>
 
 <a class="skip" href="#main">Skip to content</a>
-<div class="intro" id="intro" aria-hidden="true"><div class="intro-photo"></div><div class="intro-cover"></div></div>
+<div class="intro" id="intro" aria-hidden="true"><div class="door left"></div><div class="door right"></div><div class="glow"></div><div class="seam"></div></div>
 
 <header id="header">
   <div class="wrap bar">
