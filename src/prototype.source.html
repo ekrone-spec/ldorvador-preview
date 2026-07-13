@@ -4,10 +4,11 @@
 :root{
   --hero:url('__IMG_hero__');
   --doors:url('__IMG_doors__');
-  --blue:#002B7F; --blue-2:#123FA6; --yellow:#F9E814; --gold:#E8B923; --gold-ink:#7A5B00;
-  --ink:#1B2436; --ink-soft:#4E586B;
-  --white:#fff; --paper:#FAF7F0; --stone:#EFE6D3; --line:#E6DECB;
-  --coral:#B0471F; --green:#4E6B2E; --footer:#14130F;
+  /* palette locked: one blue · white · yellow · one cream. legacy names aliased so nothing else breaks. */
+  --blue:#002B7F; --blue-2:#123FA6; --navy:#04143A; --yellow:#F9E814;
+  --ink:#14203A; --ink-soft:#55607A;
+  --white:#fff; --cream:#F5F1E6; --paper:var(--cream); --stone:var(--cream); --line:#E5DFCC;
+  --gold:var(--yellow); --gold-ink:var(--blue); --coral:var(--blue); --green:var(--blue); --footer:var(--navy);
   --display:'Syne','Hanken Grotesk',system-ui,sans-serif;
   --serif:'Fraunces',Georgia,'Times New Roman',serif;
   --body:'Hanken Grotesk',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
@@ -63,7 +64,7 @@ a{color:inherit}
 .intro .dl.r{left:73%}
 
 /* ===== header (transparent over hero) ===== */
-header{position:fixed;top:0;left:0;right:0;z-index:1000;transition:background .35s ease,box-shadow .35s ease;padding:8px 0}
+header{position:fixed;top:0;left:0;right:0;z-index:1000;transition:background .35s ease,box-shadow .35s ease;padding:8px 0;opacity:0;animation:fade 1.2s ease 2.7s forwards}
 header::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,10,20,.55),rgba(6,10,20,0));transition:opacity .35s;pointer-events:none}
 header.scrolled::before{opacity:0}
 header:not(.scrolled) .bar{text-shadow:0 1px 10px rgba(0,0,0,.4)}
@@ -91,24 +92,25 @@ header.scrolled .lang button[aria-pressed="true"]{color:var(--blue)}
 header.scrolled .lang button+button{border-color:var(--line)}
 @media(max-width:980px){nav.main,.header-cta .btn{display:none}}
 
-/* ===== hero ===== */
-.hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:flex-start;text-align:left;color:#fff;overflow:hidden}
-.hero .bg{position:absolute;inset:0;background:var(--hero) center 54%/cover;transform:scale(1.05);animation:kb 14s ease-out forwards}
+/* ===== hero — fixed; the page below scrolls up over it (Avenue H) ===== */
+.hero{position:fixed;top:0;left:0;right:0;height:100vh;display:flex;align-items:center;justify-content:flex-start;text-align:left;color:#fff;overflow:hidden;z-index:0}
+.hero .bg{position:absolute;inset:0;background:var(--hero) center 54%/cover;transform:scale(1.06);animation:kb 18s ease-out forwards}
 @keyframes kb{to{transform:scale(1)}}
-.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,rgba(6,12,26,.78) 0%,rgba(6,12,26,.5) 40%,rgba(6,12,26,.12) 72%),linear-gradient(180deg,rgba(6,12,26,.35) 0%,rgba(6,12,26,0) 30%,rgba(6,12,26,.35) 100%)}
-.hero-inner{position:relative;z-index:2;width:100%;max-width:var(--wrap);margin:0 auto;padding:130px 34px 92px}
-.hero .heb{font-family:var(--heb);font-weight:800;font-size:clamp(34px,5.4vw,64px);color:#fff;direction:rtl;text-align:left;margin:0 0 6px;letter-spacing:.03em;
-  text-shadow:0 1px 0 #efe3c2, 1px 2px 0 rgba(38,28,6,.4), 2px 3px 0 rgba(38,28,6,.28), 3px 6px 18px rgba(0,0,0,.55);
-  opacity:0;animation:heb3d 1.3s cubic-bezier(.2,.7,.2,1) 2.4s forwards}
-@keyframes heb3d{0%{opacity:0;transform:translateY(14px) scale(.96)}100%{opacity:1;transform:none}}
-.hero h1{font-size:clamp(44px,7vw,92px);max-width:900px;font-weight:700;line-height:1.0;letter-spacing:-.02em;text-shadow:0 2px 24px rgba(4,10,22,.5);opacity:0;transform:translateY(20px);animation:rise 1.1s cubic-bezier(.2,.7,.2,1) 2.6s forwards}
-.hero h1 em{font-family:var(--serif);font-style:italic;font-weight:400}
-.hero p.lede{max-width:600px;margin:28px 0 36px;font-size:clamp(19px,1.9vw,23px);font-weight:500;line-height:1.5;color:#fff;text-shadow:0 1px 3px rgba(4,10,22,.7),0 2px 22px rgba(4,10,22,.6);opacity:0;animation:fade 1s ease 3s forwards}
-.hero-actions{display:flex;gap:18px;justify-content:flex-start;align-items:center;flex-wrap:wrap;opacity:0;animation:fade 1s ease 3.2s forwards}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,rgba(6,12,26,.6) 0%,rgba(6,12,26,.3) 46%,rgba(6,12,26,.04) 76%),linear-gradient(180deg,rgba(6,12,26,.26) 0%,rgba(6,12,26,0) 34%,rgba(6,12,26,.32) 100%)}
+.hero-inner{position:relative;z-index:2;width:100%;max-width:none;margin:0;padding:0 clamp(24px,5.5vw,110px)}
+.hero .heb{font-family:var(--heb);font-weight:800;font-size:clamp(42px,6.2vw,88px);color:#fff;direction:rtl;text-align:left;margin:0 0 22px;letter-spacing:.03em;
+  text-shadow:0 2px 4px rgba(0,0,0,.35),0 10px 30px rgba(0,0,0,.5);
+  opacity:0;animation:fade 1.5s ease .5s forwards}
+.hero h1{font-family:var(--display);font-size:clamp(30px,5vw,66px);font-weight:700;line-height:1.02;letter-spacing:-.02em;white-space:nowrap;
+  text-shadow:0 2px 24px rgba(4,10,22,.45);opacity:0;transform:translateY(14px);animation:rise 1.3s cubic-bezier(.2,.7,.2,1) 1.9s forwards}
+@media(max-width:640px){.hero h1{white-space:normal}}
+.hero-actions{display:flex;gap:18px;justify-content:flex-start;align-items:center;flex-wrap:wrap;margin-top:38px;opacity:0;animation:fade 1.1s ease 3.4s forwards}
 .hero-actions .btn{min-height:62px;padding:0 40px;font-size:13.5px}
 @keyframes rise{to{opacity:1;transform:none}}
 @keyframes fade{to{opacity:1}}
-.scrollcue{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:3;color:#fff;opacity:0;animation:fade 1s ease 3.6s forwards}
+.below{position:relative;z-index:2;margin-top:100vh;background:var(--cream)}
+footer{position:relative;z-index:2}
+.scrollcue{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:3;color:#fff;opacity:0;animation:fade 1s ease 3.8s forwards}
 .scrollcue span{display:block;width:1px;height:46px;background:rgba(255,255,255,.6);margin:0 auto;position:relative;overflow:hidden}
 .scrollcue span::after{content:"";position:absolute;top:-46px;left:0;width:1px;height:46px;background:#fff;animation:cue 2.2s ease-in-out infinite}
 @keyframes cue{0%{transform:translateY(0)}60%,100%{transform:translateY(92px)}}
@@ -327,7 +329,7 @@ footer a:hover{color:var(--yellow)}
   *{animation:none!important;transition:none!important}
   .intro{display:none}
   .reveal{opacity:1;transform:none}
-  .hero .heb,.hero h1,.hero p.lede,.hero-actions,.scrollcue{opacity:1;transform:none}
+  header,.hero .heb,.hero h1,.hero-actions,.scrollcue{opacity:1;transform:none}
   .hero .bg{transform:none}
   .map-region{opacity:0}.map-detail{opacity:1}
   #island{transform:scale(1.1)}
@@ -335,8 +337,6 @@ footer a:hover{color:var(--yellow)}
 </style>
 
 <a class="skip" href="#main">Skip to content</a>
-<div class="intro" id="intro" aria-hidden="true"><div class="ihero"></div><div class="idoors"></div><span class="dl l" lang="he">וָדוֹר</span><span class="dl r" lang="he">לְדוֹר</span></div>
-
 <header id="header">
   <div class="wrap bar">
     <a class="brand" href="#top" aria-label="L'Dor Vador, Jewish Heritage Travel, home">
@@ -366,8 +366,7 @@ footer a:hover{color:var(--yellow)}
   <div class="bg" role="img" aria-label="Historic gabled colonial houses in Willemstad, Curaçao, at golden hour"></div>
   <div class="hero-inner">
     <p class="heb" lang="he">לְדוֹר וָדוֹר</p>
-    <h1 data-i18n="hero_h1">From generation to generation,<br><em>across the sea.</em></h1>
-    <p class="lede" data-i18n="hero_lede">Jewish heritage journeys to Curaçao — home to one of the oldest, most enduring Jewish communities in the Americas. We arrange every detail, so you simply arrive, and belong.</p>
+    <h1 data-i18n="hero_h1">From generation to generation</h1>
     <div class="hero-actions">
       <a class="btn btn-yellow" href="#trips"><span class="lbl" data-i18n="hero_cta1">See Upcoming Trips</span></a>
       <a class="btn btn-line on-photo" href="#contact"><span class="lbl" data-i18n="hero_cta2">Plan a Private Journey</span></a>
@@ -375,6 +374,7 @@ footer a:hover{color:var(--yellow)}
   </div>
   <div class="scrollcue" aria-hidden="true"><span></span></div>
 </section>
+<div class="below">
 
 <!-- welcome statement -->
 <section class="stmtline">
@@ -467,7 +467,7 @@ footer a:hover{color:var(--yellow)}
 
 <!-- map -->
 <section class="stmtline on-stone">
-  <div class="wrap"><p class="reveal" data-i18n="say2">"The extraordinary happens where the right people meet the right place."</p></div>
+  <div class="wrap"><p class="reveal" data-i18n="say2">"Some places you visit. This one receives you — as family returning."</p></div>
 </section>
 
 <section class="mapsec" id="map">
@@ -657,6 +657,7 @@ footer a:hover{color:var(--yellow)}
     </div>
   </div>
 </section>
+</div><!-- /.below -->
 </main>
 
 <footer>
@@ -692,9 +693,6 @@ var mio=new IntersectionObserver(function(es){es.forEach(function(e){
   if(e.isIntersecting && !mapFired){mapFired=true;setTimeout(function(){document.getElementById('map').classList.add('map-in')},5000);}
 })},{threshold:.5});
 mio.observe(document.getElementById('mapwrap'));
-// remove intro from DOM after it finishes so it never blocks interaction
-var intro=document.getElementById('intro');
-setTimeout(function(){if(intro&&intro.parentNode)intro.parentNode.removeChild(intro)},4800);
 
 var i18n={
  en:{},
