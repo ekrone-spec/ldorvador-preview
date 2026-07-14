@@ -1,0 +1,58 @@
+
+document.getElementById('yr').textContent=new Date().getFullYear();
+if('scrollRestoration' in history){history.scrollRestoration='manual';}
+var header=document.getElementById('header');
+function onScroll(){header.classList.toggle('scrolled', window.scrollY> window.innerHeight-90)}
+onScroll(); window.addEventListener('scroll',onScroll,{passive:true});
+window.addEventListener('load',function(){window.scrollTo(0,0);onScroll();});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
+/* map: hold 5s after it's in view, then begin the very slow zoom */
+var mapFired=false;
+var mio=new IntersectionObserver(function(es){es.forEach(function(e){
+  if(e.isIntersecting && !mapFired){mapFired=true;setTimeout(function(){document.getElementById('map').classList.add('map-in')},5000);}
+})},{threshold:.5});
+mio.observe(document.getElementById('mapwrap'));
+
+/* auto-gliding carousels (§3 journeys, §6 offerings): float accumulator so it glides
+   sub-pixel; pause on hover; user can scroll/swipe to move faster; seamless loop */
+(function(){
+  var reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  document.querySelectorAll('.jscroll').forEach(function(sc){
+    var half=0; function measure(){half=sc.scrollWidth/2;}
+    measure(); window.addEventListener('load',measure); window.addEventListener('resize',measure);
+    if(reduce) return;
+    var pos=0, paused=false;
+    sc.addEventListener('mouseenter',function(){paused=true;});
+    sc.addEventListener('mouseleave',function(){paused=false;});
+    sc.addEventListener('scroll',function(){ if(Math.abs(sc.scrollLeft-pos)>2) pos=sc.scrollLeft; });
+    function tick(){
+      if(half<=0) measure();
+      if(!paused && half>0){ pos+=0.7; if(pos>=half) pos-=half; else if(pos<0) pos+=half; sc.scrollLeft=pos; }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+})();
+
+var i18n={
+ en:{},
+ es:{brand_sub:'Viajes de Herencia Judía',nav_journeys:'Viajes',nav_trips:'Próximas Salidas',nav_about:'Nosotros',nav_faq:'Preguntas',cta_plan:'Planifica tu Viaje',cta_enquire:'Consultar un Viaje',
+   hero_h1:'De generación en generación,<br><em>al otro lado del mar.</em>',hero_lede:'Viajes de herencia judía a Curazao — hogar de una de las comunidades judías más antiguas y duraderas de las Américas. Organizamos cada detalle, para que solo tengas que llegar.',hero_cta1:'Ver Próximas Salidas',hero_cta2:'Planear un viaje privado',
+   story_eyebrow:'Willemstad · desde 1651',story_stmt:'Durante más de <em>375 años</em>, las familias judías han comerciado, rezado y construido un hogar en esta isla. Te ayudamos a entrar en esa historia viva — no como visitante, sino como familia que regresa.',story_cta:'Descubre los viajes',pill_h2:'Cuatro formas en que la isla permanece contigo',trips_h2:'Próximos viajes con plazas disponibles',reserve:'Reservar',svc_h2:'Lo que organizamos para ti',voices_h2:'Viajeros que se sintieron en casa',faq_h2:'Preguntas frecuentes',contact_h2:'Cuéntanos quién viaja. Del resto nos encargamos nosotros.',f_submit:'Enviar consulta',foot_lang:'Disponible en English · Español · Nederlands · עברית'},
+ nl:{brand_sub:'Joodse Erfgoedreizen',nav_journeys:'Reizen',nav_trips:'Komende Reizen',nav_about:'Over ons',nav_faq:'Vragen',cta_plan:'Plan uw Reis',cta_enquire:'Informeer naar een Reis',
+   hero_h1:'Van generatie op generatie,<br><em>over de zee.</em>',hero_lede:'Joodse erfgoedreizen naar Curaçao — thuis van een van de oudste en meest duurzame Joodse gemeenschappen van Amerika. Wij regelen elk detail, zodat u alleen hoeft aan te komen.',hero_cta1:'Bekijk Komende Reizen',hero_cta2:'Plan een privéreis',
+   story_eyebrow:'Willemstad · sinds 1651',story_stmt:'Al meer dan <em>375 jaar</em> handelen, bidden en wonen Joodse families op dit eiland. Wij helpen u dat levende verhaal binnen te stappen — niet als bezoeker, maar als familie die terugkeert.',story_cta:'Ontdek de reizen',pill_h2:'Vier manieren waarop het eiland bij u blijft',trips_h2:'Komende reizen met nog vrije plaatsen',reserve:'Reserveren',svc_h2:'Wat wij voor u regelen',voices_h2:'Reizigers die zich thuis voelden',faq_h2:'Veelgestelde vragen',contact_h2:'Vertel ons wie er reist. Wij doen de rest.',f_submit:'Aanvraag versturen',foot_lang:'Beschikbaar in English · Español · Nederlands · עברית'},
+ he:{brand_sub:'מורשת יהודית',nav_journeys:'מסעות',nav_trips:'טיולים קרובים',nav_about:'אודות',nav_faq:'שאלות',cta_plan:'תכננו את המסע',cta_enquire:'לברר על טיול',
+   hero_h1:'לדור ודור,<br><em>מעבר לים.</em>',hero_lede:'מסעות מורשת יהודית לקורסאו — ביתה של אחת הקהילות היהודיות העתיקות והמתמשכות ביבשת אמריקה. אנחנו מסדירים כל פרט, כדי שתוכלו פשוט להגיע.',hero_cta1:'טיולים קרובים',hero_cta2:'לתכנן מסע פרטי',
+   story_eyebrow:'וילמסטאד · מאז 1651',story_stmt:'במשך יותר מ־<em>375 שנה</em> משפחות יהודיות סחרו, התפללו ובנו בית באי הזה. אנחנו עוזרים לכם להיכנס אל הסיפור החי הזה — לא כאורחים, אלא כמשפחה ששבה הביתה.',story_cta:'גלו את המסעות',pill_h2:'ארבע דרכים שבהן האי נשאר איתכם',trips_h2:'טיולים קרובים עם מקומות פנויים',reserve:'לשמור מקום',svc_h2:'מה אנחנו מסדירים עבורכם',voices_h2:'מטיילים שהרגישו בבית',faq_h2:'שאלות נפוצות',contact_h2:'ספרו לנו מי מגיע. את השאר נעשה אנחנו.',f_submit:'שלחו פנייה',foot_lang:'זמין באנגלית · ספרדית · הולנדית · עברית'}
+};
+var enStore={};
+document.querySelectorAll('[data-i18n]').forEach(function(el){enStore[el.getAttribute('data-i18n')]=el.innerHTML});
+function setLang(l){
+ var d=i18n[l]||{};
+ document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.getAttribute('data-i18n');el.innerHTML=(l==='en')?enStore[k]:(d[k]!==undefined?d[k]:enStore[k])});
+ document.documentElement.setAttribute('lang',l);document.documentElement.setAttribute('dir',l==='he'?'rtl':'ltr');
+ document.querySelectorAll('.lang button').forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-lang')===l)});
+}
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setLang(b.getAttribute('data-lang'))})});
