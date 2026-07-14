@@ -327,7 +327,7 @@ footer a:hover{color:var(--yellow)}
 .journeys{background:var(--cream);overflow:hidden;padding:clamp(80px,11vh,140px) 0}
 .journeys .jhead{padding:0 clamp(24px,5.5vw,110px);margin-bottom:46px}
 .journeys h2{font-size:clamp(34px,5vw,66px);color:var(--blue)}
-.jscroll{overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.jscroll{overflow-x:auto;overflow-y:hidden;scrollbar-width:none;scroll-behavior:auto}
 .jscroll::-webkit-scrollbar{display:none}
 .jtrack{display:flex;gap:0;width:max-content;align-items:center;height:660px}
 .jcard{position:relative;flex:0 0 auto;overflow:hidden;background:var(--blue)}
@@ -485,7 +485,7 @@ footer a:hover{color:var(--yellow)}
 </section>
 
 <!-- §6 what we offer — carousel, text over images -->
-<section id="services" class="journeys" style="background:var(--white)">
+<section id="services" class="journeys">
   <div class="jhead reveal"><h2 data-i18n="svc_h2">What we offer</h2></div>
   <div class="jscroll"><div class="jtrack">
     <article class="jcard"><div class="img" style="background-image:url('__IMG_a__')"></div><div class="teaser"><div class="jt" data-i18n="s1t">Airport Transfers</div></div><div class="more"><div class="jt" data-i18n="s1t">Airport Transfers</div><p class="jdesc" data-i18n="s1p">Met at arrivals and welcomed to the island, with private transfers arranged from the moment you land.</p></div></article>
@@ -505,10 +505,6 @@ footer a:hover{color:var(--yellow)}
 </section>
 
 <!-- map -->
-<section class="stmtline on-stone">
-  <div class="wrap"><p class="reveal" data-i18n="say2">"Some places you visit. This one receives you — as family returning."</p></div>
-</section>
-
 <section class="mapsec" id="map">
   <div class="wrap">
     <div class="grid">
@@ -563,7 +559,7 @@ footer a:hover{color:var(--yellow)}
 <!-- testimonials -->
 <section class="voices" id="voices">
   <div class="wrap">
-    <div class="center reveal" style="max-width:640px;margin:0 auto 60px"><p class="eyebrow" data-i18n="voices_eyebrow">In their words</p><h2 class="big" style="margin-top:18px" data-i18n="voices_h2">Travellers who felt at home</h2></div>
+    <div class="center reveal" style="max-width:900px;margin:0 auto 60px"><p class="eyebrow" data-i18n="voices_eyebrow">In their words</p><h2 class="serif-i" style="margin-top:18px;font-size:clamp(28px,4vw,50px);color:var(--blue);line-height:1.22" data-i18n="voices_h2">"Some places you visit. This one receives you — as family returning."</h2></div>
     <div class="quotes">
       <figure class="quote reveal"><blockquote data-i18n="q1">Standing on the sand floor where my ancestors stood — Hannah arranged everything so all we had to do was feel it. The most meaningful week of our lives.</blockquote><div class="rule"></div><cite data-i18n="q1c">Marilyn &amp; David R.<span>Boca Raton, Florida</span></cite></figure>
       <figure class="quote reveal"><blockquote data-i18n="q2">We brought a congregation of twenty-six, ages nine to eighty-eight. Every transfer, meal, and service ran without a single worry. Flawless and deeply warm.</blockquote><div class="rule"></div><cite data-i18n="q2c">Rabbi S. Weiss<span>Congregation Beth Shalom</span></cite></figure>
