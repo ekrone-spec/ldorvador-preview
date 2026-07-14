@@ -323,6 +323,29 @@ footer a:hover{color:var(--yellow)}
 .imgpanel .cap .loc{font-family:var(--body);text-transform:uppercase;letter-spacing:.32em;font-size:12.5px;font-weight:700;text-shadow:0 2px 14px rgba(0,0,0,.75)}
 .imgpanel .cap .say{display:block;font-family:var(--serif);font-style:italic;font-size:clamp(20px,2.4vw,30px);margin-bottom:14px;text-shadow:0 2px 16px rgba(0,0,0,.6)}
 
+/* §3 upcoming journeys — gliding gallery, hover reveals details */
+.journeys{background:var(--cream);overflow:hidden;padding:clamp(80px,11vh,140px) 0}
+.journeys .jhead{padding:0 clamp(24px,5.5vw,110px);margin-bottom:46px}
+.journeys h2{font-size:clamp(34px,5vw,66px);color:var(--blue)}
+.jtrack{display:flex;gap:26px;width:max-content;animation:glide 48s linear infinite}
+.journeys:hover .jtrack{animation-play-state:paused}
+@keyframes glide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.jcard{flex:0 0 min(76vw,380px);position:relative;aspect-ratio:3/4;overflow:hidden;background:var(--blue)}
+.jcard .img{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 1.4s ease}
+.jcard:hover .img{transform:scale(1.06)}
+.jcard .teaser{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:28px;color:#fff;background:linear-gradient(180deg,transparent,rgba(4,10,22,.8));transition:opacity .4s ease}
+.jcard .teaser .jt{font-family:var(--display);font-weight:700;font-size:23px;line-height:1.12}
+.jcard .teaser .jd{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin-top:10px;opacity:.92}
+.jcard .more{position:absolute;inset:0;z-index:3;background:rgba(0,43,127,.92);color:#fff;padding:30px;display:flex;flex-direction:column;justify-content:flex-end;gap:14px;opacity:0;transition:opacity .45s ease}
+.jcard:hover .more{opacity:1}.jcard:hover .teaser{opacity:0}
+.jcard .more .jt{font-family:var(--display);font-weight:700;font-size:25px;line-height:1.1}
+.jcard .more .jd{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--yellow)}
+.jcard .more .jdesc{font-size:15px;line-height:1.5;color:#d9e2f4}
+.jcard .more .jmeta{display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.25);padding-top:14px}
+.jcard .more .price{font-family:var(--display);font-size:20px}
+.jcard .more .rez{font-family:var(--body);font-weight:700;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:#fff;text-decoration:none;border-bottom:1.5px solid var(--yellow);padding-bottom:4px}
+.jhint{padding:22px clamp(24px,5.5vw,110px) 0;font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--ink-soft)}
+
 /* side-by-side split (image | copy) — full-bleed */
 .split{display:grid;grid-template-columns:1fr 1fr;align-items:stretch;min-height:min(86vh,780px);background:var(--cream);padding:0}
 .split-media{position:relative;margin:0;overflow:hidden}
@@ -413,40 +436,42 @@ footer a:hover{color:var(--yellow)}
   </div></div>
 </section>
 
-<!-- trips -->
-<section id="trips">
-  <div class="wrap"><div class="reveal" style="max-width:720px;margin:0 0 52px">
-    <p class="eyebrow" data-i18n="trips_eyebrow">Join a planned departure</p>
-    <h2 class="big" style="margin-top:18px" data-i18n="trips_h2">Upcoming journeys with places still open</h2>
-    <p class="sub" style="color:var(--ink-soft);font-size:19px;margin-top:16px" data-i18n="trips_sub">Small groups, fixed dates, everything arranged. See live availability and hold your place — final payment is never taken on this site.</p>
+<!-- §3 upcoming journeys — gliding gallery -->
+<section id="trips" class="journeys">
+  <div class="jhead reveal"><h2 data-i18n="trips_h2">Upcoming journeys</h2></div>
+  <div class="jtrack-wrap"><div class="jtrack">
+    <article class="jcard">
+      <div class="img" style="background-image:url('__IMG_d__')"></div>
+      <div class="teaser"><div class="jt">Sukkot in the Sand Synagogue</div><div class="jd">Nov 9–15, 2026</div></div>
+      <div class="more"><div class="jd">Festival journey · 2 places left</div><div class="jt">Sukkot in the Sand Synagogue</div><p class="jdesc">Services at Mikvé Israel-Emanuel, the Jewish quarter, Beth Haim cemetery, and Shabbat with the community.</p><div class="jmeta"><span class="price">From $2,940</span><a class="rez" href="#contact">Reserve →</a></div></div>
+    </article>
+    <article class="jcard">
+      <div class="img" style="background-image:url('__IMG_a__')"></div>
+      <div class="teaser"><div class="jt">Sephardic Roots &amp; Waterfront</div><div class="jd">Jan 18–24, 2027</div></div>
+      <div class="more"><div class="jd">Roots &amp; waterfront · 7 places left</div><div class="jt">Sephardic Roots &amp; Waterfront</div><p class="jdesc">The Handelskade waterfront, the Jewish Cultural Museum, guided archive time for family-history seekers, kosher dining.</p><div class="jmeta"><span class="price">From $2,610</span><a class="rez" href="#contact">Reserve →</a></div></div>
+    </article>
+    <article class="jcard">
+      <div class="img" style="background-image:url('__IMG_b__')"></div>
+      <div class="teaser"><div class="jt">Pesach on the Island</div><div class="jd">Mar 22–28, 2027</div></div>
+      <div class="more"><div class="jd">Festival journey · waitlist open</div><div class="jt">Pesach on the Island</div><p class="jdesc">Community seders, guided walks through 375 years of history, and warm island Shabbat — fully hosted.</p><div class="jmeta"><span class="price">From $3,180</span><a class="rez" href="#contact">Join waitlist →</a></div></div>
+    </article>
+    <article class="jcard" aria-hidden="true">
+      <div class="img" style="background-image:url('__IMG_d__')"></div>
+      <div class="teaser"><div class="jt">Sukkot in the Sand Synagogue</div><div class="jd">Nov 9–15, 2026</div></div>
+      <div class="more"><div class="jd">Festival journey · 2 places left</div><div class="jt">Sukkot in the Sand Synagogue</div><p class="jdesc">Services at Mikvé Israel-Emanuel, the Jewish quarter, Beth Haim cemetery, and Shabbat with the community.</p><div class="jmeta"><span class="price">From $2,940</span><a class="rez" href="#contact">Reserve →</a></div></div>
+    </article>
+    <article class="jcard" aria-hidden="true">
+      <div class="img" style="background-image:url('__IMG_a__')"></div>
+      <div class="teaser"><div class="jt">Sephardic Roots &amp; Waterfront</div><div class="jd">Jan 18–24, 2027</div></div>
+      <div class="more"><div class="jd">Roots &amp; waterfront · 7 places left</div><div class="jt">Sephardic Roots &amp; Waterfront</div><p class="jdesc">The Handelskade waterfront, the Jewish Cultural Museum, guided archive time for family-history seekers, kosher dining.</p><div class="jmeta"><span class="price">From $2,610</span><a class="rez" href="#contact">Reserve →</a></div></div>
+    </article>
+    <article class="jcard" aria-hidden="true">
+      <div class="img" style="background-image:url('__IMG_b__')"></div>
+      <div class="teaser"><div class="jt">Pesach on the Island</div><div class="jd">Mar 22–28, 2027</div></div>
+      <div class="more"><div class="jd">Festival journey · waitlist open</div><div class="jt">Pesach on the Island</div><p class="jdesc">Community seders, guided walks through 375 years of history, and warm island Shabbat — fully hosted.</p><div class="jmeta"><span class="price">From $3,180</span><a class="rez" href="#contact">Join waitlist →</a></div></div>
+    </article>
   </div></div>
-    <div class="trips reveal">
-      <article class="trip reveal">
-        <div class="ph"><i style="background-image:url('__IMG_d__')"></i></div>
-        <p class="cat" data-i18n="trip1_cat">Festival journey</p>
-        <h3 data-i18n="trip1_t">Sukkot in the Sand Synagogue</h3>
-        <p class="desc" data-i18n="trip1_p">Services at Mikvé Israel-Emanuel, the Jewish quarter, Beth Haim cemetery, and Shabbat with the community.</p>
-        <div class="meta"><span class="date">Nov 9–15, 2026</span><span class="status few" data-i18n="st_few">2 places left</span></div>
-        <div class="meta" style="border:0;padding-top:6px"><span class="price">From $2,940</span><a class="tlink" href="#contact" data-i18n="reserve">Reserve</a></div>
-      </article>
-      <article class="trip reveal">
-        <div class="ph"><i style="background-image:url('__IMG_a__')"></i></div>
-        <p class="cat" data-i18n="trip2_cat">Roots &amp; waterfront</p>
-        <h3 data-i18n="trip2_t">Sephardic Roots &amp; Waterfront</h3>
-        <p class="desc" data-i18n="trip2_p">The Handelskade waterfront, the Jewish Cultural Museum, guided archive time for family-history seekers, kosher dining.</p>
-        <div class="meta"><span class="date">Jan 18–24, 2027</span><span class="status open" data-i18n="st_open">7 places left</span></div>
-        <div class="meta" style="border:0;padding-top:6px"><span class="price">From $2,610</span><a class="tlink" href="#contact" data-i18n="reserve">Reserve</a></div>
-      </article>
-      <article class="trip reveal">
-        <div class="ph"><i style="background-image:url('__IMG_b__')"></i></div>
-        <p class="cat" data-i18n="trip3_cat">Festival journey</p>
-        <h3 data-i18n="trip3_t">Pesach on the Island</h3>
-        <p class="desc" data-i18n="trip3_p">Community seders, guided walks through 375 years of history, and warm island Shabbat — fully hosted.</p>
-        <div class="meta"><span class="date">Mar 22–28, 2027</span><span class="status wait" data-i18n="st_wait">Join waitlist</span></div>
-        <div class="meta" style="border:0;padding-top:6px"><span class="price">From $3,180</span><a class="tlink" href="#contact" data-i18n="waitlist">Waitlist</a></div>
-      </article>
-    </div>
-  <div class="wrap"><div class="trips-hint" data-i18n="trips_hint">Scroll for journeys<span class="track"></span></div></div>
+  <p class="jhint" data-i18n="trips_hint">Hover a journey for details · glides on its own</p>
 </section>
 
 <!-- services -->
