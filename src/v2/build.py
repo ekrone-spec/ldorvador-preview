@@ -28,6 +28,11 @@ trips  = R('trips.frag.html')
 
 def entesc(s):
     return ''.join(c if ord(c)<128 else '&#%d;'%ord(c) for c in s)
+def jsesc(s):
+    return ''.join(c if ord(c)<128 else '\\u%04x'%ord(c) for c in s)
+
+# ---- app.js (external, ASCII-escaped) ----
+W('assets/app.js', jsesc(R('js.tmpl')))
 
 HEAD = ('<!doctype html>\n<html lang="en"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width, initial-scale=1">'

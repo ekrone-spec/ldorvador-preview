@@ -7,12 +7,32 @@ onScroll(); window.addEventListener('scroll',onScroll,{passive:true});
 window.addEventListener('load',function(){window.scrollTo(0,0);onScroll();});
 var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
 document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
-/* map: hold 5s after it's in view, then begin the very slow zoom */
-var mapFired=false;
-var mio=new IntersectionObserver(function(es){es.forEach(function(e){
-  if(e.isIntersecting && !mapFired){mapFired=true;setTimeout(function(){document.getElementById('map').classList.add('map-in')},5000);}
-})},{threshold:.5});
-mio.observe(document.getElementById('mapwrap'));
+/* map: hold 5s after it's in view, then begin the very slow zoom (only if a map exists) */
+var mapwrap=document.getElementById('mapwrap');
+if(mapwrap){
+  var mapFired=false;
+  var mio=new IntersectionObserver(function(es){es.forEach(function(e){
+    if(e.isIntersecting && !mapFired){mapFired=true;setTimeout(function(){document.getElementById('map').classList.add('map-in')},5000);}
+  })},{threshold:.5});
+  mio.observe(mapwrap);
+}
+
+/* curtain footer: the page lifts to reveal the fixed footer beneath it */
+(function(){
+  var f=document.querySelector('footer'), below=document.querySelector('.below');
+  if(!f||!below) return;
+  function layout(){
+    var h=f.offsetHeight;
+    below.style.marginBottom=h+'px';
+    // keep it hidden over the hero; once the page has lifted past the footer's
+    // own height it is covered by .below, and only the end-scroll gap reveals it
+    f.style.visibility = (window.scrollY > h*0.9) ? 'visible' : 'hidden';
+  }
+  layout();
+  window.addEventListener('scroll',layout,{passive:true});
+  window.addEventListener('resize',layout);
+  window.addEventListener('load',layout);
+})();
 
 /* auto-gliding carousels (\u00a73 journeys, \u00a76 offerings): float accumulator so it glides
    sub-pixel; pause on hover; user can scroll/swipe to move faster; seamless loop */
