@@ -327,10 +327,16 @@ footer a:hover{color:var(--yellow)}
 .journeys{background:var(--cream);overflow:hidden;padding:clamp(80px,11vh,140px) 0}
 .journeys .jhead{padding:0 clamp(24px,5.5vw,110px);margin-bottom:46px}
 .journeys h2{font-size:clamp(34px,5vw,66px);color:var(--blue)}
-.jtrack{display:flex;gap:26px;width:max-content;animation:glide 48s linear infinite}
-.journeys:hover .jtrack{animation-play-state:paused}
-@keyframes glide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.jcard{flex:0 0 min(76vw,380px);position:relative;aspect-ratio:3/4;overflow:hidden;background:var(--blue)}
+.jscroll{overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.jscroll::-webkit-scrollbar{display:none}
+.jtrack{display:flex;gap:0;width:max-content;align-items:center;height:660px}
+.jcard{position:relative;flex:0 0 auto;overflow:hidden;background:var(--blue)}
+.jcard:nth-child(6n+1){width:min(80vw,360px);height:560px;transform:translateY(-22px)}
+.jcard:nth-child(6n+2){width:min(84vw,470px);height:430px;transform:translateY(46px)}
+.jcard:nth-child(6n+3){width:min(78vw,330px);height:610px;transform:translateY(-6px)}
+.jcard:nth-child(6n+4){width:min(82vw,430px);height:490px;transform:translateY(34px)}
+.jcard:nth-child(6n+5){width:min(80vw,400px);height:540px;transform:translateY(-34px)}
+.jcard:nth-child(6n+6){width:min(84vw,485px);height:450px;transform:translateY(22px)}
 .jcard .img{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 1.4s ease}
 .jcard:hover .img{transform:scale(1.06)}
 .jcard .teaser{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:28px;color:#fff;background:linear-gradient(180deg,transparent,rgba(4,10,22,.8));transition:opacity .4s ease}
@@ -347,7 +353,8 @@ footer a:hover{color:var(--yellow)}
 .jhint{padding:22px clamp(24px,5.5vw,110px) 0;font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--ink-soft)}
 
 /* side-by-side split (image | copy) — full-bleed */
-.split{display:grid;grid-template-columns:1fr 1fr;align-items:stretch;min-height:min(86vh,780px);background:var(--cream);padding:0}
+.split{display:grid;grid-template-columns:2fr 1fr;align-items:stretch;min-height:min(86vh,780px);background:var(--cream);padding:0}
+.split.reverse{grid-template-columns:1fr 2fr}
 .split-media{position:relative;margin:0;overflow:hidden}
 .split-media .ph{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.06);transition:transform 2.4s ease}
 .split.in .split-media .ph{transform:scale(1)}
@@ -426,20 +433,10 @@ footer a:hover{color:var(--yellow)}
   </div>
 </section>
 
-<!-- full-bleed band -->
-<section class="band" id="band" style="padding:0">
-  <div class="bg" style="background-image:url('__IMG_c__')"></div>
-  <div class="wrap"><div class="inner reveal">
-    <p class="eyebrow light" data-i18n="band_eyebrow">Blessed are you in your coming</p>
-    <h2 style="margin-top:16px" data-i18n="band_h2">Every stone here remembers a name.</h2>
-    <p data-i18n="band_p">Hebrew inscriptions worn smooth by generations, a cemetery older than most nations, a quarter where the Sabbath has never once been missed. We open the doors, and let the place speak.</p>
-  </div></div>
-</section>
-
 <!-- §3 upcoming journeys — gliding gallery -->
 <section id="trips" class="journeys">
   <div class="jhead reveal"><h2 data-i18n="trips_h2">Upcoming journeys</h2></div>
-  <div class="jtrack-wrap"><div class="jtrack">
+  <div class="jscroll"><div class="jtrack">
     <article class="jcard">
       <div class="img" style="background-image:url('__IMG_d__')"></div>
       <div class="teaser"><div class="jt">Sukkot in the Sand Synagogue</div><div class="jd">Nov 9–15, 2026</div></div>
@@ -471,7 +468,20 @@ footer a:hover{color:var(--yellow)}
       <div class="more"><div class="jd">Festival journey · waitlist open</div><div class="jt">Pesach on the Island</div><p class="jdesc">Community seders, guided walks through 375 years of history, and warm island Shabbat — fully hosted.</p><div class="jmeta"><span class="price">From $3,180</span><a class="rez" href="#contact">Join waitlist →</a></div></div>
     </article>
   </div></div>
-  <p class="jhint" data-i18n="trips_hint">Hover a journey for details · glides on its own</p>
+  <p class="jhint" data-i18n="trips_hint">Glides on its own · scroll to move faster · hover for details</p>
+</section>
+
+<!-- §4 reversed split: copy | image (Every stone) -->
+<section id="band" class="split reverse reveal">
+  <div class="split-copy">
+    <p class="eyebrow" data-i18n="band_eyebrow">Blessed are you in your coming</p>
+    <h2 data-i18n="band_h2">Every stone here remembers a name.</h2>
+    <p class="body" data-i18n="band_p">Hebrew inscriptions worn smooth by generations, a cemetery older than most nations, a quarter where the Sabbath has never once been missed. We open the doors, and let the place speak.</p>
+  </div>
+  <figure class="split-media">
+    <div class="ph" style="background-image:url('__IMG_c__')"></div>
+    <figcaption class="over-quote" lang="he" dir="rtl" style="font-family:var(--heb);font-style:normal">ברוך אתה בבאך</figcaption>
+  </figure>
 </section>
 
 <!-- services -->
@@ -724,6 +734,22 @@ var mio=new IntersectionObserver(function(es){es.forEach(function(e){
   if(e.isIntersecting && !mapFired){mapFired=true;setTimeout(function(){document.getElementById('map').classList.add('map-in')},5000);}
 })},{threshold:.5});
 mio.observe(document.getElementById('mapwrap'));
+
+/* §3 journeys: auto-scroll; pause on hover; user can scroll to move faster; seamless loop */
+(function(){
+  var sc=document.querySelector('.jscroll'); if(!sc)return;
+  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  var half=0; function measure(){half=sc.scrollWidth/2;} measure(); window.addEventListener('resize',measure);
+  var paused=false;
+  sc.addEventListener('mouseenter',function(){paused=true;});
+  sc.addEventListener('mouseleave',function(){paused=false;});
+  function tick(){
+    if(!paused){ sc.scrollLeft+=0.6; }
+    if(half>0){ if(sc.scrollLeft>=half) sc.scrollLeft-=half; else if(sc.scrollLeft<=0) sc.scrollLeft+=half; }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
 
 var i18n={
  en:{},
