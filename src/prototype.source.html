@@ -153,16 +153,15 @@ h2.big{font-size:clamp(32px,4.6vw,56px);color:var(--blue)}
 .stats{display:flex;gap:40px;flex-wrap:wrap;margin-top:36px}
 .stat b{display:block;font-family:var(--display);font-size:42px;color:var(--blue);line-height:1}
 .stat span{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);margin-top:8px;display:block;font-weight:700}
-.mapstage{position:relative;width:100%;aspect-ratio:560/380;overflow:hidden;background:#eef1f4;border:1px solid var(--line);filter:drop-shadow(0 20px 34px rgba(20,30,55,.12))}
+.split-media.map-media{background:#DAE5F4}
+.split-media.map-media::after{display:none}
 .map-region,.map-detail{position:absolute;inset:0;width:100%;height:100%}
-.map-region{transform-origin:53.6% 63.7%;transition:transform 12s cubic-bezier(.35,0,.2,1),opacity 4s ease 8s}
+.map-region{transform-origin:57% 75%;transition:transform 12s cubic-bezier(.35,0,.2,1),opacity 4s ease 8s}
 .map-detail{opacity:0;transition:opacity 3.5s ease 8.5s}
-.map-in .map-region{transform:scale(3.4);opacity:0}
+.map-in .map-region{transform:scale(7);opacity:0}
 .map-in .map-detail{opacity:1}
 .mlabel{font-family:var(--body);font-weight:700;letter-spacing:.16em}
-.mlabel.sea{fill:#93a6b5;font-size:11.5px;letter-spacing:.26em}
-.mlabel.land{fill:#a2833f;font-size:11px}
-.mlabel.strong{fill:var(--coral);font-size:12px;letter-spacing:.12em}
+.mlabel.strong{fill:var(--blue);font-size:14px;letter-spacing:.16em}
 .cur-mark .ring2{transform-box:fill-box;transform-origin:center;animation:pulse 2.4s ease-out infinite}
 #island{transform-box:fill-box;transform-origin:60% 60%;transition:transform 4s cubic-bezier(.3,.7,.3,1) 8.5s}
 .map-in #island{transform:scale(1.1)}
@@ -504,56 +503,29 @@ footer a:hover{color:var(--yellow)}
   <p class="jhint" data-i18n="svc_hint">Glides on its own · scroll to move faster · hover for details</p>
 </section>
 
-<!-- map -->
-<section class="mapsec" id="map">
-  <div class="wrap">
-    <div class="grid">
-      <div class="reveal">
-        <p class="eyebrow" data-i18n="map_eyebrow">One island · one square mile of history</p>
-        <h2 class="big" style="margin-top:16px" data-i18n="map_h2">A short sail from Venezuela, an ocean of history within.</h2>
-        <p data-i18n="map_p">Everything we plan orbits one bright square mile of Willemstad — cobalt water, ochre walls, and the sand-floor synagogue at its heart. Distances are short; the days are gentle.</p>
-        <div class="stats">
-          <div class="stat"><b>1651</b><span data-i18n="stat1">Community founded</span></div>
-          <div class="stat"><b>1732</b><span data-i18n="stat2">Synagogue built</span></div>
-          <div class="stat"><b>375+</b><span data-i18n="stat3">Years unbroken</span></div>
-        </div>
-      </div>
-      <div class="mapwrap reveal" id="mapwrap">
-        <div class="mapstage">
-          <!-- Caribbean context: zooms into Curaçao -->
-          <svg class="map-region" viewBox="0 0 560 380" role="img" aria-label="Map of the southern Caribbean showing Curaçao off the coast of Venezuela">
-            <rect width="560" height="380" fill="#eef1f4"/>
-            <g fill="#dccca6"><ellipse cx="108" cy="66" rx="18" ry="7"/><ellipse cx="172" cy="52" rx="12" ry="5"/><ellipse cx="244" cy="62" rx="9" ry="4"/><ellipse cx="408" cy="66" rx="10" ry="6"/><ellipse cx="470" cy="92" rx="8" ry="11"/><ellipse cx="502" cy="140" rx="7" ry="13"/></g>
-            <path d="M0,300 Q120,272 250,286 Q360,298 470,282 Q520,275 560,292 L560,380 L0,380 Z" fill="#d9c39a"/>
-            <path d="M0,300 Q120,272 250,286 Q360,298 470,282 Q520,275 560,292" fill="none" stroke="#c3a86f" stroke-width="1.5"/>
-            <g fill="#cdb488" stroke="#b6975c" stroke-width="1.2">
-              <ellipse cx="228" cy="256" rx="13" ry="6"/>
-              <ellipse cx="356" cy="252" rx="12" ry="6"/>
-              <ellipse cx="300" cy="242" rx="19" ry="8"/>
-            </g>
-            <g class="cur-mark">
-              <circle class="ring2" cx="300" cy="242" r="15" fill="none" stroke="var(--coral)" stroke-width="2"/>
-              <circle cx="300" cy="242" r="4" fill="var(--coral)"/>
-            </g>
-            <text x="300" y="214" text-anchor="middle" class="mlabel strong">CURA&#199;AO</text>
-            <text x="246" y="150" text-anchor="middle" class="mlabel sea">CARIBBEAN SEA</text>
-            <text x="300" y="352" text-anchor="middle" class="mlabel land">VENEZUELA</text>
-          </svg>
-          <!-- detailed island (zoom target) -->
-          <svg class="map-detail" viewBox="0 0 560 380" role="img" aria-label="Stylized map of Curaçao with Willemstad marked on the south coast">
-            <g stroke="var(--line)" fill="none"><ellipse cx="300" cy="220" rx="255" ry="150"/><ellipse cx="300" cy="220" rx="185" ry="108"/></g>
-            <path id="island" fill="var(--stone)" stroke="var(--blue)" stroke-width="2" stroke-opacity=".5"
-              d="M70,100 C104,74 150,78 176,100 C204,122 214,144 250,154 C300,168 342,154 388,172 C436,192 478,218 486,254 C492,282 470,304 440,304 C410,304 392,286 360,276 C322,264 300,272 262,260 C214,244 190,218 152,200 C120,184 84,182 68,156 C58,138 56,112 70,100 Z"/>
-            <g class="pin" transform="translate(322,254)">
-              <circle class="ring" r="9" fill="none" stroke="var(--coral)" stroke-width="2"/>
-              <circle r="7" fill="var(--coral)" stroke="#fff" stroke-width="2.5"/>
-              <text class="pinlabel" x="16" y="5">Willemstad</text>
-            </g>
-          </svg>
-        </div>
-      </div>
+<!-- §8 map split: copy | Caribbean map that slowly zooms to Curaçao -->
+<section id="map" class="split reverse">
+  <div class="split-copy">
+    <p class="eyebrow" data-i18n="map_eyebrow">Where it is</p>
+    <h2 data-i18n="map_h2">A short sail from the mainland, an ocean of history within.</h2>
+    <p class="body" data-i18n="map_p">Everything we plan orbits one bright square mile of Willemstad — the harbour, the ochre walls, and the sand-floor synagogue at its heart. Distances are short; the days are gentle.</p>
+    <div class="stats">
+      <div class="stat"><b>1651</b><span data-i18n="stat1">Community founded</span></div>
+      <div class="stat"><b>1732</b><span data-i18n="stat2">Synagogue built</span></div>
+      <div class="stat"><b>375+</b><span data-i18n="stat3">Years unbroken</span></div>
     </div>
   </div>
+  <figure class="split-media map-media" id="mapwrap">
+    __CARIBBEAN__
+    <svg class="map-detail" viewBox="0 0 560 380" role="img" aria-label="Stylized map of Curaçao">
+      <path id="island" fill="var(--cream)" stroke="var(--blue)" stroke-width="2.5"
+        d="M70,100 C104,74 150,78 176,100 C204,122 214,144 250,154 C300,168 342,154 388,172 C436,192 478,218 486,254 C492,282 470,304 440,304 C410,304 392,286 360,276 C322,264 300,272 262,260 C214,244 190,218 152,200 C120,184 84,182 68,156 C58,138 56,112 70,100 Z"/>
+      <g class="pin" transform="translate(322,254)">
+        <circle class="ring" r="9" fill="none" stroke="var(--blue)" stroke-width="2"/>
+        <circle r="7" fill="var(--blue)" stroke="#fff" stroke-width="2.5"/>
+      </g>
+    </svg>
+  </figure>
 </section>
 
 <!-- testimonials -->
@@ -624,18 +596,17 @@ footer a:hover{color:var(--yellow)}
 </section>
 
 <!-- our story: Hannah -->
-<section id="founder" class="founder">
-  <div class="wrap">
-    <div class="hist-split reveal">
-      <figure class="hist-photo"><div class="ph tall" style="background-image:url('__IMG_facade__')"></div></figure>
-      <div class="hist-text">
-        <p class="eyebrow" data-i18n="our_eyebrow">Our story</p>
-        <h2 class="big" style="margin:16px 0 22px" data-i18n="our_h2">Founded by a journalist who tells a place by its people.</h2>
-        <p><b>Hannah Berkeley Cohen</b> is an Ohio native who has called the Caribbean home since 2012. In Havana she became the New York Times' primary stringer, reporting on U.S.–Cuba policy, the death of Fidel Castro, and the historic visits of President Obama and the Pope — and meeting Jewish groups returning to Cuba for the first time in generations.</p>
-        <p>She founded Cuba Rising, a bespoke travel company revealing the complex realities of modern Cuba, with trips capped at eight for depth and flexibility. In 2024 she moved to Curaçao to delve into the island's Jewish heritage and build culturally-relevant programmes for North American travellers. She is fluent in English and Spanish, and is learning Dutch and Papiamentu.</p>
-        <p class="expect-note" data-i18n="expect_note"><b>What to expect:</b> immersive journeys of people-to-people encounters — meeting prominent members of the local Jewish community, storytelling at historic sites, and dialogues with scholars, artists, and cultural trailblazers.</p>
-      </div>
-    </div>
+<!-- §10 our story — split (photo ⅔ | copy ⅓) -->
+<section id="founder" class="split reveal">
+  <figure class="split-media">
+    <div class="ph" style="background-image:url('__IMG_facade__')"></div>
+    <figcaption class="over-quote" data-i18n="our_cap">"To tell a place by its people."</figcaption>
+  </figure>
+  <div class="split-copy">
+    <p class="eyebrow" data-i18n="our_eyebrow">Our story</p>
+    <h2 data-i18n="our_h2">Founded by a journalist who tells a place by its people.</h2>
+    <p class="body"><b>Hannah Berkeley Cohen</b> has called the Caribbean home since 2012. In Havana she became the New York Times' primary stringer, and later founded Cuba Rising, a bespoke travel company revealing the realities of modern Cuba. In 2024 she moved to Curaçao to build culturally-relevant Jewish heritage programmes — fluent in English and Spanish, and learning Dutch and Papiamentu.</p>
+    <p class="expect-note" data-i18n="expect_note"><b>What to expect:</b> immersive, people-to-people journeys — time with members of the local Jewish community, storytelling at historic sites, and dialogues with scholars and cultural trailblazers.</p>
   </div>
 </section>
 
