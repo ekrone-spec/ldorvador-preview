@@ -2,7 +2,7 @@
 document.getElementById('yr').textContent=new Date().getFullYear();
 if('scrollRestoration' in history){history.scrollRestoration='manual';}
 var header=document.getElementById('header');
-function onScroll(){header.classList.toggle('scrolled', window.scrollY> window.innerHeight-90)}
+function onScroll(){header.classList.toggle('scrolled', window.scrollY> window.innerHeight-90);header.classList.toggle('logo-min', window.scrollY>18)}
 onScroll(); window.addEventListener('scroll',onScroll,{passive:true});
 window.addEventListener('load',function(){window.scrollTo(0,0);onScroll();});
 var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
