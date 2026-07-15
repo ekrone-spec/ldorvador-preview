@@ -55,6 +55,21 @@ if(mapwrap){
   });
 })();
 
+/* "Message us" popovers: toggle, close on outside-click / Escape */
+document.addEventListener('click',function(e){
+  var t=e.target.closest('.msgus-trigger');
+  var openNow=document.querySelectorAll('.msgus.open');
+  if(t){
+    e.preventDefault();
+    var m=t.closest('.msgus'), wasOpen=m.classList.contains('open');
+    openNow.forEach(function(x){x.classList.remove('open')});
+    if(!wasOpen)m.classList.add('open');
+    return;
+  }
+  if(!e.target.closest('.msgus-pop')) openNow.forEach(function(x){x.classList.remove('open')});
+});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')document.querySelectorAll('.msgus.open').forEach(function(x){x.classList.remove('open')})});
+
 var i18n={
  en:{},
  es:{brand_sub:'Viajes de Herencia Jud\u00eda',nav_journeys:'Viajes',nav_trips:'Pr\u00f3ximas Salidas',nav_about:'Nosotros',nav_faq:'Preguntas',cta_plan:'Planifica tu Viaje',cta_enquire:'Consultar un Viaje',
