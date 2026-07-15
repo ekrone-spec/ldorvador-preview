@@ -79,10 +79,10 @@ header.scrolled::before{opacity:0}
 header:not(.scrolled) .bar{text-shadow:0 1px 10px rgba(0,0,0,.4)}
 .bar{display:flex;align-items:center;gap:22px;min-height:92px;position:relative}
 /* text logo: L'Dor / Vador stacked & right-justified (Cormorant) + Heritage Travel (Century Gothic) */
-.brand{display:flex;flex-direction:column;align-items:flex-end;gap:0;text-decoration:none;flex-shrink:0;line-height:1}
-.brand-word{font-family:var(--display);font-weight:600;font-size:29px;line-height:.9;letter-spacing:.004em;color:#fff;transition:color .35s;text-shadow:0 1px 10px rgba(0,0,0,.28)}
+.brand{--logo:42px;display:flex;flex-direction:column;align-items:flex-end;gap:0;text-decoration:none;flex-shrink:0;line-height:1}
+.brand-word{font-family:var(--display);font-weight:600;font-size:var(--logo);line-height:.9;letter-spacing:.004em;color:#fff;transition:color .35s;text-shadow:0 1px 10px rgba(0,0,0,.28)}
 header.scrolled .brand-word,.header-solid .brand-word{color:var(--green-d);text-shadow:none}
-.brand-tx{font-family:var(--tagline);font-weight:400;font-size:10.5px;line-height:1.2;letter-spacing:.17em;text-transform:uppercase;color:#fff;max-width:none;margin-top:6px;transition:color .35s}
+.brand-tx{font-family:var(--tagline);font-weight:400;font-size:calc(var(--logo)/8.5);line-height:1.2;letter-spacing:.14em;text-transform:uppercase;color:#fff;max-width:none;margin-top:calc(var(--logo)*.14);transition:color .35s}
 nav.main{display:flex;gap:32px;margin-inline-start:auto;align-items:center}
 nav.main a{text-decoration:none;font-family:var(--body);font-weight:600;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:#fff;position:relative;padding:4px 0;transition:color .35s}
 nav.main a::after{content:"";position:absolute;left:0;bottom:-3px;width:0;height:1.5px;background:currentColor;transition:width .25s}
@@ -277,9 +277,9 @@ footer{background:var(--footer);color:#c3c8b0;padding:0}
 footer h4{font-family:var(--body);text-transform:uppercase;letter-spacing:.18em;font-size:11.5px;color:#fff;margin:0 0 18px}
 footer a{color:#c3c8b0;text-decoration:none;display:block;padding:6px 0}
 footer a:hover{color:#fff}
-.foot-brand .brand{flex-direction:column;align-items:flex-start;line-height:.9}
-.foot-brand .brand-word{color:#fff;font-size:38px;line-height:.9}
-.foot-brand .brand-tx{color:#c3c8b0;font-size:11px;margin-top:10px}
+.foot-brand .brand{--logo:60px;flex-direction:column;align-items:flex-start;line-height:.9}
+.foot-brand .brand-word{color:#fff;line-height:.9}
+.foot-brand .brand-tx{color:#c3c8b0}
 .foot-brand p{margin-top:16px;color:#9a9484;max-width:340px;font-size:15px}
 .colophon{padding:26px 0 40px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:#8d8778;font-size:14px}
 .colophon a{color:#fff;text-decoration:underline;text-underline-offset:3px}
@@ -422,8 +422,7 @@ footer a:hover{color:#fff}
 @media(max-width:640px){
   :root{--hdr:74px}
   .bar{min-height:58px}
-  .brand-word{font-size:23px}
-  .brand-tx{font-size:9px;margin-top:4px}
+  .brand{--logo:32px}
   .cband{padding:8px 0}
   .cband .in{gap:5px 16px;font-size:10px;letter-spacing:.08em}
 }
@@ -451,6 +450,10 @@ footer .msgus-pop{left:0;transform:translateY(6px);background:#20200f;border-col
 footer .msgus.up.open .msgus-pop,footer .msgus.open .msgus-pop{transform:translateY(0)}
 footer .msgus-pop a{color:#e7e3d5}
 footer .msgus-pop a:hover{background:var(--sage);color:var(--green-d)}
+/* begin-your-journey variant: outlined button over the video */
+.begin-msg .msgus-trigger{display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:0 40px;font-family:var(--body);font-weight:700;font-size:12.5px;letter-spacing:.2em;text-transform:uppercase;color:#fff;border:1.5px solid #fff;background:rgba(255,255,255,.08);transition:.24s}
+.begin-msg .msgus-trigger:hover{background:#fff;color:var(--ink);border-color:#fff}
+.begin-msg .msgus-pop{left:50%}
 /* discrete button over a full-bleed video/photo panel (→ subpages) */
 .discreet-btn{display:inline-flex;gap:.7em;align-items:center;font-family:var(--body);font-weight:700;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#fff;text-decoration:none;border:1.5px solid rgba(255,255,255,.65);padding:15px 28px;border-radius:0;transition:.24s;text-shadow:0 1px 8px rgba(0,0,0,.5)}
 .discreet-btn:hover{background:#fff;color:var(--ink);border-color:#fff;text-shadow:none}
