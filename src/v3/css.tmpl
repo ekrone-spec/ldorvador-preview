@@ -84,13 +84,13 @@ header:not(.scrolled) .bar{text-shadow:0 1px 10px rgba(0,0,0,.4)}
    Minimized: tagline moves to the RIGHT of the logo at a fixed readable size. */
 .brand{--logo:85px;display:flex;flex-direction:column;align-items:flex-end;gap:0;text-decoration:none;flex-shrink:0;line-height:1}
 .brand-stack{display:flex;flex-direction:column;align-items:flex-end;line-height:.9}
-header.logo-min .brand,header.header-solid .brand{--logo:40px;flex-direction:row;align-items:flex-end;gap:14px}
+header.logo-min .brand,header.header-solid .brand{--logo:40px;flex-direction:row;align-items:center;gap:14px}
 .brand-word{font-family:var(--display);font-weight:600;font-size:var(--logo);line-height:.9;letter-spacing:.004em;color:#fff;transition:font-size .45s ease,color .35s ease;text-shadow:0 1px 10px rgba(0,0,0,.28)}
 header.scrolled .brand-word,.header-solid .brand-word{color:var(--green-d);text-shadow:none}
 .brand-tx{font-family:var(--tagline);font-weight:400;font-size:calc(var(--logo)/8.5);line-height:1.2;letter-spacing:.14em;text-transform:uppercase;color:#fff;max-width:none;margin-top:calc(var(--logo)*.1);white-space:nowrap;
   transition:font-size .45s ease,margin .45s ease,padding .45s ease,border-color .45s ease,color .35s ease}
 /* minimized: fixed 11px beside the mark, separated by a hairline */
-header.logo-min .brand-tx,header.header-solid .brand-tx{font-family:var(--tagline);font-size:var(--logo);letter-spacing:0;line-height:1;margin:0 0 2px 0;padding-left:16px;border-left:1px solid currentColor;opacity:.9}
+header.logo-min .brand-tx,header.header-solid .brand-tx{font-family:var(--tagline);font-size:calc(var(--logo)*.5);letter-spacing:.1em;line-height:1;margin:0;padding-left:15px;border-left:1px solid currentColor;opacity:.85;align-self:center}
 nav.main{display:flex;gap:32px;margin-inline-start:auto;align-items:center}
 nav.main a{text-decoration:none;font-family:var(--body);font-weight:600;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:#fff;position:relative;padding:4px 0;transition:color .35s}
 nav.main a::after{content:"";position:absolute;left:0;bottom:-3px;width:0;height:1.5px;background:currentColor;transition:width .25s}
@@ -453,7 +453,7 @@ footer a:hover{color:#fff}
   .bar{min-height:58px}
   .brand{--logo:42px}
   header.logo-min .brand,header.header-solid .brand{--logo:28px;gap:10px}
-  header.logo-min .brand-tx,header.header-solid .brand-tx{font-size:calc(var(--logo)*.9);padding-left:10px;letter-spacing:0}
+  header.logo-min .brand-tx,header.header-solid .brand-tx{font-size:calc(var(--logo)*.5);padding-left:10px;letter-spacing:.08em}
   .cband{padding:8px 0}
   .cband .in{gap:5px 16px;font-size:10px;letter-spacing:.08em}
 }
@@ -637,7 +637,7 @@ form{padding:clamp(22px,3vw,36px)}
 
 /* tighter: testimonials, now a horizontal scroller */
 .voices{padding-bottom:clamp(30px,4vh,56px)}
-.voices-head{margin:0 auto clamp(22px,3.2vh,44px)}
+.voices-head{margin:0 auto clamp(20px,3vh,40px);text-align:left;max-width:none}
 .voices-head h2{font-size:clamp(27px,3.6vw,50px)}
 .quotes{display:flex;grid-template-columns:none;gap:clamp(26px,3vw,52px);
   overflow-x:auto;overflow-y:hidden;scrollbar-width:none;scroll-behavior:auto;
@@ -657,7 +657,7 @@ header .header-cta{gap:12px}
 header .header-cta .btn{padding:0 20px;min-height:48px;font-size:11.5px;letter-spacing:.14em;white-space:nowrap}
 header .lang button{padding:6px 5px;font-size:11px}
 .brand-tx{white-space:nowrap}
-@media(max-width:1400px){header.logo-min .brand,header.header-solid .brand{--logo:34px}}
-@media(max-width:1200px){header.logo-min .brand,header.header-solid .brand{--logo:28px;gap:10px}
+@media(max-width:1400px){header.logo-min .brand,header.header-solid .brand{--logo:38px}}
+@media(max-width:1200px){header.logo-min .brand,header.header-solid .brand{--logo:32px;gap:11px}
   header.logo-min .brand-tx,header.header-solid .brand-tx{padding-left:11px}}
 @media(max-width:1040px){header .lang{display:none}}
