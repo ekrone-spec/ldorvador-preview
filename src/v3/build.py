@@ -24,7 +24,7 @@ W('assets/app.css', css)
 
 header = R('header.frag.html')
 footer = R('footer.frag.html')
-trips  = R('trips.frag.html')
+discover = R('discover.frag.html')
 
 def entesc(s):
     return ''.join(c if ord(c)<128 else '&#%d;'%ord(c) for c in s)
@@ -44,7 +44,7 @@ HEAD = ('<!doctype html>\n<html lang="en"><head><meta charset="utf-8">'
 TAIL = '\n<script src="assets/app.js" defer></script></body></html>'
 
 def sub(s):
-    s = s.replace('__HEADER__', header).replace('__FOOTER__', footer).replace('__TRIPS__', trips)
+    s = s.replace('__HEADER__', header).replace('__FOOTER__', footer).replace('__DISCOVER__', discover)
     for k,v in imgmap.items(): s = s.replace(k,v)
     return s
 

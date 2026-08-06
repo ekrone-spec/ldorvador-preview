@@ -3,14 +3,17 @@
 <header id="header">
   <div class="wrap bar">
     <a class="brand" href="index.html" aria-label="L'Dor Vador, Heritage Travel, home">
-      <span class="brand-word">L&rsquo;Dor</span>
-      <span class="brand-word">Vador</span>
+      <span class="brand-stack">
+        <span class="brand-word">L&rsquo;Dor</span>
+        <span class="brand-word">Vador</span>
+      </span>
       <span class="brand-tx">Heritage Travel</span>
     </a>
     <nav class="main" aria-label="Primary">
-      <a href="history.html">The Story</a>
+      <a href="itinerary.html">Journeys</a>
+      <a href="#discover">Curaçao</a>
+      <a href="history.html">History</a>
       <a href="story.html">About</a>
-      <a href="itinerary.html">Itinerary</a>
       <a href="#contact">Contact</a>
     </nav>
     <div class="header-cta">
@@ -39,77 +42,83 @@
 
 <div class="below">
 
-  <!-- slim contact band -->
+  <!-- sticky band: if not now, when? -->
   <div class="cband"><div class="wrap"><div class="in">
-    <a class="cband-lead" href="#contact"><b>Begin a conversation</b></a>
-    <a href="mailto:connect@ldorvadortravel.com">connect@ldorvadortravel.com</a>
+    <span class="cb-q">If not now, when?</span>
+    <a class="cb-cta" href="#contact">Join a scheduled departure</a>
   </div></div></div>
+
+  <!-- three doorways into the story -->
+  <section class="doors" aria-label="Explore">
+    <a class="door reveal" href="#whatwedo">
+      <span class="door-img" style="background-image:url('__IMG_c__')"></span>
+      <span class="door-cap"><span class="door-n">01</span><span class="door-h">What we do</span><span class="door-more">Explore</span></span>
+    </a>
+    <a class="door reveal" href="#defines">
+      <span class="door-img" style="background-image:url('__IMG_a__')"></span>
+      <span class="door-cap"><span class="door-n">02</span><span class="door-h">What defines us</span><span class="door-more">Explore</span></span>
+    </a>
+    <a class="door reveal" href="#howweplan">
+      <span class="door-img" style="background-image:url('__IMG_d__')"></span>
+      <span class="door-cap"><span class="door-n">03</span><span class="door-h">How we plan your journey</span><span class="door-more">Explore</span></span>
+    </a>
+  </section>
 
   <!-- 1. what we do -->
   <section class="split split-25 flip reveal" id="whatwedo">
     <div class="split-media">
-      <div class="ph" style="background-image:url('__IMG_c__')"></div>
+      <div class="ph" style="background-image:url('__IMG_f__')"></div>
     </div>
     <div class="split-copy">
-      <p class="eyebrow">What we do</p>
-      <div class="triad"><span>Curate.</span><span>Storytell.</span><span>Connect.</span></div>
-      <p class="body">We take you on a journey through the compelling stories of Jewish Atlantic migration. Along the way, we connect you with local academics, cultural experts, and community members whose knowledge, family histories, and personal experiences provide meaningful cultural context. Our hands-on approach and service-minded attitude ensure a seamless journey. This allows you to fully engage with every encounter and uncover one of Jewish history&rsquo;s most remarkable yet seldom-told chapters: the story of how Jewish life found hope, took root, and flourished in Curaçao.</p>
+      <div class="sec-head" data-origin="left">
+        <p class="eyebrow">What we do</p>
+        <div class="triad"><span>Curate.</span><span>Storytell.</span><span>Connect.</span></div>
+      </div>
+      <p class="body">We take you on a journey through the compelling stories of Jewish Atlantic migration. Along the way, we connect you with local academics, cultural experts, and community members whose knowledge, family histories, and personal experiences provide meaningful cultural context. Our hands-on approach and service-minded attitude ensure a seamless journey, so you can fully engage with every encounter and uncover one of Jewish history&rsquo;s most remarkable yet seldom-told chapters: how Jewish life found hope, took root, and flourished in Curaçao.</p>
     </div>
   </section>
 
-  <!-- 2. begin your journey: contained video with a slight border -->
-  <section class="beginsec reveal" aria-label="Begin your journey">
-    <div class="videoframe">
-      <div class="vid" style="background-image:url('__IMG_b__')"></div>
-      <div class="vcap">
+  <!-- 2. begin your journey: slim, full-bleed band -->
+  <section class="beginband reveal" aria-label="Begin your journey">
+    <div class="bg" style="background-image:url('__IMG_b__')"></div>
+    <div class="wrap bb-in">
+      <div class="bb-copy">
         <h2>Begin your Journey</h2>
-        <p>We collaborate with Jewish institutions, community organizers, lay leaders, and individual families. If you are considering a journey for your organization or community, we invite you to begin a conversation.</p>
-        <p class="vcap-sub">We also serve as a trusted local DMC for outbound tour operators, managing every aspect of their programs on the ground.</p>
-        <a class="btn btn-line on-photo" href="#contact">Begin a Conversation</a>
+        <p>We collaborate with Jewish institutions, community organizers, lay leaders, and individual families. If you are considering a journey for your organization or community, we invite you to begin a conversation. We also serve as a trusted local DMC for outbound tour operators, managing every aspect of their programs on the ground.</p>
+      </div>
+      <a class="btn btn-line on-photo" href="#contact">Begin a Conversation</a>
+    </div>
+  </section>
+
+  <!-- 3. what defines us + a note on our name -->
+  <section class="split split-25 reveal" id="defines">
+    <div class="split-copy">
+      <div class="sec-head" data-origin="left">
+        <p class="eyebrow">What defines us</p>
+        <div class="triad"><span>History.</span><span>Culture.</span><span>Expertise.</span></div>
+      </div>
+      <p class="body">L&rsquo;Dor Vador is shaped by the combined experience of its founders, Hannah Berkeley Cohen and Cornelis Greiwe, who together have led more than 100 group journeys in destinations including Cuba and Suriname. Our approach draws on backgrounds in journalism, bespoke travel, and more than three decades of combined experience in special-interest tourism.</p>
+      <p class="body">Together, these experiences shape our perspective: we explore history and culture in depth, look beyond the familiar, and connect travelers with the people, places, and stories that define a destination.</p>
+      <a class="tlink" href="story.html">Our origin story</a>
+    </div>
+    <div class="split-media namepanel">
+      <div class="ph" style="background-image:url('__IMG_e__')"></div>
+      <div class="namecap">
+        <span class="eyebrow">A note on our name</span>
+        <span class="heb-x" lang="he" dir="rtl">לְדוֹר וָדוֹר</span>
+        <p class="sub-x">The name L&rsquo;Dor Vador translates from Hebrew as &ldquo;from generation to generation.&rdquo; It embodies the core of Jewish continuity: that profound, sentimental tie connecting our ancestors to their descendants via memory and tradition.</p>
+        <p class="sub-x">At L&rsquo;Dor Vador Travel, this sentiment defines our mission: we create journeys that bridge the gap between travelers and the roots of Jewish existence in Curaçao.</p>
+        <a class="discreet-btn" href="history.html">Read a history lesson</a>
       </div>
     </div>
   </section>
 
-  <!-- 3. if not now, when? -->
-  <section class="stmtband reveal" aria-label="If not now, when?">
-    <div class="wrap">
-      <p class="stmt-q">If not now, when?</p>
-      <p class="stmt-sub">Join one of our scheduled departures.</p>
-      <a class="btn btn-line light" href="#contact">Sign up for a departure</a>
-    </div>
-  </section>
-
-  <!-- 4. what defines us -->
-  <section class="split split-25 reveal" id="defines">
-    <div class="split-copy">
-      <p class="eyebrow">What defines us</p>
-      <div class="triad"><span>History.</span><span>Culture.</span><span>Expertise.</span></div>
-      <p class="body">L&rsquo;Dor Vador is shaped by the combined experience of its founders, Hannah Berkeley Cohen and Cornelis Greiwe, who together have led more than 100 group journeys in destinations including Cuba and Suriname. Our approach draws on backgrounds in journalism, bespoke travel, and more than three decades of combined experience in special-interest tourism.</p>
-      <p class="body">Together, these experiences shape our distinctive perspective: we explore history and culture in depth, look beyond the familiar, and create meaningful connections between travelers and the people, places, and stories that define a destination.</p>
-      <a class="tlink" href="story.html">Our origin story</a>
-    </div>
-    <div class="split-media">
-      <div class="ph" style="background-image:url('__IMG_a__')"></div>
-      <blockquote class="over-quote">&ldquo;One of the oldest Jewish stories in the Western Hemisphere.&rdquo; Willemstad, Curaçao</blockquote>
-    </div>
-  </section>
-
-  <!-- 5. a note on our name, the doorway to the history lesson -->
-  <section class="imgpanel namecross left reveal" aria-label="A note on our name">
-    <div class="bg" style="background-image:url('__IMG_e__')"></div>
-    <div class="cap">
-      <span class="eyebrow">A note on our name</span>
-      <span class="heb-x" lang="he" dir="rtl">לְדוֹר וָדוֹר</span>
-      <p class="sub-x">The name L&rsquo;Dor Vador translates from Hebrew as &ldquo;from generation to generation.&rdquo; It embodies the core of Jewish continuity: that profound, sentimental tie connecting our ancestors to their descendants via memory and tradition. It signifies our duty to transmit our history and values.</p>
-      <p class="sub-x">At L&rsquo;Dor Vador Travel, this sentiment defines our mission: we create journeys that bridge the gap between travelers and the roots of Jewish existence in Curaçao, providing an opportunity to enter the transatlantic narrative and discover your own role within it.</p>
-      <a class="discreet-btn" href="history.html">Read a history lesson</a>
-    </div>
-  </section>
-
-  <!-- 6. how we plan your journey -->
+  <!-- 4. how we plan your journey -->
   <section class="steps-sec reveal" id="howweplan">
     <div class="wrap">
-      <p class="eyebrow">How we plan your journey</p>
+      <div class="sec-head" data-origin="left">
+        <p class="eyebrow">How we plan your journey</p>
+      </div>
       <ol class="steps">
         <li class="step">
           <h3>Listen.</h3>
@@ -117,30 +126,30 @@
         </li>
         <li class="step">
           <h3>Design.</h3>
-          <p>We translate the answers into a journey in which every element contributes to the broader narrative. As destination specialists, we combine roles that are often divided among several parties: we create the program, contract its services, and personally coordinate its execution on the ground. This direct, integrated approach keeps us close to the places, people, and stories at the heart of each journey.</p>
+          <p>We translate the answers into a journey in which every element contributes to the broader narrative. As destination specialists, we create the program, contract its services, and personally coordinate its execution on the ground.</p>
         </li>
         <li class="step">
           <h3>Deliver.</h3>
-          <p>From accommodations and transportation to expert-led encounters and dining, every detail is coordinated by our team with careful attention to each group&rsquo;s interests, pace, and needs. With L&rsquo;Dor Vador, you travel with the people who created the journey and who remain personally involved in bringing it to life: from the first idea to the final farewell.</p>
+          <p>From accommodations and transportation to expert-led encounters and dining, every detail is coordinated by our team with attention to each group&rsquo;s interests, pace, and needs. You travel with the people who created the journey.</p>
         </li>
       </ol>
       <a class="tlink" href="itinerary.html">See an example itinerary</a>
     </div>
   </section>
 
-  <!-- 7. discover curaçao: slideshow with overlay -->
-  <section class="slideshow reveal" id="discover" aria-label="Discover Curaçao">
-    <div class="slides" aria-hidden="true">
-      <div class="slide is-on" style="background-image:url('__IMG_hero__')"></div>
-      <div class="slide" style="background-image:url('__IMG_g__')"></div>
-      <div class="slide" style="background-image:url('__IMG_f__')"></div>
-      <div class="slide" style="background-image:url('__IMG_d__')"></div>
+  <!-- 5. discover curaçao: gliding gallery -->
+  <section class="journeys reveal" id="discover">
+    <div class="jhead">
+      <div class="sec-head" data-origin="left">
+        <p class="eyebrow">Discover Curaçao</p>
+        <h2>A vibrant island in the West Indies.</h2>
+      </div>
     </div>
-    <div class="cap">
-      <span class="eyebrow">Discover Curaçao</span>
-      <p class="say">A vibrant island in the West Indies, and an autonomous country within the Kingdom of the Netherlands.</p>
-      <p class="slide-body">Situated in the southern Caribbean, between Aruba and Bonaire and just 40 miles off the coast of Venezuela, Curaçao is home to approximately 158,000 people. It is a welcoming, multilingual society where Papiamentu, Dutch, English, and Spanish are widely spoken. Its established institutions, modern infrastructure, and constitutional ties to the Kingdom contribute to an environment in which travelers can feel at ease.</p>
-    </div>
+    <div class="jscroll"><div class="jtrack">
+      __DISCOVER__
+      __DISCOVER__
+    </div></div>
+    <p class="jhint">Glides on its own · scroll to move faster · hover for details</p>
   </section>
 
   <!-- discover: supporting detail -->
@@ -149,11 +158,11 @@
       <div class="dd-grid">
         <div>
           <h3>Remarkably accessible</h3>
-          <p>Nonstop flights connect the island with major US gateways including Miami, New York, Newark, Atlanta, Chicago and Charlotte, plus Toronto and Montreal in Canada, placing Curaçao within a five-hour flight of many major North American cities. The island is also a prominent Caribbean cruise destination. Hundreds of cruise ships call at Willemstad each year, docking within walking distance of its historic center; in 2025 alone, Curaçao welcomed more than 880,000 cruise passengers.</p>
+          <p>Nonstop flights connect the island with major US gateways including Miami, New York, Newark, Atlanta, Chicago and Charlotte, plus Toronto and Montreal in Canada, placing Curaçao within a five-hour flight of many major North American cities. Hundreds of cruise ships call at Willemstad each year, docking within walking distance of its historic center.</p>
         </div>
         <div>
           <h3>An extraordinary legacy</h3>
-          <p>Beyond its clear waters, dramatic coastline, rugged natural landscapes, and dozens of inviting beaches, Curaçao holds an extraordinary cultural legacy. Its capital, Willemstad, is a UNESCO World Heritage city known for its colorful architecture, historic harbor, and the swinging Queen Emma Bridge. It is also home to the Snoa, the oldest synagogue in continuous use in the Americas, and Beth Haim Bleinheim, the oldest walled-in Jewish cemetery in the Americas.</p>
+          <p>Its capital, Willemstad, is a UNESCO World Heritage city known for its colorful architecture, historic harbor, and the swinging Queen Emma Bridge. It is also home to the Snoa, the oldest synagogue in continuous use in the Americas, and Beth Haim Bleinheim, the oldest walled-in Jewish cemetery in the Americas.</p>
           <p class="dd-close">Together, these places reveal Curaçao as something many travelers never expected to find: one of the most important and enduring centers of Jewish life in the Caribbean.</p>
         </div>
       </div>
@@ -166,13 +175,31 @@
     </div>
   </section>
 
+  <!-- 6. in their words -->
+  <section class="voices reveal" id="voices">
+    <div class="wrap">
+      <div class="center voices-head">
+        <div class="sec-head" data-origin="center">
+          <p class="eyebrow">In their words</p>
+          <h2 class="serif-i">&ldquo;Some places you visit. This one receives you, as family returning.&rdquo;</h2>
+        </div>
+      </div>
+      <div class="quotes">
+        <figure class="quote"><blockquote>Standing on the sand floor where my ancestors stood, Hannah arranged everything so all we had to do was feel it. The most meaningful week of our lives.</blockquote><div class="rule"></div><cite>Marilyn &amp; David R.<span>Boca Raton, Florida</span></cite></figure>
+        <figure class="quote"><blockquote>We brought a congregation of twenty-six, ages nine to eighty-eight. Every transfer, meal, and service ran without a single worry. Flawless and deeply warm.</blockquote><div class="rule"></div><cite>Rabbi S. Weiss<span>Congregation Beth Shalom</span></cite></figure>
+      </div>
+    </div>
+  </section>
+
   <!-- contact / form -->
   <section class="contact" id="contact">
     <div class="wrap">
       <div class="grid">
         <div class="reveal">
-          <p class="eyebrow">Get in touch</p>
-          <h2 style="color:var(--blue);font-size:clamp(32px,4.4vw,50px);margin-top:16px">Tell us who&rsquo;s travelling. We&rsquo;ll take it from there.</h2>
+          <div class="sec-head" data-origin="left">
+            <p class="eyebrow">Get in touch</p>
+            <h2>Tell us who&rsquo;s travelling. We&rsquo;ll take it from there.</h2>
+          </div>
           <p class="sub">Share a few details and we&rsquo;ll reply personally, usually within two business days, with ideas, dates, and a plan shaped around you.</p>
           <div class="direct">
             <a href="mailto:connect@ldorvadortravel.com"><svg style="width:22px;color:var(--sage)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14"/><path d="m3 7 9 6 9-6"/></svg><b>connect@ldorvadortravel.com</b></a>
@@ -202,13 +229,12 @@
     <div class="foot-grid">
       <div class="foot-brand">
         <a class="brand foot-logo" href="index.html" aria-label="L'Dor Vador, Heritage Travel, home">
-          <span class="brand-word">L&rsquo;Dor</span>
-          <span class="brand-word">Vador</span>
+          <span class="brand-stack"><span class="brand-word">L&rsquo;Dor</span><span class="brand-word">Vador</span></span>
           <span class="brand-tx">Heritage Travel</span>
         </a>
         <p>Heritage travel to Curaçao, from generation to generation. Willemstad, Curaçao · KvK 148736.</p>
       </div>
-      <div><h4>Explore</h4><a href="history.html">The Story</a><a href="story.html">About</a><a href="itinerary.html">Itinerary</a></div>
+      <div><h4>Explore</h4><a href="itinerary.html">Journeys</a><a href="#discover">Curaçao</a><a href="history.html">History</a><a href="story.html">About</a></div>
       <div><h4>Contact</h4><a href="mailto:connect@ldorvadortravel.com">connect@ldorvadortravel.com</a><a href="#contact">Inquire about a trip</a><a href="#top">Back to top ↑</a></div>
     </div>
     <div class="colophon">
