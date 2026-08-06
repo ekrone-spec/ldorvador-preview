@@ -37,7 +37,9 @@ W('assets/app.js', jsesc(R('js.tmpl')))
 HEAD = ('<!doctype html>\n<html lang="en"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
         '<meta name="robots" content="noindex, nofollow">'
-        '<meta name="description" content="Curated Jewish heritage journeys to Curacao.">'
+        '<meta name="description" content="%s">'
+        '<meta property="og:title" content="%s"><meta property="og:description" content="%s">'
+        '<meta property="og:type" content="website">'
         '<title>%s</title><link rel="stylesheet" href="assets/app.css"></head><body>\n')
 TAIL = '\n<script src="assets/app.js" defer></script></body></html>'
 
@@ -46,15 +48,25 @@ def sub(s):
     for k,v in imgmap.items(): s = s.replace(k,v)
     return s
 
+# title, meta description. The site description keeps "Jewish Heritage Travel"
+# (that is what shows in search); the on-page tagline is just "Heritage Travel".
 pages = {
-    'index.html':     ('home.body.html',      "L'Dor Vador — Jewish Heritage Travel to Curaçao"),
-    'history.html':   ('history.body.html',   "The Story — L'Dor Vador"),
-    'story.html':     ('story.body.html',     "Our Story — L'Dor Vador"),
-    'itinerary.html': ('itinerary.body.html', "Example Itinerary — L'Dor Vador"),
+    'index.html':     ('home.body.html',
+        "L'Dor Vador | Jewish Heritage Travel to Curaçao",
+        "L'Dor Vador is a Jewish Heritage Travel company in Curaçao. We curate journeys through 375 years of Jewish Atlantic history, connecting travelers with local academics, cultural experts, and community members."),
+    'history.html':   ('history.body.html',
+        "A History Lesson | L'Dor Vador Jewish Heritage Travel",
+        "How Jewish life took root and flourished in Curaçao: 375 years from Samuel Cohen and Congregation Mikvé Israel to the Snoa, Beth Haim, and the Jewish Museum Curaçao."),
+    'story.html':     ('story.body.html',
+        "About Us | L'Dor Vador Jewish Heritage Travel",
+        "Our origin story. L'Dor Vador was founded by Hannah Berkeley Cohen, former New York Times stringer in Havana, and Cornelis Greiwe, founder of CULTURESCAPE in Curaçao."),
+    'itinerary.html': ('itinerary.body.html',
+        "Example Itinerary | L'Dor Vador Jewish Heritage Travel",
+        "A sample week in Jewish Curaçao: the sand-floor synagogue, Beth Haim, the Jewish Museum, people-to-people encounters, and Shabbat with the community."),
 }
-for out,(src,title) in pages.items():
+for out,(src,title,desc) in pages.items():
     body = sub(R(src))
-    W(out, entesc(HEAD%title + body + TAIL))
+    W(out, entesc(HEAD%(desc,title,desc,title) + body + TAIL))
 
 # ---- self-contained homepage (inline css+js, data-uri images) ----
 def datauri(path):
@@ -75,7 +87,7 @@ for fn in os.listdir(os.path.join(D,'assets','img')):
 js = R('js.tmpl')
 sc = ('<!doctype html>\n<html lang="en"><head><meta charset="utf-8">'
       '<meta name="viewport" content="width=device-width, initial-scale=1">'
-      '<title>L’Dor Vador — Jewish Heritage Travel to Curaçao</title>'
+      '<title>L’Dor Vador | Jewish Heritage Travel to Curaçao</title>'
       '<style>%s</style></head><body>\n%s\n<script>%s</script></body></html>' % (css_self, body, js))
 W('home_selfcontained.html', sc)
 print('built:', ', '.join(pages), '+ home_selfcontained.html')
