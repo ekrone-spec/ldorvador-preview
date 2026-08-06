@@ -37,23 +37,53 @@ if(mapwrap){
 
 
 
-/* Discover Curacao: slow crossfading slideshow */
+/* Section headers land large and settle into place as the section arrives. */
 (function(){
-  var box=document.querySelector('.slideshow'); if(!box) return;
-  var slides=box.querySelectorAll('.slide'); if(slides.length<2) return;
+  var heads=[].slice.call(document.querySelectorAll('.sec-head'));
+  if(!heads.length) return;
   if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-  var i=0, timer=null;
-  function step(){
-    slides[i].classList.remove('is-on');
-    i=(i+1)%slides.length;
-    slides[i].classList.add('is-on');
+  var MAX=0.85;            // extra scale at the moment the section appears
+  var ticking=false;
+  function frame(){
+    ticking=false;
+    var vh=window.innerHeight;
+    for(var i=0;i<heads.length;i++){
+      var h=heads[i];
+      var sec=h.closest('section')||h.parentNode;
+      var top=sec.getBoundingClientRect().top;
+      // p: 0 when the section top sits at the viewport bottom, 1 once it reaches the top
+      var p=(vh-top)/vh;
+      p=p<0?0:(p>1?1:p);
+      var e=1-Math.pow(1-p,3);           // ease out
+      h.style.setProperty('--hs',(1+(1-e)*MAX).toFixed(4));
+    }
   }
-  // only run while the section is on screen
-  var sio=new IntersectionObserver(function(es){es.forEach(function(e){
-    if(e.isIntersecting){ if(!timer) timer=setInterval(step,7000); }
-    else { clearInterval(timer); timer=null; }
-  })},{threshold:.15});
-  sio.observe(box);
+  function onScrollHead(){ if(!ticking){ticking=true;requestAnimationFrame(frame);} }
+  frame();
+  window.addEventListener('scroll',onScrollHead,{passive:true});
+  window.addEventListener('resize',onScrollHead);
+  window.addEventListener('load',frame);
+})();
+
+/* Discover Curacao: auto-gliding gallery. Float accumulator so it glides
+   sub-pixel; pauses on hover; scroll or swipe to move faster; seamless loop. */
+(function(){
+  var reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  document.querySelectorAll('.jscroll').forEach(function(sc){
+    var half=0; function measure(){half=sc.scrollWidth/2;}
+    measure(); window.addEventListener('load',measure); window.addEventListener('resize',measure);
+    if(reduce) return;
+    var pos=0, paused=false;
+    sc.addEventListener('mouseenter',function(){paused=true;});
+    sc.addEventListener('mouseleave',function(){paused=false;});
+    sc.addEventListener('scroll',function(){ if(Math.abs(sc.scrollLeft-pos)>2) pos=sc.scrollLeft; });
+    function tick(){
+      if(half<=0) measure();
+      if(!paused && half>0){ pos+=0.55; if(pos>=half) pos-=half; else if(pos<0) pos+=half; sc.scrollLeft=pos; }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
 })();
 
 var i18n={
