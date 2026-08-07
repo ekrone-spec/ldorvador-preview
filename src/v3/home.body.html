@@ -13,7 +13,15 @@
       <a href="itinerary.html">Journeys</a>
       <a href="#discover">Curaçao</a>
       <a href="history.html">History</a>
-      <a href="story.html">About</a>
+      <span class="navitem has-sub">
+        <a href="story.html" aria-haspopup="true" aria-expanded="false">About</a>
+        <span class="submenu" role="menu">
+          <a role="menuitem" href="#whatwedo">What we do</a>
+          <a role="menuitem" href="#defines">What defines us</a>
+          <a role="menuitem" href="#howweplan">How we plan your journey</a>
+          <a role="menuitem" href="story.html">Our origin story</a>
+        </span>
+      </span>
       <a href="#contact">Contact</a>
     </nav>
     <div class="header-cta">
@@ -136,7 +144,7 @@
     </div>
   </section>
 
-  <!-- 5. discover curaçao: gliding gallery -->
+  <!-- 5. discover curaçao: header sticks while the gallery, copy and stats scroll past -->
   <section class="journeys reveal" id="discover">
     <div class="jhead">
       <div class="sec-head" data-origin="left">
@@ -149,11 +157,8 @@
       __DISCOVER__
     </div></div>
     <p class="jhint">Glides on its own · scroll to move faster · hover for details</p>
-  </section>
 
-  <!-- discover: supporting detail -->
-  <section class="discover-detail reveal">
-    <div class="wrap">
+    <div class="wrap dd-wrap">
       <div class="dd-grid">
         <div>
           <h3>Remarkably accessible</h3>
