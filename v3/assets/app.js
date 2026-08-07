@@ -86,6 +86,46 @@ if(mapwrap){
   });
 })();
 
+/* Anchor jumps. Sections are stacked sticky: a pinned section reports a client
+   rect top of 0, so the browser's own anchor maths can land in the wrong place.
+   Element heights are unaffected by sticky, so we derive the flow position by
+   summing the heights of the preceding siblings. */
+(function(){
+  function flowTopOf(node){
+    var below=document.querySelector('.below');
+    if(!below) return null;
+    var sec=node;
+    while(sec && sec.parentElement!==below) sec=sec.parentElement;
+    if(!sec) return null;                       // not inside .below
+    var y=below.getBoundingClientRect().top+window.pageYOffset;
+    var kids=below.children;
+    for(var i=0;i<kids.length;i++){
+      if(kids[i]===sec) break;
+      y+=kids[i].getBoundingClientRect().height;
+    }
+    return Math.round(y);
+  }
+  document.addEventListener('click',function(e){
+    var a=e.target.closest && e.target.closest('a[href*="#"]');
+    if(!a) return;
+    var href=a.getAttribute('href')||'';
+    var i=href.indexOf('#');
+    var path=href.slice(0,i), hash=href.slice(i);
+    if(hash.length<2) return;
+    if(path && path.indexOf('index.html')===-1) return;   // link to another page
+    var t=document.querySelector(hash);
+    if(!t) return;
+    var y=flowTopOf(t);
+    if(y===null) return;                        // let the browser handle it
+    e.preventDefault();
+    y=Math.max(0,y-(parseFloat(getComputedStyle(t).scrollMarginTop)||0));
+    var reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    window.scrollTo({top:y,behavior:reduce?'auto':'smooth'});
+    if(history.replaceState) history.replaceState(null,'',hash);
+    if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  });
+})();
+
 var i18n={
  en:{},
  es:{brand_sub:'Viajes de Herencia Jud\u00eda',nav_journeys:'Viajes',nav_trips:'Pr\u00f3ximas Salidas',nav_about:'Nosotros',nav_faq:'Preguntas',cta_plan:'Planifica tu Viaje',cta_enquire:'Consultar un Viaje',

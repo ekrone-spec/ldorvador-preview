@@ -720,3 +720,15 @@ nav.main{align-items:center}
 .submenu a:hover{background:var(--sage-2)}
 @media(max-width:1040px){.submenu{left:0;transform:translateY(-6px)}
   .navitem:hover .submenu,.navitem:focus-within .submenu{transform:translateY(0)}}
+
+/* ===== v3.5 fixes ===== */
+/* (a) position:sticky is dead inside an overflow:hidden ancestor, which is why the
+       Discover header would not stick. The carousel keeps its own scroller. */
+#discover{overflow:visible}
+#discover .jscroll{overflow-x:auto;overflow-y:hidden}
+
+/* (b) With sections stacked, an anchor must land exactly at the section start,
+       otherwise the previous pinned section is still covering it and the jump
+       looks like nothing happened. */
+.below>section[id]{scroll-margin-top:0}
+#discover{scroll-margin-top:0}
