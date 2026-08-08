@@ -732,3 +732,48 @@ nav.main{align-items:center}
        looks like nothing happened. */
 .below>section[id]{scroll-margin-top:0}
 #discover{scroll-margin-top:0}
+
+/* ===== v3.6: language switcher is now links, plus Hebrew RTL ===== */
+.lang a{display:inline-block;text-decoration:none;font-family:var(--body);font-weight:700;font-size:11px;
+  letter-spacing:.1em;padding:6px 5px;color:#fff;border-bottom:2px solid transparent;transition:color .35s}
+.lang a+a{border-inline-start:1px solid rgba(255,255,255,.3)}
+.lang a[aria-current="true"]{border-bottom-color:currentColor}
+.lang a::after{display:none}
+header.scrolled .lang a,.header-solid .lang a{color:var(--ink-soft)}
+header.scrolled .lang a[aria-current="true"],.header-solid .lang a[aria-current="true"]{color:var(--blue)}
+header.scrolled .lang a+a,.header-solid .lang a+a{border-color:var(--line)}
+
+/* --- Hebrew RTL ---
+   Flexbox and grid alignment are already direction-aware, so flex-start/flex-end
+   flip on their own. Only genuinely physical properties are corrected here:
+   transform-origin, text-align, and left/right padding, borders and margins. */
+[dir="rtl"] .sec-head,[dir="rtl"] .sec-head[data-origin="left"]{transform-origin:right center}
+[dir="rtl"] .split-copy,[dir="rtl"] .split-copy .triad,[dir="rtl"] .bb-copy,
+[dir="rtl"] .steps-sec .wrap,[dir="rtl"] .discover-detail .wrap,[dir="rtl"] .voices .wrap,
+[dir="rtl"] #discover .jhead,[dir="rtl"] .door-cap,[dir="rtl"] .foot-grid,
+[dir="rtl"] .contact .grid>div{text-align:right}
+[dir="rtl"] .hero h1{text-align:left}
+[dir="rtl"] .imgpanel.left .cap{text-align:right}
+[dir="rtl"] .imgpanel.right .cap{text-align:left}
+[dir="rtl"] .namecap{text-align:left}
+[dir="rtl"] .field label,[dir="rtl"] .field input,[dir="rtl"] .field textarea{text-align:right}
+[dir="rtl"] .foot-brand{text-align:left}
+[dir="rtl"] .foot-brand .brand{margin-left:0;margin-right:auto}
+[dir="rtl"] .foot-brand p{margin-left:auto;margin-right:0}
+[dir="rtl"] .quote .rule{margin-left:auto;margin-right:0}
+[dir="rtl"] header.logo-min .brand-tx,[dir="rtl"] header.header-solid .brand-tx{
+  padding-left:0;padding-right:15px;border-left:0;border-right:1px solid currentColor}
+/* the gallery keeps gliding the same way; only the card text flips */
+[dir="rtl"] .jscroll{direction:ltr}
+[dir="rtl"] .jcard .teaser,[dir="rtl"] .jcard .more{direction:rtl;text-align:right}
+[dir="rtl"] .triad span,[dir="rtl"] .step h3{letter-spacing:0}
+
+/* ===== v3.7: stop horizontal overflow (showed up as a blank RTL page) ===== */
+.sec-head{display:inline-block;max-width:100%}
+/* hide-but-keep-accessible without pushing the scroll area 9999px wide */
+.skip{position:absolute;width:1px;height:1px;padding:0;margin:0;overflow:hidden;
+  clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;left:auto;top:auto;border:0}
+.skip:focus{position:fixed;width:auto;height:auto;clip:auto;clip-path:none;
+  left:0;top:0;padding:12px 18px;background:var(--blue);color:#fff;z-index:2000}
+form input[name="company"]{position:absolute!important;left:auto!important;width:1px;height:1px;
+  overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%)}

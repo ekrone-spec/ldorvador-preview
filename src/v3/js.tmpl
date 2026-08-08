@@ -43,6 +43,7 @@ if(mapwrap){
   if(!heads.length) return;
   if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
   var MAX=0.85;            // extra scale at the moment the section appears
+  var rtl=getComputedStyle(document.documentElement).direction==='rtl';
   var ticking=false;
   function frame(){
     ticking=false;
@@ -55,7 +56,20 @@ if(mapwrap){
       var p=(vh-top)/vh;
       p=p<0?0:(p>1?1:p);
       var e=1-Math.pow(1-p,3);           // ease out
-      h.style.setProperty('--hs',(1+(1-e)*MAX).toFixed(4));
+      // Never let the scaled header run past its container. transform-origin
+      // pins one edge, so measure the room on the side it actually grows toward.
+      var own=h.offsetWidth||1;
+      var par=h.parentElement, cap=1+MAX;
+      if(par){
+        var pr=par.getBoundingClientRect(), pcs=getComputedStyle(par);
+        var cl=pr.left+(parseFloat(pcs.paddingLeft)||0);
+        var cr=pr.right-(parseFloat(pcs.paddingRight)||0);
+        var hb=h.getBoundingClientRect();
+        var room=rtl?(hb.right-cl):(cr-hb.left);
+        if(room>0) cap=Math.max(1,room/own);
+      }
+      var top_=Math.min(1+MAX,cap);
+      h.style.setProperty('--hs',(1+(1-e)*(top_-1)).toFixed(4));
     }
   }
   function onScrollHead(){ if(!ticking){ticking=true;requestAnimationFrame(frame);} }
