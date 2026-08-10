@@ -141,56 +141,104 @@ if(mapwrap){
 })();
 
 /* Hero video rotation. The still image carries the hero by default; the clips
-   only load on a wide screen, with motion allowed and no data-saver set, and
-   each one is fetched shortly before its turn rather than all at once. */
+   only load on a wide screen, with motion allowed and no data-saver set.
+
+   Crossfade notes: only the incoming clip animates, stacked above the outgoing
+   one, so the two never sit at part opacity together and reveal the background
+   through the gap. The fade does not start until the incoming frame is actually
+   decodable, and each clip is rewound so it always enters on its first frame. */
 (function(){
   var box=document.querySelector('.hero-videos');
   if(!box) return;
   var vids=[].slice.call(box.querySelectorAll('.hero-video'));
   if(!vids.length) return;
-  var started=false;
+  var HOLD=7000, FADE=2200, i=0, timer=null, started=false;
+
   function eligible(){
     if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return false;
     var w=window.innerWidth||document.documentElement.clientWidth||0;
-    if(w<820) return false;                       // also covers a 0 reading before layout
+    if(w<820) return false;
     var c=navigator.connection||{};
     if(c.saveData || /(^|-)2g$/.test(c.effectiveType||'')) return false;
     return true;
   }
-
-  var HOLD=7000, i=0, timer=null;
   function load(v){
     if(v.dataset.loaded) return;
-    v.dataset.loaded='1';
-    v.preload='auto';
-    v.src=v.getAttribute('data-src');
-    v.load();
+    v.dataset.loaded='1'; v.preload='auto';
+    v.src=v.getAttribute('data-src'); v.load();
   }
-  function abort(){                    // autoplay refused: leave the still hero alone
+  function abort(){
     if(timer) clearInterval(timer);
     vids.forEach(function(o){ o.classList.remove('on'); o.removeAttribute('src'); });
+  }
+  function reveal(n){
+    var v=vids[n];
+    try{ v.currentTime=0; }catch(e){}      // always enter on the first frame
+    var p=v.play();
+    if(p&&p.catch) p.catch(function(){ if(n===0) abort(); });
+    vids.forEach(function(o,k){ o.style.zIndex = (k===n) ? 2 : 1; });
+    v.classList.add('on');                  // only the incoming animates
+    setTimeout(function(){                  // retire the others once it is covered
+      vids.forEach(function(o,k){
+        if(k!==n){ o.classList.remove('on'); o.pause(); }
+      });
+    }, FADE);
+    load(vids[(n+1)%vids.length]);          // fetch the next one ahead of its turn
   }
   function show(n){
     var v=vids[n];
     load(v);
-    var p=v.play();
-    if(p&&p.catch) p.catch(function(){ if(n===0) abort(); });
-    vids.forEach(function(o,k){ o.classList.toggle('on', k===n); });
-    // pause the ones that are not visible so they stop decoding
-    vids.forEach(function(o,k){ if(k!==n && o.dataset.loaded) o.pause(); });
-    load(vids[(n+1)%vids.length]);   // get the next one ready
+    if(v.readyState>=2) reveal(n);
+    else v.addEventListener('canplay', function(){ reveal(n); }, {once:true});
   }
   function start(){
-    if(started || !eligible()) return;
+    if(started||!eligible()) return;
     started=true;
-    vids[0].addEventListener('canplay', function(){ show(0); }, {once:true});
-    load(vids[0]);
+    show(0);
     timer=setInterval(function(){ i=(i+1)%vids.length; show(i); }, HOLD);
   }
-  // width can read 0 before first layout, so decide once the page has settled
   if(document.readyState==='complete') start();
   else window.addEventListener('load', start, {once:true});
   window.addEventListener('resize', start);
+})();
+
+/* Enlarge a Discover photo. The carousel keeps gliding underneath, so the
+   overlay pauses nothing; it just sits on top until dismissed. */
+(function(){
+  var lb=document.getElementById('lightbox');
+  if(!lb) return;
+  var img=lb.querySelector('img'), cap=lb.querySelector('figcaption');
+  var closeBtn=lb.querySelector('.lb-close'), lastFocus=null;
+  function open(card){
+    var full=card.getAttribute('data-full'); if(!full) return;
+    var t=card.querySelector('.teaser .jt'), s=card.querySelector('.teaser .jd');
+    lastFocus=card;
+    img.src=full;
+    img.alt=t?t.textContent:'';
+    cap.textContent=[t&&t.textContent, s&&s.textContent].filter(Boolean).join(' \u00b7 ');
+    lb.hidden=false;
+    requestAnimationFrame(function(){ lb.classList.add('open'); });
+    closeBtn.focus();
+    document.body.style.overflow='hidden';
+  }
+  function close(){
+    lb.classList.remove('open');
+    document.body.style.overflow='';
+    setTimeout(function(){ lb.hidden=true; img.removeAttribute('src'); }, 350);
+    if(lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  document.addEventListener('click',function(e){
+    if(e.target.closest('.lb-close')){ close(); return; }
+    if(!lb.hidden && e.target===lb){ close(); return; }
+    var card=e.target.closest && e.target.closest('.jcard[data-full]');
+    if(card && !e.target.closest('a')){ e.preventDefault(); open(card); }
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape' && !lb.hidden){ close(); return; }
+    var card=document.activeElement && document.activeElement.closest
+             && document.activeElement.closest('.jcard[data-full]');
+    if(card && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); open(card); }
+  });
 })();
 
 var i18n={

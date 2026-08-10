@@ -377,6 +377,8 @@ HE = {
 # gen_locales.py merges these on top of the index-based tables.
 EXTRA = {
  'es': {
+  'Read the full history':'Leer la historia completa',
+  'Close':'Cerrar',
   'Mikvé Israel-Emanuel, the Snoa, Willemstad':'Mikvé Israel-Emanuel, la Snoa, Willemstad',
   'Merchant gables in the old city':'Frontones de comerciantes en la ciudad antigua',
   'Beth Haim: die geboren zijn moeten sterven':'Beth Haim: die geboren zijn moeten sterven',
@@ -397,6 +399,8 @@ EXTRA = {
    'Una biblioteca y museo judíos instalados en un landhuis a las afueras de la ciudad antigua, con archivos, judaica y volúmenes raros de la comunidad de la isla.',
  },
  'nl': {
+  'Read the full history':'Lees het volledige verhaal',
+  'Close':'Sluiten',
   'Mikvé Israel-Emanuel, the Snoa, Willemstad':'Mikvé Israel-Emanuel, de Snoa, Willemstad',
   'Merchant gables in the old city':'Koopmansgevels in de oude stad',
   'Beth Haim: die geboren zijn moeten sterven':'Beth Haim: die geboren zijn moeten sterven',
@@ -417,6 +421,8 @@ EXTRA = {
    'Een Joodse bibliotheek en museum in een landhuis buiten de oude stad, met archieven, judaica en zeldzame boeken uit de gemeenschap van het eiland.',
  },
  'he': {
+  'Read the full history':'לקריאת הסיפור המלא',
+  'Close':'סגירה',
   'Mikvé Israel-Emanuel, the Snoa, Willemstad':'מקווה ישראל-עמנואל, הסנואה, וילמסטאד',
   'Merchant gables in the old city':'גגות הסוחרים בעיר העתיקה',
   'Beth Haim: die geboren zijn moeten sterven':'בית חיים: "הנולדים נועדו למות"',
