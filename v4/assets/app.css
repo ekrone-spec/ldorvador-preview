@@ -881,3 +881,16 @@ form{padding:clamp(18px,2.4vw,30px)}
 .offer.reveal.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){
   .offer.reveal{opacity:1!important;transform:none!important;transition:none!important}}
+
+
+/* ===== v4.6: Hebrew hero is the wordmark alone, centred ===== */
+.hero-title-he{grid-template-columns:1fr;justify-items:center}
+.hero-title-he h1.heb-hero,[dir="rtl"] .hero-title-he h1.heb-hero{
+  justify-self:center;text-align:center;max-width:none}
+.heb-hero{font-family:var(--heb);font-weight:800;font-size:clamp(46px,8vw,116px);
+  line-height:1;color:#fff;direction:rtl;letter-spacing:.03em;
+  white-space:nowrap;margin:0;
+  text-shadow:0 2px 4px rgba(0,0,0,.35),0 10px 30px rgba(0,0,0,.5);
+  opacity:0;transform:translateY(14px);
+  animation:rise 1.4s cubic-bezier(.2,.7,.2,1) .9s forwards}
+@media(prefers-reduced-motion:reduce){.heb-hero{opacity:1;transform:none;animation:none}}

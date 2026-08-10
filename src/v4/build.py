@@ -160,6 +160,16 @@ for code in LOCALES:
         if code != 'en':
             body = i18n.translate(body, tr)
         body = body.replace('__LANGNAV__', langnav(code, page, tr))
+        if code == 'he' and page == 'index.html':
+            # In Hebrew the translated headline and the wordmark are the same
+            # phrase, so the hero would say it twice. Show the wordmark alone,
+            # centred, and let it be the h1.
+            body = re.sub(
+                r'<div class="hero-title">.*?</div>',
+                '<div class="hero-title hero-title-he">'
+                '<h1 class="heb-hero" lang="he" dir="rtl">\u05dc\u05b0\u05d3\u05d5\u05b9\u05e8 '
+                '\u05d5\u05b8\u05d3\u05d5\u05b9\u05e8</h1></div>',
+                body, count=1, flags=re.S)
         for k, v in imgmap.items():
             body = body.replace(k, pre + v)
         title, desc = META[code][page]
