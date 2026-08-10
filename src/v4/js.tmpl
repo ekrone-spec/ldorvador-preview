@@ -140,23 +140,57 @@ if(mapwrap){
   });
 })();
 
-/* Hero video: a 5 MB autoplay is rude on a phone or a hotel connection, so the
-   still image carries the hero by default and the video only loads on a wide
-   screen, with motion allowed and no data-saver in play. */
+/* Hero video rotation. The still image carries the hero by default; the clips
+   only load on a wide screen, with motion allowed and no data-saver set, and
+   each one is fetched shortly before its turn rather than all at once. */
 (function(){
-  var v=document.querySelector('.hero-video');
-  if(!v) return;
-  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-  if(window.innerWidth<820) return;
-  var c=navigator.connection||{};
-  if(c.saveData || /(^|-)2g$/.test(c.effectiveType||'')) return;
-  v.preload='auto';
-  v.src=v.getAttribute('data-src');
-  v.addEventListener('canplay',function(){
-    v.classList.add('ready');
-    var p=v.play(); if(p&&p.catch) p.catch(function(){});
-  },{once:true});
-  v.load();
+  var box=document.querySelector('.hero-videos');
+  if(!box) return;
+  var vids=[].slice.call(box.querySelectorAll('.hero-video'));
+  if(!vids.length) return;
+  var started=false;
+  function eligible(){
+    if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return false;
+    var w=window.innerWidth||document.documentElement.clientWidth||0;
+    if(w<820) return false;                       // also covers a 0 reading before layout
+    var c=navigator.connection||{};
+    if(c.saveData || /(^|-)2g$/.test(c.effectiveType||'')) return false;
+    return true;
+  }
+
+  var HOLD=7000, i=0, timer=null;
+  function load(v){
+    if(v.dataset.loaded) return;
+    v.dataset.loaded='1';
+    v.preload='auto';
+    v.src=v.getAttribute('data-src');
+    v.load();
+  }
+  function abort(){                    // autoplay refused: leave the still hero alone
+    if(timer) clearInterval(timer);
+    vids.forEach(function(o){ o.classList.remove('on'); o.removeAttribute('src'); });
+  }
+  function show(n){
+    var v=vids[n];
+    load(v);
+    var p=v.play();
+    if(p&&p.catch) p.catch(function(){ if(n===0) abort(); });
+    vids.forEach(function(o,k){ o.classList.toggle('on', k===n); });
+    // pause the ones that are not visible so they stop decoding
+    vids.forEach(function(o,k){ if(k!==n && o.dataset.loaded) o.pause(); });
+    load(vids[(n+1)%vids.length]);   // get the next one ready
+  }
+  function start(){
+    if(started || !eligible()) return;
+    started=true;
+    vids[0].addEventListener('canplay', function(){ show(0); }, {once:true});
+    load(vids[0]);
+    timer=setInterval(function(){ i=(i+1)%vids.length; show(i); }, HOLD);
+  }
+  // width can read 0 before first layout, so decide once the page has settled
+  if(document.readyState==='complete') start();
+  else window.addEventListener('load', start, {once:true});
+  window.addEventListener('resize', start);
 })();
 
 var i18n={
