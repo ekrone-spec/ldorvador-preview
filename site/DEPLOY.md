@@ -1,5 +1,14 @@
 # Launch runbook — ldorvadortravel.com on Cloudflare Pages + TinaCMS
 
+## Cost change for the client
+
+| | Before | After |
+|---|---|---|
+| Squarespace website plan | $220/yr | cancelled |
+| Hosting + CMS + forms (Cloudflare Pages, TinaCloud, Web3Forms) | — | $0 |
+| Domain (Squarespace Domains) | $12/yr | $12/yr |
+| **Total** | **$232/yr** | **$12/yr** |
+
 The `site/` folder is the full source. `python3 build.py` builds the site into
 `site/` itself; `SITE=https://www.ldorvadortravel.com PROD=1 WEB3FORMS_KEY=…`
 builds the production version (real canonical/hreflang/OG URLs, no noindex,
