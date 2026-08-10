@@ -6,7 +6,7 @@
   <div class="wrap bar">
     <a class="brand" href="index.html" aria-label="L'Dor Vador, Viajes de Patrimonio, inicio">
       <span class="brand-stack">
-        <span class="brand-word">L&rsquo;Dor</span>
+        <span class="brand-word">L&#8217;Dor</span>
         <span class="brand-word">Vador</span>
       </span>
       <span class="brand-tx">Viajes de Patrimonio</span>
@@ -108,7 +108,7 @@
         <p class="eyebrow">Qu&#233; nos define</p>
         <div class="triad"><span>Historia.</span><span>Cultura.</span><span>Experiencia.</span></div>
       </div>
-      <p class="body">L&rsquo;Dor Vador se nutre de la experiencia conjunta de sus fundadores, Hannah Berkeley Cohen y Cornelis Greiwe, que juntos han dirigido m&#225;s de 100 viajes de grupo en destinos como Cuba y Surinam. Nuestro enfoque bebe del periodismo, del viaje a medida y de m&#225;s de tres d&#233;cadas de experiencia combinada en turismo de inter&#233;s especial.</p>
+      <p class="body">L&#8217;Dor Vador se nutre de la experiencia conjunta de sus fundadores, Hannah Berkeley Cohen y Cornelis Greiwe, que juntos han dirigido m&#225;s de 100 viajes de grupo en destinos como Cuba y Surinam. Nuestro enfoque bebe del periodismo, del viaje a medida y de m&#225;s de tres d&#233;cadas de experiencia combinada en turismo de inter&#233;s especial.</p>
       <p class="body">Juntas, estas experiencias moldean nuestra perspectiva: exploramos la historia y la cultura en profundidad, miramos m&#225;s all&#225; de lo evidente y conectamos a los viajeros con las personas, los lugares y las historias que definen un destino.</p>
       <a class="tlink" href="story.html">Nuestra historia</a>
     </div>
@@ -117,8 +117,8 @@
       <div class="namecap">
         <span class="eyebrow">Una nota sobre nuestro nombre</span>
         <span class="heb-x" lang="he" dir="rtl">&#1500;&#1456;&#1491;&#1493;&#1465;&#1512; &#1493;&#1464;&#1491;&#1493;&#1465;&#1512;</span>
-        <p class="sub-x">El nombre L&rsquo;Dor Vador se traduce del hebreo como &ldquo;de generaci&#243;n en generaci&#243;n&rdquo;. Encarna el n&#250;cleo de la continuidad jud&#237;a: ese v&#237;nculo profundo y entra&#241;able que une a nuestros antepasados con sus descendientes a trav&#233;s de la memoria y la tradici&#243;n.</p>
-        <p class="sub-x">En L&rsquo;Dor Vador Travel, ese sentimiento define nuestra misi&#243;n: creamos viajes que tienden un puente entre los viajeros y las ra&#237;ces de la existencia jud&#237;a en Cura&#231;ao.</p>
+        <p class="sub-x">El nombre L&#8217;Dor Vador se traduce del hebreo como &#8220;de generaci&#243;n en generaci&#243;n&#8221;. Encarna el n&#250;cleo de la continuidad jud&#237;a: ese v&#237;nculo profundo y entra&#241;able que une a nuestros antepasados con sus descendientes a trav&#233;s de la memoria y la tradici&#243;n.</p>
+        <p class="sub-x">En L&#8217;Dor Vador Travel, ese sentimiento define nuestra misi&#243;n: creamos viajes que tienden un puente entre los viajeros y las ra&#237;ces de la existencia jud&#237;a en Cura&#231;ao.</p>
         <a class="discreet-btn" href="history.html">Leer una lecci&#243;n de historia</a>
       </div>
     </div>
@@ -215,7 +215,7 @@
         <figure class="quote"><blockquote>Las personas que nos presentaron son la raz&#243;n por la que este viaje import&#243;. No recorrimos una comunidad: pasamos tiempo dentro de ella.</blockquote><div class="rule"></div><cite>Judith A.<span>Toronto, Ontario</span></cite></figure>
         <figure class="quote"><blockquote>Como operador he trabajado con muchos socios locales. Pocos conocen su destino tan bien, y con ninguno ha sido tan f&#225;cil planificar.</blockquote><div class="rule"></div><cite>Daniel M.<span>Operador tur&#237;stico, Nueva York</span></cite></figure>
       </div>
-      <p class="vhint">Despl&#225;zate para m&#225;s voces &rarr;</p>
+      <p class="vhint">Despl&#225;zate para m&#225;s voces &#8594;</p>
     </div>
   </section>
 
@@ -233,7 +233,12 @@
             <a href="mailto:connect@ldorvadortravel.com"><svg style="width:22px;color:var(--sage)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14"/><path d="m3 7 9 6 9-6"/></svg><b>connect@ldorvadortravel.com</b></a>
           </div>
         </div>
-        <form class="reveal" onsubmit="event.preventDefault();this.querySelector('.formnote').textContent='Demo only. This form is not yet connected.';">
+        <form class="reveal" id="inquiryform" method="POST" action="https://api.web3forms.com/submit"
+              data-ok="Gracias. Su consulta est&#225; en camino y le responderemos personalmente en un plazo de dos d&#237;as laborables."
+              data-err="Algo sali&#243; mal al enviar su mensaje. Escr&#237;banos directamente a connect@ldorvadortravel.com.">
+          <input type="hidden" name="access_key" value="REPLACE-WITH-WEB3FORMS-ACCESS-KEY">
+          <input type="hidden" name="subject" value="New inquiry from ldorvadortravel.com">
+          <input type="hidden" name="from_name" value="L'Dor Vador website">
           <div class="field"><label for="forg">Nombre u organizaci&#243;n</label><input id="forg" name="organization" type="text" autocomplete="organization"></div>
           <div class="two">
             <div class="field"><label for="ffn">Nombre <span class="req">(obligatorio)</span></label><input id="ffn" name="first" type="text" autocomplete="given-name" required></div>
@@ -241,7 +246,7 @@
           </div>
           <div class="field"><label for="fe">Correo electr&#243;nico <span class="req">(obligatorio)</span></label><input id="fe" name="email" type="email" autocomplete="email" required></div>
           <div class="field"><label for="fm">&#191;Qu&#233; tipo de viaje te interesa planificar?</label><textarea id="fm" name="message"></textarea></div>
-          <input type="text" name="company" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+          <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
           <button class="btn btn-solid" type="submit">Enviar mi consulta</button>
           <p class="formnote"></p>
         </form>
@@ -262,7 +267,7 @@
     <div class="foot-grid">
       <div class="foot-brand">
         <a class="brand foot-logo" href="index.html" aria-label="L'Dor Vador, Viajes de Patrimonio, inicio">
-          <span class="brand-stack"><span class="brand-word">L&rsquo;Dor</span><span class="brand-word">Vador</span></span>
+          <span class="brand-stack"><span class="brand-word">L&#8217;Dor</span><span class="brand-word">Vador</span></span>
           <span class="brand-tx">Viajes de Patrimonio</span>
         </a>
         <p>Viajes de patrimonio a Cura&#231;ao, de generaci&#243;n en generaci&#243;n. Willemstad, Cura&#231;ao &#183; KvK 148736.</p>
