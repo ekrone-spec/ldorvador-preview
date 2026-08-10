@@ -152,7 +152,10 @@ if(mapwrap){
   if(!box) return;
   var vids=[].slice.call(box.querySelectorAll('.hero-video'));
   if(!vids.length) return;
-  var HOLD=7000, FADE=2200, i=0, timer=null, started=false;
+  // Each clip is 9.6s. It is shown for HOLD then covered over FADE, so it is
+  // hidden by 9.2s and never reaches its end while on screen. That end-of-clip
+  // jump was the snap. `loop` is off for the same reason.
+  var HOLD=7000, FADE=2200, CLIP=9600, i=0, timer=null, started=false;
 
   function eligible(){
     if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return false;

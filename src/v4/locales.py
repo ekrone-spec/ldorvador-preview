@@ -377,6 +377,11 @@ HE = {
 # gen_locales.py merges these on top of the index-based tables.
 EXTRA = {
  'es': {
+  'The chapel at Beth Haim':'La capilla de Beth Haim',
+  'The bell in the courtyard':'La campana del patio',
+  'Santa Martha Bay':'Bahía de Santa Marta',
+  'The coast before Shabbat':'La costa antes del Shabat',
+  'Beth Haim tombstones with the refinery beyond':'Lápidas de Beth Haim con la refinería al fondo',
   'Read the full history':'Leer la historia completa',
   'Close':'Cerrar',
   'Mikvé Israel-Emanuel, the Snoa, Willemstad':'Mikvé Israel-Emanuel, la Snoa, Willemstad',
@@ -399,6 +404,11 @@ EXTRA = {
    'Una biblioteca y museo judíos instalados en un landhuis a las afueras de la ciudad antigua, con archivos, judaica y volúmenes raros de la comunidad de la isla.',
  },
  'nl': {
+  'The chapel at Beth Haim':'De kapel op Beth Haim',
+  'The bell in the courtyard':'De klok op de binnenplaats',
+  'Santa Martha Bay':'Santa Marthabaai',
+  'The coast before Shabbat':'De kust voor Sjabbat',
+  'Beth Haim tombstones with the refinery beyond':'Grafstenen van Beth Haim met de raffinaderij daarachter',
   'Read the full history':'Lees het volledige verhaal',
   'Close':'Sluiten',
   'Mikvé Israel-Emanuel, the Snoa, Willemstad':'Mikvé Israel-Emanuel, de Snoa, Willemstad',
@@ -421,6 +431,11 @@ EXTRA = {
    'Een Joodse bibliotheek en museum in een landhuis buiten de oude stad, met archieven, judaica en zeldzame boeken uit de gemeenschap van het eiland.',
  },
  'he': {
+  'The chapel at Beth Haim':'הקפלה בבית חיים',
+  'The bell in the courtyard':'הפעמון בחצר',
+  'Santa Martha Bay':'מפרץ סנטה מרתה',
+  'The coast before Shabbat':'קו החוף לפני שבת',
+  'Beth Haim tombstones with the refinery beyond':'מצבות בית חיים ובית הזיקוק ברקע',
   'Read the full history':'לקריאת הסיפור המלא',
   'Close':'סגירה',
   'Mikvé Israel-Emanuel, the Snoa, Willemstad':'מקווה ישראל-עמנואל, הסנואה, וילמסטאד',

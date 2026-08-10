@@ -800,3 +800,13 @@ form input[name="company"]{position:absolute!important;left:auto!important;width
 .lb-close:hover{background:#fff;color:var(--green-d)}
 [dir="rtl"] .lb-close{right:auto;left:clamp(12px,2vw,26px)}
 @media(prefers-reduced-motion:reduce){.lightbox,.lb-fig img{transition:none}}
+
+
+/* ===== v4.3: photographs through the sample week ===== */
+.offer.has-img{grid-template-columns:auto 1fr;grid-template-areas:"day copy" "img img"}
+.offer.has-img .on{grid-area:day}
+.offer.has-img>div{grid-area:copy}
+.offer-img{grid-area:img;width:100%;aspect-ratio:4/3;object-fit:cover;display:block;margin-top:18px}
+@media(min-width:721px){
+  .offer.has-img{grid-template-columns:auto 1fr;grid-template-areas:"day copy" ". img"}
+}
