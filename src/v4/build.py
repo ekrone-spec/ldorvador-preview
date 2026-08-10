@@ -17,7 +17,7 @@ def W(p, s):
     os.makedirs(os.path.dirname(full), exist_ok=True)
     open(full, 'w', encoding='utf-8').write(s)
 
-SITE = 'https://ekrone-spec.github.io/ldorvador-preview/v3'
+SITE = 'https://ekrone-spec.github.io/ldorvador-preview/v4'
 
 # ---- fonts: reuse the @font-face block already embedded in the built app.css ----
 old_css = R('assets/app.css').splitlines()
@@ -134,6 +134,16 @@ HEAD = ('<!doctype html>\n<html lang="%s"%s><head><meta charset="utf-8">'
         '<meta name="description" content="%s">'
         '<meta property="og:title" content="%s"><meta property="og:description" content="%s">'
         '<meta property="og:type" content="website"><meta property="og:locale" content="%s">'
+        '<meta property="og:site_name" content="L\u2019Dor Vador">'
+        '<meta property="og:image" content="%s/assets/img/og-home.jpg">'
+        '<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">'
+        '<meta property="og:image:alt" content="%s">'
+        '<meta name="twitter:card" content="summary_large_image">'
+        '<link rel="icon" href="%sassets/img/favicon.ico" sizes="any">'
+        '<link rel="icon" type="image/png" sizes="32x32" href="%sassets/img/favicon-32.png">'
+        '<link rel="icon" type="image/png" sizes="16x16" href="%sassets/img/favicon-16.png">'
+        '<link rel="apple-touch-icon" sizes="180x180" href="%sassets/img/favicon-180.png">'
+        '<meta name="theme-color" content="#282819">'
         '%s<link rel="canonical" href="%s">'
         '<title>%s</title><link rel="stylesheet" href="%sassets/app.css"></head><body>\n')
 TAIL = '\n<script src="%sassets/app.js" defer></script></body></html>'
@@ -156,6 +166,8 @@ for code in LOCALES:
         head = HEAD % (HTMLLANG[code],
                        ' dir="rtl"' if code in RTL else '',
                        desc, title, desc, HTMLLANG[code],
+                       SITE, title,
+                       pre, pre, pre, pre,
                        hreflangs(page), page_url(code, page),
                        title, pre)
         out = page if code == 'en' else '%s/%s' % (code, page)
