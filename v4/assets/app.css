@@ -393,7 +393,7 @@ footer a:hover{color:#fff}
 .jcard .teaser .jt{font-family:var(--display);font-weight:700;font-size:23px;line-height:1.12}
 .jcard .teaser .jd{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin-top:10px;opacity:.92}
 .jcard .more{position:absolute;inset:0;z-index:3;background:rgba(0,43,127,.92);color:#fff;padding:30px;display:flex;flex-direction:column;justify-content:flex-end;gap:14px;opacity:0;transition:opacity .45s ease}
-.jcard:hover .more{opacity:1}.jcard:hover .teaser{opacity:0}
+@media(hover:hover){.jcard:hover .more{opacity:1}.jcard:hover .teaser{opacity:0}}
 .jcard .more .jt{font-family:var(--display);font-weight:700;font-size:25px;line-height:1.1}
 .jcard .more .jd{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--yellow)}
 .jcard .more .jdesc{font-size:15px;line-height:1.5;color:#d9e2f4}
@@ -447,7 +447,8 @@ footer a:hover{color:#fff}
 .doors{display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:var(--cream);padding:0}
 .door{position:relative;aspect-ratio:1/1;overflow:hidden;text-decoration:none;display:block;background:var(--green-d)}
 .door-img{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.04);transition:transform 1.6s ease,filter .6s ease;filter:saturate(.92)}
-.door:hover .door-img,.door:focus-visible .door-img{transform:scale(1.11);filter:saturate(1.05)}
+@media(hover:hover){.door:hover .door-img{transform:scale(1.11);filter:saturate(1.05)}}
+.door:focus-visible .door-img{transform:scale(1.11);filter:saturate(1.05)}
 .door::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,14,10,.12),rgba(6,14,10,.2) 45%,rgba(6,14,10,.78));transition:background .5s ease}
 .door:hover::after{background:linear-gradient(180deg,rgba(6,14,10,.22),rgba(6,14,10,.35) 45%,rgba(6,14,10,.86))}
 .door-cap{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:clamp(22px,3vw,44px);color:#fff;display:flex;flex-direction:column;align-items:flex-start;gap:10px}
@@ -455,7 +456,8 @@ footer a:hover{color:#fff}
 .door-h{font-family:var(--display);font-weight:600;font-size:clamp(24px,2.6vw,40px);line-height:1.06;text-shadow:0 2px 16px rgba(0,0,0,.5)}
 .door-more{font-family:var(--body);font-weight:700;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#fff;
   opacity:0;transform:translateY(8px);transition:opacity .45s ease,transform .45s ease;border-bottom:1.5px solid var(--sand);padding-bottom:4px}
-.door:hover .door-more,.door:focus-visible .door-more{opacity:1;transform:none}
+@media(hover:hover){.door:hover .door-more{opacity:1;transform:none}}
+.door:focus-visible .door-more{opacity:1;transform:none}
 @media(max-width:820px){.doors{grid-template-columns:1fr}.door{aspect-ratio:16/10}.door-more{opacity:1;transform:none}}
 
 /* ===== section headers: land large, settle into place as the section arrives ===== */
@@ -554,7 +556,7 @@ footer a:hover{color:#fff}
 .jcard .teaser .jt{font-family:var(--display);font-weight:600;font-size:24px;line-height:1.1}
 .jcard .teaser .jd{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-top:8px;opacity:.9}
 .jcard .more{position:absolute;inset:0;z-index:3;background:rgba(40,40,25,.93);color:#fff;padding:26px;display:flex;flex-direction:column;justify-content:flex-end;gap:12px;opacity:0;transition:opacity .5s ease}
-.jcard:hover .more{opacity:1}.jcard:hover .teaser{opacity:0}
+@media(hover:hover){.jcard:hover .more{opacity:1}.jcard:hover .teaser{opacity:0}}
 .jcard .more .jt{font-family:var(--display);font-weight:600;font-size:26px;line-height:1.08}
 .jcard .more .jd{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--sand)}
 .jcard .more .jdesc{font-size:14.5px;line-height:1.55;color:#dfe3d4}
@@ -711,7 +713,8 @@ nav.main{align-items:center}
   min-width:238px;display:flex;flex-direction:column;padding:8px;
   background:var(--cream);border:1px solid var(--line);box-shadow:0 24px 54px -24px rgba(40,40,25,.5);
   opacity:0;visibility:hidden;transition:opacity .22s ease,transform .22s ease,visibility .22s;z-index:60}
-.navitem:hover .submenu,.navitem:focus-within .submenu{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+@media(hover:hover){.navitem:hover .submenu{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}}
+.navitem:focus-within .submenu{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
 /* bridge the gap so the menu does not close while the pointer travels to it */
 .submenu::before{content:"";position:absolute;left:0;right:0;top:-14px;height:14px}
 .submenu a{display:block;padding:10px 15px;font-family:var(--body);font-size:11.5px;letter-spacing:.13em;
@@ -719,7 +722,7 @@ nav.main{align-items:center}
 .submenu a::after{display:none}
 .submenu a:hover{background:var(--sage-2)}
 @media(max-width:1040px){.submenu{left:0;transform:translateY(-6px)}
-  .navitem:hover .submenu,.navitem:focus-within .submenu{transform:translateY(0)}}
+  .navitem:focus-within .submenu{transform:translateY(0)}}
 
 /* ===== v3.5 fixes ===== */
 /* (a) position:sticky is dead inside an overflow:hidden ancestor, which is why the
@@ -894,3 +897,40 @@ form{padding:clamp(18px,2.4vw,30px)}
   opacity:0;transform:translateY(14px);
   animation:rise 1.4s cubic-bezier(.2,.7,.2,1) .9s forwards}
 @media(prefers-reduced-motion:reduce){.heb-hero{opacity:1;transform:none;animation:none}}
+
+
+/* ===== v4.7: mobile ===== */
+.navtoggle{display:none;width:46px;height:46px;padding:0;border:0;background:transparent;cursor:pointer;
+  flex-direction:column;justify-content:center;gap:6px;align-items:stretch;margin-inline-start:auto}
+.navtoggle span{display:block;height:2px;background:#fff;transition:transform .3s ease,opacity .2s ease}
+header.scrolled .navtoggle span,.header-solid .navtoggle span{background:var(--green-d)}
+.navtoggle[aria-expanded="true"] span:nth-child(1){transform:translateY(8px) rotate(45deg)}
+.navtoggle[aria-expanded="true"] span:nth-child(2){opacity:0}
+.navtoggle[aria-expanded="true"] span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
+
+.mobilenav{position:fixed;left:0;right:0;top:var(--hdr);bottom:0;z-index:1200;
+  background:var(--cream);padding:clamp(20px,5vw,34px);overflow-y:auto;
+  opacity:0;transform:translateY(-8px);transition:opacity .3s ease,transform .3s ease}
+.mobilenav[hidden]{display:none}
+.mobilenav.open{opacity:1;transform:none}
+.mobilenav a{display:block;padding:14px 0;text-decoration:none;color:var(--green-d);
+  font-family:var(--display);font-weight:600;font-size:clamp(26px,7vw,38px);line-height:1.1;
+  border-bottom:1px solid var(--line)}
+.mobilenav .sub a{font-family:var(--body);font-size:13px;letter-spacing:.14em;text-transform:uppercase;
+  font-weight:700;color:var(--olive);padding:10px 0 10px 18px;border-bottom:0}
+[dir="rtl"] .mobilenav .sub a{padding:10px 18px 10px 0}
+.mobilenav .m-lang{display:flex;gap:0;margin-top:26px}
+.mobilenav .m-lang a{font-family:var(--body);font-size:13px;font-weight:700;letter-spacing:.1em;
+  padding:10px 14px;border-bottom:0;border:1px solid var(--line);margin-inline-end:-1px}
+.mobilenav .m-lang a[aria-current="true"]{background:var(--green-d);color:var(--cream)}
+.mobilenav .btn{display:inline-flex;margin-top:26px;width:100%}
+
+@media(max-width:980px){
+  .navtoggle{display:flex}
+  nav.main,.header-cta{display:none}
+  /* the curtain footer cannot work when the footer is taller than the screen:
+     its top would sit above the viewport and be unreachable */
+  footer{position:static!important;visibility:visible!important}
+  .below{margin-bottom:0!important}
+}
+@media(min-width:981px){.mobilenav{display:none!important}}

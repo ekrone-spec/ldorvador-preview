@@ -244,6 +244,92 @@ if(mapwrap){
   });
 })();
 
+/* Mobile menu. The panel is built from the existing nav, language switcher and
+   CTA, so every locale gets it without a second copy of the markup. */
+(function(){
+  var btn=document.querySelector('.navtoggle'), panel=document.getElementById('mobilenav');
+  if(!btn||!panel) return;
+  var built=false;
+  function build(){
+    if(built) return; built=true;
+    var nav=document.querySelector('nav.main');
+    if(nav){
+      [].forEach.call(nav.children,function(node){
+        if(node.matches('a')){ panel.appendChild(node.cloneNode(true)); return; }
+        var top=node.querySelector(':scope > a');           // the About item
+        if(top) panel.appendChild(top.cloneNode(true));
+        var sub=node.querySelector('.submenu');
+        if(sub){
+          var wrap=document.createElement('div'); wrap.className='sub';
+          [].forEach.call(sub.querySelectorAll('a'),function(a){ wrap.appendChild(a.cloneNode(true)); });
+          panel.appendChild(wrap);
+        }
+      });
+    }
+    var lang=document.querySelector('.header-cta .lang');
+    if(lang){ var l=lang.cloneNode(true); l.className='m-lang'; panel.appendChild(l); }
+    var cta=document.querySelector('.header-cta .btn');
+    if(cta) panel.appendChild(cta.cloneNode(true));
+  }
+  function open(){
+    build(); panel.hidden=false;
+    requestAnimationFrame(function(){ panel.classList.add('open'); });
+    btn.setAttribute('aria-expanded','true');
+    document.body.style.overflow='hidden';
+  }
+  function close(){
+    panel.classList.remove('open');
+    btn.setAttribute('aria-expanded','false');
+    document.body.style.overflow='';
+    setTimeout(function(){ panel.hidden=true; },300);
+  }
+  btn.addEventListener('click',function(){
+    btn.getAttribute('aria-expanded')==='true' ? close() : open();
+  });
+  panel.addEventListener('click',function(e){ if(e.target.closest('a')) close(); });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape' && btn.getAttribute('aria-expanded')==='true') close();
+  });
+  window.addEventListener('resize',function(){
+    if(window.innerWidth>980 && btn.getAttribute('aria-expanded')==='true') close();
+  });
+})();
+
+/* Testimonials glide on their own where there is no cursor to drag with.
+   Any touch or scroll hands control back to the reader. */
+(function(){
+  var q=document.querySelector('.quotes');
+  if(!q) return;
+  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  if(window.matchMedia('(hover:hover)').matches) return;   // pointer devices can drag
+  var pos=0, paused=false, resume=null;
+  function hold(){
+    paused=true; clearTimeout(resume);
+    resume=setTimeout(function(){ pos=q.scrollLeft; paused=false; },4000);
+  }
+  ['touchstart','pointerdown','wheel'].forEach(function(ev){
+    q.addEventListener(ev,hold,{passive:true});
+  });
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting) tick(); });
+  },{threshold:.25});
+  io.observe(q);
+  var running=false;
+  function tick(){
+    if(running) return; running=true;
+    pos=q.scrollLeft;
+    (function step(){
+      var max=q.scrollWidth-q.clientWidth;
+      if(!paused && max>0){
+        pos+=0.35;
+        if(pos>=max) pos=0;
+        q.scrollLeft=pos;
+      }
+      requestAnimationFrame(step);
+    })();
+  }
+})();
+
 var i18n={
  en:{},
  es:{brand_sub:'Viajes de Herencia Jud\u00eda',nav_journeys:'Viajes',nav_trips:'Pr\u00f3ximas Salidas',nav_about:'Nosotros',nav_faq:'Preguntas',cta_plan:'Planifica tu Viaje',cta_enquire:'Consultar un Viaje',
