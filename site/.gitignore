@@ -14,6 +14,3 @@ _redirects
 _headers
 home_selfcontained.html
 __pycache__/
-tina/__generated__/
-node_modules/
-package-lock.json

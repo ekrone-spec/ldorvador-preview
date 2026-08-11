@@ -7,12 +7,6 @@ fonts_extra.css
 wrangler.jsonc
 DEPLOY.md
 locales/
-tina/
 __pycache__/
-node_modules/
 worker.js
 content/
-node_modules/
-package.json
-package-lock.json
-tina/

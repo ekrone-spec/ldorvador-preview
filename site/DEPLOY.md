@@ -22,19 +22,12 @@ robots.txt + sitemap.xml, live form key).
    `SITE=https://www.ldorvadortravel.com`, `PROD=1`, `WEB3FORMS_KEY=<key>`.
 2. **Web3Forms** (free) — web3forms.com. Enter connect@ldorvadortravel.com,
    they email an access key. That key becomes `WEB3FORMS_KEY`.
-3. **TinaCloud** (free tier, 2 users) — app.tina.io. Create a project against
-   the repo; copy the Client ID and a read/write token into Cloudflare Pages
-   env vars `TINA_CLIENT_ID` / `TINA_TOKEN`. Invite Hannah by email.
-
-## TinaCloud gotcha (cost us an afternoon)
-
-If builds fail with 403 "not authorized to access branch" or "Branch 'main'
-is not on TinaCloud": the branch was never indexed. Auto-indexing after
-project creation is unreliable. Fix: TinaCloud project -> Configuration ->
-Branches -> menu next to main -> Reindex. Test locally with
-`TINA_TOKEN=... npx tinacms build` before blaming tokens or client IDs.
-Also: the TINA_TOKEN goes in Cloudflare's BUILD variables (Settings ->
-Build), not the Worker's runtime variables.
+3. **CloudCannon** (done 2026-08-11) — site `ldorvador-preview` connected to
+   the repo in headless mode (cloudcannon.config.yml at repo root; CloudCannon
+   edits and commits, Cloudflare builds). Hannah uses a Client Sharing
+   password link. Apply to the partner program before the trial ends for the
+   $10/mo Lite plan. The leftover TINA_TOKEN build variable in Cloudflare can
+   be deleted.
 
 ## Cutover order (do not reorder)
 
@@ -82,7 +75,7 @@ The old site was a single page; `_redirects` maps `/home` and `/cart` to `/`.
 
 ## How editing works after launch
 
-Hannah signs in at the TinaCloud-hosted admin with email + password. Every
+Hannah opens the CloudCannon Client Sharing link with its password. Every
 text on the site is a field in `site/content/*.json`, grouped by page and
 section, each field labeled with a preview of its current text. Saving
 commits to the repo; Cloudflare rebuilds; live in ~1 minute.

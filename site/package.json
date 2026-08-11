@@ -1,9 +1,0 @@
-{
-  "name": "ldorvador-site",
-  "private": true,
-  "description": "TinaCMS admin build for the L'Dor Vador site (the site itself is built by build.py)",
-  "dependencies": {
-    "tinacms": "^2.7.0",
-    "@tinacms/cli": "^1.9.0"
-  }
-}
