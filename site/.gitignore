@@ -1,0 +1,16 @@
+# build outputs (Cloudflare builds these; assets/app.css+js are committed
+# because build.py reads the embedded fonts back out of app.css)
+index.html
+history.html
+story.html
+itinerary.html
+privacy.html
+es/
+nl/
+he/
+robots.txt
+sitemap.xml
+_redirects
+_headers
+home_selfcontained.html
+__pycache__/

@@ -69,9 +69,10 @@ def fill_content(body):
     assert not leftover, 'untranslated content tokens: %s' % leftover[:5]
     return body
 
-PAGES = ['index.html', 'history.html', 'story.html', 'itinerary.html']
+PAGES = ['index.html', 'history.html', 'story.html', 'itinerary.html', 'privacy.html']
 BODY  = {'index.html': 'home.body.html', 'history.html': 'history.body.html',
-         'story.html': 'story.body.html', 'itinerary.html': 'itinerary.body.html'}
+         'story.html': 'story.body.html', 'itinerary.html': 'itinerary.body.html',
+         'privacy.html': 'privacy.body.html'}
 
 LOCALES = ['en', 'es', 'nl', 'he']
 LABEL   = {'en': 'EN', 'es': 'ES', 'nl': 'NL', 'he': 'עב'}
@@ -100,6 +101,8 @@ META = {
    "Our origin story. L'Dor Vador was founded by Hannah Berkeley Cohen, former New York Times stringer in Havana, and Cornelis Greiwe, founder of CULTURESCAPE in Curaçao."),
  'itinerary.html': ("Example Itinerary | L'Dor Vador Jewish Heritage Travel",
    "A sample week in Jewish Curaçao: the sand-floor synagogue, Beth Haim, the Jewish Museum, people-to-people encounters, and Shabbat with the community."),
+ 'privacy.html': ("Privacy Policy | L'Dor Vador",
+   "How L'Dor Vador Travel handles the little personal information it collects: contact form details only, no tracking cookies, no data sales."),
 },
 'es': {
  'index.html':     ("L'Dor Vador | Viajes de patrimonio judío a Curaçao",
@@ -110,6 +113,8 @@ META = {
    "Nuestra historia. L'Dor Vador fue fundada por Hannah Berkeley Cohen, ex corresponsal del New York Times en La Habana, y Cornelis Greiwe, fundador de CULTURESCAPE en Curaçao."),
  'itinerary.html': ("Itinerario de ejemplo | L'Dor Vador",
    "Una semana de muestra en la Curaçao judía: la sinagoga de suelo de arena, Beth Haim, el Museo Judío, encuentros de persona a persona y Shabat con la comunidad."),
+ 'privacy.html': ("Pol\u00edtica de privacidad | L'Dor Vador",
+   "C\u00f3mo trata L'Dor Vador Travel la poca informaci\u00f3n personal que recoge: solo los datos del formulario de contacto, sin cookies de rastreo y sin venta de datos."),
 },
 'nl': {
  'index.html':     ("L'Dor Vador | Joodse erfgoedreizen naar Curaçao",
@@ -120,6 +125,8 @@ META = {
    "Ons ontstaan. L'Dor Vador werd opgericht door Hannah Berkeley Cohen, voormalig correspondent van The New York Times in Havana, en Cornelis Greiwe, oprichter van CULTURESCAPE op Curaçao."),
  'itinerary.html': ("Voorbeeldreis | L'Dor Vador",
    "Een voorbeeldweek in Joods Curaçao: de synagoge met zandvloer, Beth Haim, het Joods Museum, ontmoetingen van mens tot mens en Sjabbat met de gemeente."),
+ 'privacy.html': ("Privacybeleid | L'Dor Vador",
+   "Hoe L'Dor Vador Travel omgaat met de weinige persoonsgegevens die worden verzameld: alleen het contactformulier, geen tracking cookies, geen verkoop van gegevens."),
 },
 'he': {
  'index.html':     ("לדור ודור | טיולי מורשת יהודית לקוראסאו",
@@ -130,6 +137,8 @@ META = {
    "הסיפור שלנו. לדור ודור נוסדה על ידי חנה ברקלי כהן וקורנליס חריווה."),
  'itinerary.html': ("מסלול לדוגמה | לדור ודור",
    "שבוע לדוגמה בקוראסאו היהודית: בית הכנסת עם רצפת החול, בית חיים, המוזיאון היהודי ושבת עם הקהילה."),
+ 'privacy.html': ("\u05de\u05d3\u05d9\u05e0\u05d9\u05d5\u05ea \u05e4\u05e8\u05d8\u05d9\u05d5\u05ea | \u05dc\u05d3\u05d5\u05e8 \u05d5\u05d3\u05d5\u05e8",
+   "\u05d0\u05d9\u05da \u05dc\u05d3\u05d5\u05e8 \u05d5\u05d3\u05d5\u05e8 \u05de\u05d8\u05e4\u05dc\u05ea \u05d1\u05de\u05e2\u05d8 \u05d4\u05de\u05d9\u05d3\u05e2 \u05d4\u05d0\u05d9\u05e9\u05d9 \u05e9\u05e0\u05d0\u05e1\u05e3: \u05e4\u05e8\u05d8\u05d9 \u05d8\u05d5\u05e4\u05e1 \u05d9\u05e6\u05d9\u05e8\u05ea \u05d4\u05e7\u05e9\u05e8 \u05d1\u05dc\u05d1\u05d3, \u05dc\u05dc\u05d0 \u05e2\u05d5\u05d2\u05d9\u05d5\u05ea \u05de\u05e2\u05e7\u05d1."),
 },
 }
 
@@ -137,6 +146,12 @@ def rel_prefix(code):
     return '' if code == 'en' else '../'
 
 def page_url(code, page):
+    if PROD:
+        # the production host serves clean URLs (auto-trailing-slash), so
+        # canonicals, hreflang and the sitemap must use that form
+        page = '' if page == 'index.html' else page[:-len('.html')]
+        base = SITE if code == 'en' else '%s/%s' % (SITE, code)
+        return '%s/%s' % (base, page) if page else base + '/'
     return ('%s/%s' % (SITE, page)) if code == 'en' else ('%s/%s/%s' % (SITE, code, page))
 
 def langnav(code, page, tr):
@@ -160,6 +175,28 @@ def hreflangs(page):
     tags.append('<link rel="alternate" hreflang="x-default" href="%s">' % page_url('en', page))
     return ''.join(tags)
 
+def jsonld(code, desc):
+    """schema.org TravelAgency card; json.dumps keeps it pure ASCII so the
+    later entity-escaping pass cannot corrupt it."""
+    data = {
+        '@context': 'https://schema.org',
+        '@type': 'TravelAgency',
+        'name': "L'Dor Vador Travel",
+        'description': desc,
+        'url': (SITE + '/') if PROD else SITE,
+        'email': 'connect@ldorvadortravel.com',
+        'areaServed': {'@type': 'Country', 'name': 'Curaçao'},
+        'knowsLanguage': ['en', 'es', 'nl', 'he'],
+        'founder': [
+            {'@type': 'Person', 'name': 'Hannah Berkeley Cohen'},
+            {'@type': 'Person', 'name': 'Cornelis Greiwe'},
+        ],
+        'logo': '%s/assets/img/favicon-180.png' % SITE,
+        'image': '%s/assets/img/og-home.jpg' % SITE,
+        'inLanguage': HTMLLANG[code],
+    }
+    return '<script type="application/ld+json">%s</script>' % json.dumps(data)
+
 HEAD = ('<!doctype html>\n<html lang="%s"%s><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
         + ('' if PROD else '<meta name="robots" content="noindex, nofollow">') +
@@ -177,7 +214,7 @@ HEAD = ('<!doctype html>\n<html lang="%s"%s><head><meta charset="utf-8">'
         '<link rel="apple-touch-icon" sizes="180x180" href="%sassets/img/favicon-180.png">'
         '<meta name="theme-color" content="#282819">'
         '%s<link rel="canonical" href="%s">'
-        '<title>%s</title><link rel="stylesheet" href="%sassets/app.css"></head><body>\n')
+        '<title>%s</title><link rel="stylesheet" href="%sassets/app.css">%s</head><body>\n')
 TAIL = '\n<script src="%sassets/app.js" defer></script></body></html>'
 
 built = 0
@@ -214,7 +251,7 @@ for code in LOCALES:
                        SITE, title,
                        pre, pre, pre, pre,
                        hreflangs(page), page_url(code, page),
-                       title, pre)
+                       title, pre, jsonld(code, desc))
         out = page if code == 'en' else '%s/%s' % (code, page)
         W(out, entesc(head + body + TAIL % pre))
         built += 1
@@ -239,6 +276,14 @@ W('home_selfcontained.html', sc)
 
 # ---- deploy support: redirects always; robots/sitemap only for production ----
 W('_redirects', '/home / 301\n/cart / 301\n')
+W('_headers', '''/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; media-src 'self'; connect-src 'self' https://api.web3forms.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'
+''')
 if PROD:
     W('robots.txt', 'User-agent: *\nAllow: /\n\nSitemap: %s/sitemap.xml\n' % SITE)
     urls = []

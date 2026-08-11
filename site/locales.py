@@ -377,6 +377,7 @@ HE = {
 # gen_locales.py merges these on top of the index-based tables.
 EXTRA = {
  'es': {
+  'Privacy':'Privacidad',
   'Thank you. Your inquiry is on its way, and we will reply personally within two business days.':'Gracias. Su consulta está en camino y le responderemos personalmente en un plazo de dos días laborables.',
   'Something went wrong sending your message. Please email us directly at connect@ldorvadortravel.com.':'Algo salió mal al enviar su mensaje. Escríbanos directamente a connect@ldorvadortravel.com.',
   'Menu':'Menú',
@@ -407,6 +408,7 @@ EXTRA = {
    'Una biblioteca y museo judíos instalados en un landhuis a las afueras de la ciudad antigua, con archivos, judaica y volúmenes raros de la comunidad de la isla.',
  },
  'nl': {
+  'Privacy':'Privacybeleid',
   'Thank you. Your inquiry is on its way, and we will reply personally within two business days.':'Dank u. Uw aanvraag is onderweg en wij reageren persoonlijk binnen twee werkdagen.',
   'Something went wrong sending your message. Please email us directly at connect@ldorvadortravel.com.':'Er ging iets mis bij het versturen van uw bericht. Mail ons rechtstreeks op connect@ldorvadortravel.com.',
   'Menu':'Menu',
@@ -437,6 +439,7 @@ EXTRA = {
    'Een Joodse bibliotheek en museum in een landhuis buiten de oude stad, met archieven, judaica en zeldzame boeken uit de gemeenschap van het eiland.',
  },
  'he': {
+  'Privacy':'פרטיות',
   'Thank you. Your inquiry is on its way, and we will reply personally within two business days.':'תודה. פנייתכם בדרך אלינו, ונשיב לכם באופן אישי בתוך שני ימי עסקים.',
   'Something went wrong sending your message. Please email us directly at connect@ldorvadortravel.com.':'משהו השתבש בשליחת ההודעה. אנא כתבו לנו ישירות אל connect@ldorvadortravel.com.',
   'Menu':'תפריט',
