@@ -77,7 +77,12 @@ The old site was a single page; `_redirects` maps `/home` and `/cart` to `/`.
 - [ ] Native-speaker review of the Hebrew locale
 - [ ] Privacy policy body translations (page exists, body English-only)
 - [ ] Analytics: enable Cloudflare Web Analytics if wanted (free, cookieless)
-- [ ] CloudCannon partner program application (for the $10/mo Lite price)
+- [ ] CloudCannon: 20-day trial started 2026-08-11, so it lapses around
+      2026-08-31 (confirm the exact date in the dashboard). Before then:
+      Erik applies to the partner program, creates a SEPARATE organization
+      for L'Dor Vador, moves the site into it, and Hannah adds her own card
+      -> $10/mo Lite billed directly to her. If the trial lapses without
+      this, the default rate is $49/mo.
 - [x] Photo of Cornelis (live on About, 2026-08-10)
 - [x] Privacy policy page (all four locales, 2026-08-10)
 - [x] TC Studio standards pass: JSON-LD, security headers, clean canonicals,
