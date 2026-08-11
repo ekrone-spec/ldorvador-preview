@@ -2,6 +2,10 @@
 # Maps content/*.json (the build's editable copy) into CloudCannon's editor.
 version: latest-v2
 
+# CloudCannon edits and commits only; Cloudflare builds and hosts.
+mode: headless
+source: site
+
 collections_config:
   content:
     path: content
