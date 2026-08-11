@@ -54,6 +54,12 @@ The old site was a single page; `_redirects` maps `/home` and `/cart` to `/`.
 
 ## Still open before launch
 
+- [ ] Form submissions currently deliver to erik@tcstudio.io (the Web3Forms
+      key was created under that address; end-to-end tested 2026-08-10).
+      Before cutover: repoint the recipient to connect@ldorvadortravel.com in
+      the Web3Forms account, or issue a new key under that address and swap
+      the default in site/build.py.
+
 - [ ] Real testimonials, or the section comes out (currently fabricated)
 - [ ] Real example itinerary, or label the sample as illustrative
 - [ ] Photo of Cornelis (About page has an initials placeholder)
