@@ -10,3 +10,5 @@ locales/
 tina/
 __pycache__/
 node_modules/
+worker.js
+content/

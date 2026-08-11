@@ -1,9 +1,14 @@
 {
-  // Cloudflare Workers static-assets config: serve the built site
+  // Cloudflare Workers static-assets config: serve the built site.
+  // worker.js runs first for the videos only, to add Range/206 support
+  // that static assets lack (Safari requires it for seekable video).
   "name": "ldorvador-preview",
   "compatibility_date": "2026-08-01",
+  "main": "worker.js",
   "assets": {
     "directory": ".",
-    "html_handling": "auto-trailing-slash"
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "run_worker_first": ["/assets/vid/*"]
   }
 }
