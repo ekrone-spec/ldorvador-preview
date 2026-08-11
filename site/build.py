@@ -191,7 +191,7 @@ for code in LOCALES:
                     .replace('__DISCOVER__', discover))
         body = fill_content(body)
         body = body.replace('__WEB3FORMS_KEY__',
-                            os.environ.get('WEB3FORMS_KEY', 'REPLACE-WITH-WEB3FORMS-ACCESS-KEY'))
+                            os.environ.get('WEB3FORMS_KEY', 'b650cfb7-2868-422a-8d34-553c7674e073'))
         if code != 'en':
             body = i18n.translate(body, tr)
         body = body.replace('__LANGNAV__', langnav(code, page, tr))
