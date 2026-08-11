@@ -69,7 +69,10 @@ The old site was a single page; `_redirects` maps `/home` and `/cart` to `/`.
       the Web3Forms account, or issue a new key under that address and swap
       the default in site/build.py.
 
-- [ ] Real testimonials, or the section comes out (currently fabricated)
+- [ ] GATE - DO NOT LAUNCH PAST THIS: the five testimonials are fabricated
+      (invented names incl. a rabbi and congregation). Fine on the noindex
+      preview only. At cutover: real quotes in, or the section comes out
+      (a ten-minute removal, reversible when real ones arrive).
 - [ ] Real example itinerary, or label the sample as illustrative
 - [ ] Native-speaker review of the Hebrew locale
 - [ ] Privacy policy body translations (page exists, body English-only)
