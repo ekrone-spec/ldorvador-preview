@@ -1,0 +1,9 @@
+{
+  // Cloudflare Workers static-assets config: serve the built site
+  "name": "ldorvador-preview",
+  "compatibility_date": "2026-08-01",
+  "assets": {
+    "directory": ".",
+    "html_handling": "auto-trailing-slash"
+  }
+}

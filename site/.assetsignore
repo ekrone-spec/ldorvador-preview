@@ -1,0 +1,12 @@
+*.py
+*.tmpl
+*.body.html
+*.frag.html
+_strings.json
+fonts_extra.css
+wrangler.jsonc
+DEPLOY.md
+locales/
+tina/
+__pycache__/
+node_modules/
