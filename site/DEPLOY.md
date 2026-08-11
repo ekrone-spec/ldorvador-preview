@@ -26,6 +26,16 @@ robots.txt + sitemap.xml, live form key).
    the repo; copy the Client ID and a read/write token into Cloudflare Pages
    env vars `TINA_CLIENT_ID` / `TINA_TOKEN`. Invite Hannah by email.
 
+## TinaCloud gotcha (cost us an afternoon)
+
+If builds fail with 403 "not authorized to access branch" or "Branch 'main'
+is not on TinaCloud": the branch was never indexed. Auto-indexing after
+project creation is unreliable. Fix: TinaCloud project -> Configuration ->
+Branches -> menu next to main -> Reindex. Test locally with
+`TINA_TOKEN=... npx tinacms build` before blaming tokens or client IDs.
+Also: the TINA_TOKEN goes in Cloudflare's BUILD variables (Settings ->
+Build), not the Worker's runtime variables.
+
 ## Cutover order (do not reorder)
 
 1. Deploy to Cloudflare Pages, verify on the temporary `*.pages.dev` URL:
