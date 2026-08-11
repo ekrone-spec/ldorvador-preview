@@ -1,4 +1,8 @@
-# Launch runbook — ldorvadortravel.com on Cloudflare Workers + CloudCannon
+# ldorvadortravel.com — Cloudflare Workers + CloudCannon
+
+**LAUNCHED 2026-08-11.** Live at https://www.ldorvadortravel.com
+(apex and both .org hostnames 301 to it). This file is now the handover
+and maintenance record; the cutover section is kept as history.
 
 ## Cost change for the client
 
@@ -6,16 +10,16 @@
 |---|---|---|
 | Squarespace website plan | $220/yr | cancelled |
 | Hosting + forms (Cloudflare, Web3Forms) | — | $0 |
-| CMS (CloudCannon Lite, partner) | — | $120/yr, TC Studio |
-| Domain (Squarespace Domains) | $12/yr | $12/yr |
-| **Total** | **$232/yr** | **$12/yr to Hannah** |
+| CMS (CloudCannon Lite, partner rate) | — | $120/yr, billed to Hannah |
+| Domains .com + .org (Squarespace) | ~$24/yr | ~$24/yr |
+| **Total to Hannah** | **~$244/yr** | **~$144/yr** |
 
 The `site/` folder is the full source. `python3 build.py` builds the site into
 `site/` itself; `SITE=https://www.ldorvadortravel.com PROD=1 WEB3FORMS_KEY=…`
 builds the production version (real canonical/hreflang/OG URLs, no noindex,
 robots.txt + sitemap.xml, live form key).
 
-## Accounts Erik needs to create (one-time, ~20 min)
+## Accounts (all created)
 
 1. **Cloudflare** (done) — Workers project `ldorvador-preview`, git-connected.
    Root directory `site`, build command `python3 build.py`, deploy
@@ -30,7 +34,7 @@ robots.txt + sitemap.xml, live form key).
    $10/mo Lite plan. The leftover TINA_TOKEN build variable in Cloudflare can
    be deleted.
 
-## Cutover order (do not reorder)
+## Cutover, as performed (2026-08-11) — kept for reference
 
 1. Verified 2026-08-10/11 on ldorvador-preview.erik-04a.workers.dev:
    all 20 pages x locales, language switcher, RTL, form round trip, video
@@ -61,18 +65,14 @@ robots.txt + sitemap.xml, live form key).
 
 The old site was a single page; `_redirects` maps `/home` and `/cart` to `/`.
 
-## Still open before launch
+## Open items
 
-- [ ] Form submissions currently deliver to erik@tcstudio.io (the Web3Forms
-      key was created under that address; end-to-end tested 2026-08-10).
-      Before cutover: repoint the recipient to connect@ldorvadortravel.com in
-      the Web3Forms account, or issue a new key under that address and swap
-      the default in site/build.py.
-
-- [ ] GATE - DO NOT LAUNCH PAST THIS: the five testimonials are fabricated
-      (invented names incl. a rabbi and congregation). Fine on the noindex
-      preview only. At cutover: real quotes in, or the section comes out
-      (a ten-minute removal, reversible when real ones arrive).
+- [ ] Testimonials section was REMOVED at launch (the five were fabricated).
+      It returns as soon as Hannah supplies real quotes with permission.
+- [ ] Bio text edits from the client Google doc
+- [ ] Squarespace: exports (content XML + Contacts CSV), then cancel the
+      WEBSITE plan only. Domains bill separately - keep auto-renew ON.
+- [ ] Google Search Console: submit sitemap.xml (Hannah owns the property)
 - [ ] Real example itinerary, or label the sample as illustrative
 - [ ] Native-speaker review of the Hebrew locale
 - [ ] Privacy policy body translations (page exists, body English-only)
@@ -83,7 +83,9 @@ The old site was a single page; `_redirects` maps `/home` and `/cart` to `/`.
       for L'Dor Vador, moves the site into it, and Hannah adds her own card
       -> $10/mo Lite billed directly to her. If the trial lapses without
       this, the default rate is $49/mo.
-- [x] Photo of Cornelis (live on About, 2026-08-10)
+- [x] Founder portraits + Beth Haim photo (2026-08-11)
+- [x] Web3Forms recipient includes connect@, tested end to end
+- [x] .org redirects to .com (apex, www, deep paths)
 - [x] Privacy policy page (all four locales, 2026-08-10)
 - [x] TC Studio standards pass: JSON-LD, security headers, clean canonicals,
       sitemap with hreflang (2026-08-10)
