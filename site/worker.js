@@ -7,7 +7,17 @@
  */
 export default {
   async fetch(request, env) {
+    const url = new URL(request.url);
+    if (url.hostname === 'ldorvadortravel.com') {
+      url.hostname = 'www.ldorvadortravel.com';
+      return Response.redirect(url.toString(), 301);
+    }
     const asset = await env.ASSETS.fetch(request);
+    if (url.hostname.endsWith('.workers.dev')) {
+      const h = new Headers(asset.headers);
+      h.set('X-Robots-Tag', 'noindex');
+      return new Response(asset.body, { status: asset.status, headers: h });
+    }
     const range = request.headers.get('Range');
     if (!asset.ok || !range) return asset;
 

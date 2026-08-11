@@ -17,9 +17,9 @@ def W(p, s):
     os.makedirs(os.path.dirname(full), exist_ok=True)
     open(full, 'w', encoding='utf-8').write(s)
 
-# SITE=https://www.ldorvadortravel.com PROD=1 python3 build.py  -> production
-SITE = os.environ.get('SITE', 'https://ekrone-spec.github.io/ldorvador-preview/v4').rstrip('/')
-PROD = os.environ.get('PROD') == '1'
+# Production by default. For a preview build: PROD=0 SITE=<url> python3 build.py
+SITE = os.environ.get('SITE', 'https://www.ldorvadortravel.com').rstrip('/')
+PROD = os.environ.get('PROD', '1') == '1'
 
 # ---- fonts: reuse the @font-face block already embedded in the built app.css ----
 old_css = R('assets/app.css').splitlines()

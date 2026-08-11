@@ -9,6 +9,6 @@
     "directory": ".",
     "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
-    "run_worker_first": ["/assets/vid/*"]
+    "run_worker_first": true
   }
 }
