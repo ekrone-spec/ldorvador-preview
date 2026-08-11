@@ -8,7 +8,9 @@
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.hostname === 'ldorvadortravel.com') {
+    if (url.hostname === 'ldorvadortravel.com' ||
+        url.hostname === 'ldorvadortravel.org' ||
+        url.hostname === 'www.ldorvadortravel.org') {
       url.hostname = 'www.ldorvadortravel.com';
       return Response.redirect(url.toString(), 301);
     }
