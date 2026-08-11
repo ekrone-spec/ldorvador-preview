@@ -3,7 +3,7 @@ import { defineConfig } from "tinacms";
 
 export default defineConfig({
   branch: process.env.HEAD || "main",
-  clientId: process.env.TINA_CLIENT_ID!,
+  clientId: process.env.TINA_CLIENT_ID || "c4a92e84-5acf-4dd9-a17b-42186d431031",
   token: process.env.TINA_TOKEN!,
   build: { outputFolder: "admin", publicFolder: "." },
   media: { tina: { mediaRoot: "assets/img", publicFolder: "." } },
