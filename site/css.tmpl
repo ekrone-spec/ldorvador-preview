@@ -194,7 +194,7 @@ h2.big{font-size:clamp(32px,4.6vw,56px);color:var(--blue)}
 .trip{flex:0 0 min(80vw,440px);scroll-snap-align:start;display:flex;flex-direction:column}
 .trip .ph{aspect-ratio:3/2;overflow:hidden;margin-bottom:22px}
 .trip .ph i{display:block;width:100%;height:100%;background-size:cover;background-position:center;transition:transform 1s ease}
-.trip:hover .ph i{transform:scale(1.05)}
+@media(hover:hover){.trip:hover .ph i{transform:scale(1.05)}}
 .trips-hint{display:flex;align-items:center;gap:10px;color:var(--ink-soft);font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-top:6px}
 .trips-hint .track{flex:1;height:1px;background:var(--line);position:relative;max-width:180px}
 .trips-hint .track::after{content:"";position:absolute;left:0;top:-1px;height:3px;width:44px;background:var(--blue)}
@@ -370,7 +370,7 @@ footer a:hover{color:#fff}
 .jcard:nth-child(6n+5){width:min(80vw,400px);height:540px;transform:translateY(-34px)}
 .jcard:nth-child(6n+6){width:min(84vw,485px);height:450px;transform:translateY(22px)}
 .jcard .img{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 1.4s ease}
-.jcard:hover .img{transform:scale(1.06)}
+@media(hover:hover){.jcard:hover .img{transform:scale(1.06)}}
 .jcard .teaser{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:28px;color:#fff;background:linear-gradient(180deg,transparent,rgba(4,10,22,.8));transition:opacity .4s ease}
 .jcard .teaser .jt{font-family:var(--display);font-weight:700;font-size:23px;line-height:1.12}
 .jcard .teaser .jd{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin-top:10px;opacity:.92}
@@ -536,7 +536,7 @@ footer a:hover{color:#fff}
 .jcard:nth-child(6n+5){width:min(80vw,350px);height:min(46vh,450px);transform:translateY(-28px)}
 .jcard:nth-child(6n+6){width:min(84vw,420px);height:min(39vh,375px);transform:translateY(18px)}
 .jcard .img{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 1.8s ease}
-.jcard:hover .img{transform:scale(1.06)}
+@media(hover:hover){.jcard:hover .img{transform:scale(1.06)}}
 .jcard .teaser{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:24px;color:#fff;background:linear-gradient(180deg,transparent,rgba(6,16,12,.82));transition:opacity .5s ease}
 .jcard .teaser .jt{font-family:var(--display);font-weight:600;font-size:24px;line-height:1.1}
 .jcard .teaser .jd{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-top:8px;opacity:.9}

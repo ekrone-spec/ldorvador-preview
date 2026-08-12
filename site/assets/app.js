@@ -1,6 +1,9 @@
 
 var _yr=document.getElementById('yr'); if(_yr){_yr.textContent=new Date().getFullYear();}
-if('scrollRestoration' in history){history.scrollRestoration='manual';}
+var NAV=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0])||{};
+var IS_BACK=NAV.type==='back_forward';
+/* Fresh visits start at the hero; back/forward returns to where you were. */
+if('scrollRestoration' in history){history.scrollRestoration=IS_BACK?'auto':'manual';}
 try{
   if(document.querySelector('.hero')){
     if(sessionStorage.getItem('ldv-intro-seen')){
@@ -13,7 +16,7 @@ var header=document.getElementById('header');
 function onScroll(){header.classList.toggle('scrolled', window.scrollY> window.innerHeight-90);header.classList.toggle('logo-min', window.scrollY>18)}
 onScroll(); window.addEventListener('scroll',onScroll,{passive:true});
 window.addEventListener('load',function(){
-  if(!(location.hash && document.querySelector(location.hash))) window.scrollTo(0,0);
+  if(!IS_BACK && !(location.hash && document.querySelector(location.hash))) window.scrollTo(0,0);
   onScroll();
 });
 var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.08});
