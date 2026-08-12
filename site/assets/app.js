@@ -12,7 +12,7 @@ var mapwrap=document.getElementById('mapwrap');
 if(mapwrap){
   var mapFired=false;
   var mio=new IntersectionObserver(function(es){es.forEach(function(e){
-    if(e.isIntersecting && !mapFired){mapFired=true;setTimeout(function(){document.getElementById('map').classList.add('map-in')},5000);}
+    if(e.isIntersecting && !mapFired){mapFired=true;setTimeout(function(){var m=document.getElementById('map'); if(m){m.classList.add('map-in');}},5000);}
   })},{threshold:.5});
   mio.observe(mapwrap);
 }

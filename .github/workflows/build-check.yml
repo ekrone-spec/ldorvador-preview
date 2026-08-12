@@ -30,6 +30,10 @@ jobs:
           set -o pipefail
           python3 build.py 2>&1 | tee /tmp/build.log
 
+      - name: Regression test the build
+        working-directory: site
+        run: python3 smoke_test.py
+
       - name: Warn on unresolved content tokens
         if: success()
         run: |
