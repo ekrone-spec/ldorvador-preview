@@ -65,6 +65,19 @@ def main():
             if page == 'index.html':
                 for i in HOME_IDS:
                     check('id="%s"' % i in html, '%s: missing id="%s"' % (path, i))
+                # decorative empty elements the design depends on: a cleanup
+                # pass has now deleted these twice. Counts, not presence.
+                check(html.count('door-img') == 3,
+                      '%s: expected 3 door-img tiles, found %d' % (path, html.count('door-img')))
+                nav = re.search(r'<button class="navtoggle".*?</button>', html, re.S)
+                bars = nav.group(0).count('<span>') if nav else 0
+                check(bars == 3,
+                      '%s: hamburger has %d bars, expected 3' % (path, bars))
+                cue = re.search(r'<div class="scrollcue".*?</div>', html, re.S)
+                check(bool(cue and '<span>' in cue.group(0)),
+                      '%s: scroll cue missing its animated span' % path)
+                check('class="bg"' in html, '%s: hero background element missing' % path)
+                check(html.count('hero-video') >= 3, '%s: hero videos missing' % path)
 
             # structure
             check(html.count('<h1') == 1, '%s: expected exactly one <h1>, found %d'

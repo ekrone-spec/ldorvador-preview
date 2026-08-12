@@ -69,15 +69,16 @@ def _drop_empties(body):
     """Cleared fields leave hollow markup behind. Strip empty inline wrappers
     first, then any block element left with nothing in it, so deleting a
     paragraph in the CMS actually removes the paragraph."""
-    # NEVER touch an element carrying an id or a data- attribute: those are
-    # hooks the CSS/JS depends on and are legitimately empty (e.g. the footer's
-    # <span id="yr"> year placeholder, whose removal killed app.js site-wide).
+    # ONLY block-level text elements are ever removed, and never ones carrying
+    # id/data-/aria hooks. Inline elements are NEVER removed: in this design
+    # empty spans are decorative infrastructure (door-tile photos, the
+    # hamburger bars, the scroll cue) and an empty <b></b> from a cleared
+    # field renders as nothing anyway. Lesson learned twice.
     def safe(m):
         attrs = m.group(2) or ''
-        return m.group(0) if re.search(r'\b(id|data-[\w-]+)\s*=', attrs) else ''
-    for _ in range(4):
+        return m.group(0) if re.search(r'\b(id|data-[\w-]+|aria-[\w-]+)\s*=', attrs) else ''
+    for _ in range(3):
         before = body
-        body = re.sub(r'<(b|strong|em|i|span)(\s[^>]*)?>\s*</\1>', safe, body)
         body = re.sub(r'<(p|h2|h3|h4|blockquote|figcaption|li)(\s[^>]*)?>\s*</\1>\s*', safe, body)
         if body == before:
             break
