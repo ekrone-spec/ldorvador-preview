@@ -1,0 +1,93 @@
+name: Build check
+
+# Every push - including Hannah's saves via CloudCannon - runs the real build.
+# If it fails, open (or update) an issue so it lands in Erik's inbox instead of
+# failing silently and leaving her wondering why the site did not change.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build the site
+        id: build
+        working-directory: site
+        run: |
+          set -o pipefail
+          python3 build.py 2>&1 | tee /tmp/build.log
+
+      - name: Warn on unresolved content tokens
+        if: success()
+        run: |
+          if grep -q '^WARNING:' /tmp/build.log; then
+            echo "::warning::$(grep '^WARNING:' /tmp/build.log | head -1)"
+          fi
+
+      - name: Report failure as an issue
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let log = '';
+            try { log = fs.readFileSync('/tmp/build.log', 'utf8'); } catch (e) {}
+            const tail = log.split('\n').slice(-25).join('\n');
+            const title = 'Site build is failing — the site is not updating';
+            const body = [
+              'The build failed, which means **recent edits are not publishing to',
+              'the live site**. The content is safe in the repo; only the deploy is',
+              'blocked.',
+              '',
+              `Commit: ${context.sha.slice(0, 7)} by ${context.payload.head_commit?.author?.name || 'unknown'}`,
+              `Message: ${context.payload.head_commit?.message || ''}`,
+              `[Full log](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
+              '',
+              '```',
+              tail,
+              '```',
+            ].join('\n');
+
+            const { data: open } = await github.rest.issues.listForRepo({
+              ...context.repo, state: 'open', labels: 'build-failure',
+            });
+            if (open.length) {
+              await github.rest.issues.createComment({
+                ...context.repo, issue_number: open[0].number, body,
+              });
+            } else {
+              await github.rest.issues.create({
+                ...context.repo, title, body, labels: ['build-failure'],
+              });
+            }
+
+      - name: Close the failure issue once green again
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: open } = await github.rest.issues.listForRepo({
+              ...context.repo, state: 'open', labels: 'build-failure',
+            });
+            for (const issue of open) {
+              await github.rest.issues.createComment({
+                ...context.repo, issue_number: issue.number,
+                body: `Build is green again as of ${context.sha.slice(0, 7)}. Closing.`,
+              });
+              await github.rest.issues.update({
+                ...context.repo, issue_number: issue.number, state: 'closed',
+              });
+            }
