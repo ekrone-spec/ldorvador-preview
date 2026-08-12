@@ -98,7 +98,9 @@ section, each field labeled with a preview of its current text. Saving
 commits to the repo; Cloudflare rebuilds; live in ~1 minute.
 
 Caveat: the Spanish, Dutch and Hebrew pages are translated from fixed English
-strings. When Hannah edits English copy, the other languages show her new
-English for that string until the translation tables (`site/locales.py`) are
-updated — the build does this on purpose rather than showing a stale
-translation of text that no longer exists.
+strings. When Hannah edits English copy, that string falls back to showing her
+new English on the other three pages — deliberate, since a translation of text
+that no longer exists would be worse. It is no longer invisible: CI runs
+`site/check_translations.py` on every push and opens a "translation-drift"
+issue listing exactly which strings need retranslating in `site/locales.py`,
+then closes it once they are done.

@@ -377,6 +377,7 @@ HE = {
 # gen_locales.py merges these on top of the index-based tables.
 EXTRA = {
  'es': {
+  'Santa Marta Bay':'Bahía de Santa Marta',
   'Hannah Berkeley Cohen and Cornelis Greiwe under a thatched pergola at a Curaçao landhouse':'Hannah Berkeley Cohen y Cornelis Greiwe bajo una pérgola de madera en una casa señorial de Curazao',
   'Hannah and Cornelis in Curaçao':'Hannah y Cornelis en Curazao',
   'Cornelis Greiwe under a thatched pergola at a Curaçao landhouse':'Cornelis Greiwe bajo una pérgola de madera en una casa señorial de Curazao',
@@ -411,6 +412,7 @@ EXTRA = {
    'Una biblioteca y museo judíos instalados en un landhuis a las afueras de la ciudad antigua, con archivos, judaica y volúmenes raros de la comunidad de la isla.',
  },
  'nl': {
+  'Santa Marta Bay':'Santa Martabaai',
   'Hannah Berkeley Cohen and Cornelis Greiwe under a thatched pergola at a Curaçao landhouse':'Hannah Berkeley Cohen en Cornelis Greiwe onder een houten pergola bij een landhuis op Curaçao',
   'Hannah and Cornelis in Curaçao':'Hannah en Cornelis op Curaçao',
   'Cornelis Greiwe under a thatched pergola at a Curaçao landhouse':'Cornelis Greiwe onder een houten pergola bij een landhuis op Curaçao',
@@ -445,6 +447,7 @@ EXTRA = {
    'Een Joodse bibliotheek en museum in een landhuis buiten de oude stad, met archieven, judaica en zeldzame boeken uit de gemeenschap van het eiland.',
  },
  'he': {
+  'Santa Marta Bay':'מפרץ סנטה מרתה',
   'Hannah Berkeley Cohen and Cornelis Greiwe under a thatched pergola at a Curaçao landhouse':'חנה ברקלי כהן וקורנליס חריווה תחת פרגולת עץ בבית אחוזה בקוראסאו',
   'Hannah and Cornelis in Curaçao':'חנה וקורנליס בקוראסאו',
   'Cornelis Greiwe under a thatched pergola at a Curaçao landhouse':'קורנליס חריווה תחת פרגולת עץ בבית אחוזה בקוראסאו',

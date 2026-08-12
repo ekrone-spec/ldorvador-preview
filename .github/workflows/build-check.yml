@@ -37,6 +37,47 @@ jobs:
             echo "::warning::$(grep '^WARNING:' /tmp/build.log | head -1)"
           fi
 
+      - name: Check for translation drift
+        id: i18n
+        if: success()
+        working-directory: site
+        run: python3 check_translations.py
+
+      - name: Raise an issue when English edits lose their translation
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const drifted = parseInt('${{ steps.i18n.outputs.drifted }}' || '0', 10);
+            const report = `${{ steps.i18n.outputs.report }}`;
+            const { data: open } = await github.rest.issues.listForRepo({
+              ...context.repo, state: 'open', labels: 'translation-drift',
+            });
+            if (drifted > 0) {
+              const body = [
+                `${drifted} English string(s) were edited and are now showing in`,
+                'English on the Spanish, Dutch and Hebrew pages. The site is fine;',
+                'those passages just need retranslating in `site/locales.py`.',
+                '', '```', report, '```',
+              ].join('\n');
+              if (open.length) {
+                await github.rest.issues.createComment({
+                  ...context.repo, issue_number: open[0].number, body });
+              } else {
+                await github.rest.issues.create({
+                  ...context.repo, title: 'Translations out of date after English edits',
+                  body, labels: ['translation-drift'] });
+              }
+            } else {
+              for (const issue of open) {
+                await github.rest.issues.createComment({
+                  ...context.repo, issue_number: issue.number,
+                  body: 'All edited strings are translated again. Closing.' });
+                await github.rest.issues.update({
+                  ...context.repo, issue_number: issue.number, state: 'closed' });
+              }
+            }
+
       - name: Report failure as an issue
         if: failure()
         uses: actions/github-script@v7
