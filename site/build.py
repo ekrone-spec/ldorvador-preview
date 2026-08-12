@@ -49,6 +49,9 @@ discover = R('discover.frag.html')
 # JSON; the build folds it back in before translation. ----
 import html as _html
 def _cesc(s):
+    # CloudCannon writes null when an editor clears a field; treat it as empty
+    if s is None:
+        return ''
     return s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;')
 
 CONTENT = {}
@@ -62,12 +65,30 @@ for fn in sorted(os.listdir(cdir)):
         for field, text in fields.items():
             CONTENT['__C_%s.%s.%s__' % (page, group, field)] = _cesc(text)
 
+def _drop_empties(body):
+    """Cleared fields leave hollow markup behind. Strip empty inline wrappers
+    first, then any block element left with nothing in it, so deleting a
+    paragraph in the CMS actually removes the paragraph."""
+    for _ in range(4):
+        before = body
+        body = re.sub(r'<(b|strong|em|i|span)(\s[^>]*)?>\s*</\1>', '', body)
+        body = re.sub(r'<(p|h2|h3|h4|blockquote|figcaption|li)(\s[^>]*)?>\s*</\1>\s*', '', body)
+        if body == before:
+            break
+    return body
+
 def fill_content(body):
     for tok, val in CONTENT.items():
         body = body.replace(tok, val)
-    leftover = re.findall(r'__C_[a-z0-9_.]+__', body)
-    assert not leftover, 'untranslated content tokens: %s' % leftover[:5]
-    return body
+    # An editor's content must never break the build: unknown tokens render
+    # empty and shout in the log rather than aborting the deploy.
+    leftover = sorted(set(re.findall(r'__C_[a-z0-9_.]+__', body)))
+    if leftover:
+        print('WARNING: %d content token(s) with no value: %s'
+              % (len(leftover), ', '.join(leftover[:5])))
+        for tok in leftover:
+            body = body.replace(tok, '')
+    return _drop_empties(body)
 
 PAGES = ['index.html', 'history.html', 'story.html', 'itinerary.html', 'privacy.html']
 BODY  = {'index.html': 'home.body.html', 'history.html': 'history.body.html',

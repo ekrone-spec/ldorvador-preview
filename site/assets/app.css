@@ -508,6 +508,9 @@ footer a:hover{color:#fff}
 
 /* ===== about page, founder bios ===== */
 .bio{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(30px,5vw,74px);align-items:start;margin-top:clamp(56px,8vh,96px);padding-top:clamp(44px,6vh,72px);border-top:1px solid var(--line)}
+/* reversed row: swap the track widths too, so the portrait keeps the .8fr
+   column and both founders' photos render at identical size */
+.bio.reverse{grid-template-columns:1.2fr .8fr}
 .bio.reverse .bio-portrait{order:2}
 @media(max-width:820px){.bio,.bio.reverse{grid-template-columns:1fr}.bio.reverse .bio-portrait{order:0}}
 .bio-portrait img{width:100%;height:auto;display:block;filter:saturate(.92)}
