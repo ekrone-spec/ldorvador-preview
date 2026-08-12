@@ -934,3 +934,9 @@ header.scrolled .navtoggle span,.header-solid .navtoggle span{background:var(--g
 .no-intro header{opacity:1;animation:none}
 .no-intro .hero h1,.no-intro .hero .heb{opacity:1;animation:none}
 .no-intro .scrollcue{opacity:1;animation:fade 0s ease forwards}
+
+/* Sent state: the form makes way for a confirmation worthy of the moment.
+   Nothing persists - a refresh brings the form back. */
+form.sent .field,form.sent .two,form.sent button[type=submit]{display:none}
+form.sent .formnote{font-family:var(--display);font-size:clamp(24px,2.6vw,34px);line-height:1.35;color:var(--green-d);margin:clamp(20px,4vh,40px) 0;max-width:34ch}
+form.sent .formnote::before{content:"";display:block;width:56px;height:2px;background:var(--sage);margin-bottom:22px}

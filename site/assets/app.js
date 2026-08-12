@@ -391,7 +391,7 @@ document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener
     btn.disabled = true;
     fetch(f.action, {method:'POST', body:new FormData(f), headers:{'Accept':'application/json'}})
       .then(function(r){ return r.json(); })
-      .then(function(j){ say(j.success ? f.dataset.ok : f.dataset.err); if (j.success) f.reset(); })
+      .then(function(j){ say(j.success ? f.dataset.ok : f.dataset.err); if (j.success) { f.reset(); f.classList.add('sent'); } })
       .catch(function(){ say(f.dataset.err); })
       .finally(function(){ btn.disabled = false; });
   });
