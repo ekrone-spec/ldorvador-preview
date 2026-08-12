@@ -13,7 +13,8 @@ import i18n
 D = os.path.dirname(os.path.abspath(__file__))
 def R(p): return open(os.path.join(D, p), encoding='utf-8').read()
 def W(p, s):
-    full = os.path.join(D, p)
+    # LDV_OUT_DIR: full_test.py builds into a temp dir; unset = normal build
+    full = os.path.join(os.environ.get('LDV_OUT_DIR') or D, p)
     os.makedirs(os.path.dirname(full), exist_ok=True)
     open(full, 'w', encoding='utf-8').write(s)
 
@@ -83,6 +84,11 @@ def _drop_empties(body):
         if body == before:
             break
     return body
+
+# LDV_PLACEBO: full_test.py replaces all copy with a constant so page
+# structure depends only on templates + build code, never on CMS content.
+if os.environ.get('LDV_PLACEBO'):
+    CONTENT = {k: 'Placeholder text for structural testing' for k in CONTENT}
 
 def fill_content(body):
     for tok, val in CONTENT.items():

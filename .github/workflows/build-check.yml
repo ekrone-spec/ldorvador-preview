@@ -34,6 +34,10 @@ jobs:
         working-directory: site
         run: python3 smoke_test.py
 
+      - name: Exhaustive test (golden structure + full audit)
+        working-directory: site
+        run: python3 full_test.py
+
       - name: Warn on unresolved content tokens
         if: success()
         run: |

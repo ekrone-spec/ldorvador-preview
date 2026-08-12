@@ -2,7 +2,6 @@
 /*__FONTS__*/
 :root{
   --hero:url('__IMG_hero-poster__');
-  --doors:url('__IMG_doors__');
   /* palette (ceramic star tile): cream base, near-black olive text, sage + earth accents.
      legacy names (blue/yellow/navy…) are aliased onto the new palette so nothing else breaks. */
   --green-d:#282819; --sage:#7d9065; --sage-2:#a0b286; --olive:#555a45;
@@ -60,8 +59,6 @@ a{color:inherit}
 .intro{position:fixed;inset:0;z-index:1500;overflow:hidden;background:var(--cream);animation:introEnd 0s linear 4.25s forwards}
 @keyframes introEnd{to{visibility:hidden;pointer-events:none}}
 .intro .ihero{position:absolute;inset:0;background:var(--hero) center 54%/cover}
-.intro .idoors{position:absolute;inset:0;background:var(--doors) center 42%/cover no-repeat;transform-origin:50% 50%;will-change:transform,opacity;
-  animation:doorsZoomFade 2.7s cubic-bezier(.45,.05,.25,1) 1.45s forwards}
 @keyframes doorsZoomFade{0%{transform:scale(1);opacity:1}100%{transform:scale(1.5);opacity:0}}
 .intro .dl{position:absolute;top:53%;z-index:3;font-family:var(--heb);font-weight:800;direction:rtl;color:#fff;
   font-size:clamp(52px,10vw,150px);line-height:.9;letter-spacing:.01em;transform:translate(-50%,-50%);
