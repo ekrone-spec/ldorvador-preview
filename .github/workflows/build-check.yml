@@ -55,6 +55,8 @@ jobs:
             });
             if (drifted > 0) {
               const body = [
+                '@ekrone-spec',
+                '',
                 `${drifted} English string(s) were edited and are now showing in`,
                 'English on the Spanish, Dutch and Hebrew pages. The site is fine;',
                 'those passages just need retranslating in `site/locales.py`.',
@@ -89,6 +91,8 @@ jobs:
             const tail = log.split('\n').slice(-25).join('\n');
             const title = 'Site build is failing — the site is not updating';
             const body = [
+              '@ekrone-spec',
+              '',
               'The build failed, which means **recent edits are not publishing to',
               'the live site**. The content is safe in the repo; only the deploy is',
               'blocked.',
