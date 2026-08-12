@@ -377,6 +377,9 @@ HE = {
 # gen_locales.py merges these on top of the index-based tables.
 EXTRA = {
  'es': {
+  'Example itinerary · 5 days':'Itinerario de ejemplo · 5 días',
+  'We collaborate with Jewish institutions, community organizers, lay leaders, and individual families. If you are considering a journey for your organization or community, we invite you to begin a conversation. We also serve as a trusted local DMC for American and European outbound tour operators, managing every aspect of their programs on the ground.':'Colaboramos con instituciones judías, organizadores comunitarios, líderes laicos y familias. Si está considerando un viaje para su organización o comunidad, le invitamos a iniciar una conversación. También actuamos como DMC local de confianza para turoperadores emisores estadounidenses y europeos, gestionando sobre el terreno todos los aspectos de sus programas.',
+  'From accommodation and transportation to expert-led encounters and dining, every detail is coordinated by our team with attention to each group’s interests, pace, and needs.':'Desde el alojamiento y el transporte hasta los encuentros guiados por expertos y las comidas, nuestro equipo coordina cada detalle atendiendo a los intereses, el ritmo y las necesidades de cada grupo.',
   'Santa Marta Bay':'Bahía de Santa Marta',
   'Hannah Berkeley Cohen and Cornelis Greiwe under a thatched pergola at a Curaçao landhouse':'Hannah Berkeley Cohen y Cornelis Greiwe bajo una pérgola de madera en una casa señorial de Curazao',
   'Hannah and Cornelis in Curaçao':'Hannah y Cornelis en Curazao',
@@ -412,6 +415,9 @@ EXTRA = {
    'Una biblioteca y museo judíos instalados en un landhuis a las afueras de la ciudad antigua, con archivos, judaica y volúmenes raros de la comunidad de la isla.',
  },
  'nl': {
+  'Example itinerary · 5 days':'Voorbeeldreis · 5 dagen',
+  'We collaborate with Jewish institutions, community organizers, lay leaders, and individual families. If you are considering a journey for your organization or community, we invite you to begin a conversation. We also serve as a trusted local DMC for American and European outbound tour operators, managing every aspect of their programs on the ground.':"We werken samen met Joodse instellingen, gemeenschapsorganisatoren, lekenleiders en individuele families. Overweegt u een reis voor uw organisatie of gemeenschap, dan nodigen we u uit het gesprek te beginnen. Daarnaast zijn we een betrouwbare lokale DMC voor Amerikaanse en Europese touroperators en verzorgen we ter plaatse elk aspect van hun programma's.",
+  'From accommodation and transportation to expert-led encounters and dining, every detail is coordinated by our team with attention to each group’s interests, pace, and needs.':'Van accommodatie en vervoer tot ontmoetingen onder deskundige leiding en de maaltijden: ons team coördineert elk detail met aandacht voor de interesses, het tempo en de wensen van elke groep.',
   'Santa Marta Bay':'Santa Martabaai',
   'Hannah Berkeley Cohen and Cornelis Greiwe under a thatched pergola at a Curaçao landhouse':'Hannah Berkeley Cohen en Cornelis Greiwe onder een houten pergola bij een landhuis op Curaçao',
   'Hannah and Cornelis in Curaçao':'Hannah en Cornelis op Curaçao',
@@ -447,6 +453,9 @@ EXTRA = {
    'Een Joodse bibliotheek en museum in een landhuis buiten de oude stad, met archieven, judaica en zeldzame boeken uit de gemeenschap van het eiland.',
  },
  'he': {
+  'Example itinerary · 5 days':'מסלול לדוגמה · 5 ימים',
+  'We collaborate with Jewish institutions, community organizers, lay leaders, and individual families. If you are considering a journey for your organization or community, we invite you to begin a conversation. We also serve as a trusted local DMC for American and European outbound tour operators, managing every aspect of their programs on the ground.':'אנחנו משתפים פעולה עם מוסדות יהודיים, מארגני קהילה, מנהיגים מקומיים ומשפחות. אם אתם שוקלים מסע עבור הארגון או הקהילה שלכם, נשמח שתפתחו איתנו בשיחה. אנחנו משמשים גם כחברת תיירות מקומית (DMC) אמינה עבור מארגני טיולים מארצות הברית ומאירופה, ומנהלים בשטח כל היבט של התוכניות שלהם.',
+  'From accommodation and transportation to expert-led encounters and dining, every detail is coordinated by our team with attention to each group’s interests, pace, and needs.':'מהלינה והתחבורה ועד מפגשים בהובלת מומחים והארוחות, כל פרט מתואם על ידי הצוות שלנו תוך תשומת לב לתחומי העניין, לקצב ולצרכים של כל קבוצה.',
   'Santa Marta Bay':'מפרץ סנטה מרתה',
   'Hannah Berkeley Cohen and Cornelis Greiwe under a thatched pergola at a Curaçao landhouse':'חנה ברקלי כהן וקורנליס חריווה תחת פרגולת עץ בבית אחוזה בקוראסאו',
   'Hannah and Cornelis in Curaçao':'חנה וקורנליס בקוראסאו',
