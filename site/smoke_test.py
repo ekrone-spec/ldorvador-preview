@@ -80,6 +80,11 @@ def main():
                 check(html.count('hero-video') >= 3, '%s: hero videos missing' % path)
                 check('formnote' in html,
                       '%s: form confirmation element missing (submissions send but show nothing)' % path)
+                lbx = re.search(r'<div class="lightbox".*?</div>', html, re.S)
+                lbx = lbx.group(0) if lbx else ''
+                for piece in ('lb-close', '<figcaption', '<img'):
+                    check(piece in lbx,
+                          '%s: lightbox missing %s (breaks photo expand)' % (path, piece))
 
             # structure
             check(html.count('<h1') == 1, '%s: expected exactly one <h1>, found %d'

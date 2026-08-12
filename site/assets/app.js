@@ -248,10 +248,10 @@ if(mapwrap){
     lastFocus=card;
     img.src=full;
     img.alt=t?t.textContent:'';
-    cap.textContent=[t&&t.textContent, s&&s.textContent].filter(Boolean).join(' \u00b7 ');
+    if(cap){cap.textContent=[t&&t.textContent, s&&s.textContent].filter(Boolean).join(' \u00b7 ');}
     lb.hidden=false;
     requestAnimationFrame(function(){ lb.classList.add('open'); });
-    closeBtn.focus();
+    if(closeBtn){closeBtn.focus();}
     document.body.style.overflow='hidden';
   }
   function close(){
@@ -394,7 +394,16 @@ document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener
     btn.disabled = true;
     fetch(f.action, {method:'POST', body:new FormData(f), headers:{'Accept':'application/json'}})
       .then(function(r){ return r.json(); })
-      .then(function(j){ say(j.success ? f.dataset.ok : f.dataset.err); if (j.success) { f.reset(); f.classList.add('sent'); } })
+      .then(function(j){
+        say(j.success ? f.dataset.ok : f.dataset.err);
+        if (j.success) {
+          /* keep the form's footprint so the page height does not collapse
+             (a sudden shrink mid-scroll dumped mobile users behind the page) */
+          f.style.minHeight = f.offsetHeight + 'px';
+          f.reset(); f.classList.add('sent');
+          if (note && note.scrollIntoView) note.scrollIntoView({block:'center', behavior:'smooth'});
+        }
+      })
       .catch(function(){ say(f.dataset.err); })
       .finally(function(){ btn.disabled = false; });
   });

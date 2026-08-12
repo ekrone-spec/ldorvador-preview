@@ -53,7 +53,11 @@ def _cesc(s):
     # CloudCannon writes null when an editor clears a field; treat it as empty
     if s is None:
         return ''
-    return s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;')
+    s = s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;')
+    # editors type paragraph breaks in textareas; honour them
+    s = re.sub(r'\r?\n(\s*\r?\n)+', '<br><br>', s)
+    s = re.sub(r'\r?\n', '<br>', s)
+    return s
 
 CONTENT = {}
 cdir = os.path.join(D, 'content')

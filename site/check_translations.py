@@ -31,8 +31,12 @@ def load_content():
         data = json.load(open(os.path.join(cdir, fn), encoding='utf-8'))
         for group, fields in data.items():
             for key, val in fields.items():
-                if val and val.strip():
-                    out['%s.%s.%s' % (fn[:-5], group, key)] = u(val.strip())
+                if not (val and val.strip()):
+                    continue
+                segs = [x.strip() for x in val.replace('\r','').split('\n') if x.strip()]
+                for n, seg in enumerate(segs):
+                    suffix = '' if len(segs) == 1 else '#%d' % (n + 1)
+                    out['%s.%s.%s%s' % (fn[:-5], group, key, suffix)] = u(seg)
     return out
 
 
