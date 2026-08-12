@@ -1,10 +1,21 @@
 
 var _yr=document.getElementById('yr'); if(_yr){_yr.textContent=new Date().getFullYear();}
 if('scrollRestoration' in history){history.scrollRestoration='manual';}
+try{
+  if(document.querySelector('.hero')){
+    if(sessionStorage.getItem('ldv-intro-seen')){
+      document.documentElement.classList.add('no-intro');
+    }
+    sessionStorage.setItem('ldv-intro-seen','1');
+  }
+}catch(e){}
 var header=document.getElementById('header');
 function onScroll(){header.classList.toggle('scrolled', window.scrollY> window.innerHeight-90);header.classList.toggle('logo-min', window.scrollY>18)}
 onScroll(); window.addEventListener('scroll',onScroll,{passive:true});
-window.addEventListener('load',function(){window.scrollTo(0,0);onScroll();});
+window.addEventListener('load',function(){
+  if(!(location.hash && document.querySelector(location.hash))) window.scrollTo(0,0);
+  onScroll();
+});
 var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.08});
 document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
 /* map: hold 5s after it's in view, then begin the very slow zoom (only if a map exists) */
@@ -138,6 +149,21 @@ if(mapwrap){
     if(history.replaceState) history.replaceState(null,'',hash);
     if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
   });
+  /* Arriving from another page (nav "Inquire", submenu items): the browser's
+     own anchor jump is wrong for stacked sticky sections, and the old
+     load-handler used to force the page to the top. Land it properly. */
+  function landOnHash(){
+    var t=location.hash && location.hash.length>1 && document.querySelector(location.hash);
+    if(!t) return;
+    var y=flowTopOf(t);
+    if(y===null) return;
+    y=Math.max(0,y-(parseFloat(getComputedStyle(t).scrollMarginTop)||0));
+    window.scrollTo({top:y,behavior:'auto'});
+  }
+  window.addEventListener('load',function(){
+    landOnHash();
+    setTimeout(landOnHash,350);   // again after images settle heights
+  });
 })();
 
 /* Hero video rotation. The still image carries the hero by default; the clips
@@ -200,8 +226,9 @@ if(mapwrap){
     show(0);
     timer=setInterval(function(){ i=(i+1)%vids.length; show(i); }, HOLD);
   }
-  if(document.readyState==='complete') start();
-  else window.addEventListener('load', start, {once:true});
+  start();                                  // begin fetching at script time,
+  if(document.readyState!=='complete')      // not after every image has loaded
+    window.addEventListener('load', start, {once:true});
   window.addEventListener('resize', start);
 })();
 
@@ -360,11 +387,12 @@ document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener
     e.preventDefault();
     var note = f.querySelector('.formnote');
     var btn = f.querySelector('button[type=submit]');
+    function say(msg){ if(note){ note.textContent = msg; } else { alert(msg); } }
     btn.disabled = true;
     fetch(f.action, {method:'POST', body:new FormData(f), headers:{'Accept':'application/json'}})
       .then(function(r){ return r.json(); })
-      .then(function(j){ note.textContent = j.success ? f.dataset.ok : f.dataset.err; if (j.success) f.reset(); })
-      .catch(function(){ note.textContent = f.dataset.err; })
+      .then(function(j){ say(j.success ? f.dataset.ok : f.dataset.err); if (j.success) f.reset(); })
+      .catch(function(){ say(f.dataset.err); })
       .finally(function(){ btn.disabled = false; });
   });
 })();

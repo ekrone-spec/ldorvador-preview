@@ -78,6 +78,8 @@ def main():
                       '%s: scroll cue missing its animated span' % path)
                 check('class="bg"' in html, '%s: hero background element missing' % path)
                 check(html.count('hero-video') >= 3, '%s: hero videos missing' % path)
+                check('formnote' in html,
+                      '%s: form confirmation element missing (submissions send but show nothing)' % path)
 
             # structure
             check(html.count('<h1') == 1, '%s: expected exactly one <h1>, found %d'

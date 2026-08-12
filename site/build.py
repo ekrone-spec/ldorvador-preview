@@ -77,7 +77,7 @@ def _drop_empties(body):
     # field renders as nothing anyway. Lesson learned twice.
     def safe(m):
         attrs = m.group(2) or ''
-        return m.group(0) if re.search(r'\b(id|data-[\w-]+|aria-[\w-]+)\s*=', attrs) else ''
+        return m.group(0) if re.search(r'\b(id|role|data-[\w-]+|aria-[\w-]+)\s*=', attrs) else ''
     for _ in range(3):
         before = body
         body = re.sub(r'<(p|h2|h3|h4|blockquote|figcaption|li)(\s[^>]*)?>\s*</\1>\s*', safe, body)

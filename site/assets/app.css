@@ -934,3 +934,18 @@ header.scrolled .navtoggle span,.header-solid .navtoggle span{background:var(--g
   .below{margin-bottom:0!important}
 }
 @media(min-width:981px){.mobilenav{display:none!important}}
+
+
+/* v4.8 - accessibility + polish (2026-08-12) */
+/* Eyebrows and captions that sit on photography: stronger scrim + shadow so
+   the small uppercase text meets contrast standards on bright imagery. */
+.subhero::after{background:linear-gradient(180deg,rgba(6,12,26,.55),rgba(6,12,26,.22) 42%,rgba(6,12,26,.74))}
+.subhero .eyebrow{color:#f3e2c8;text-shadow:0 1px 3px rgba(0,0,0,.65),0 6px 22px rgba(0,0,0,.45)}
+.subhero h1{text-shadow:0 2px 6px rgba(0,0,0,.4),0 12px 34px rgba(0,0,0,.35)}
+.imgpanel .cap .eyebrow,.namecap .eyebrow{text-shadow:0 1px 3px rgba(0,0,0,.6),0 5px 18px rgba(0,0,0,.4)}
+.beginband h2,.beginband p{text-shadow:0 1px 3px rgba(0,0,0,.55),0 8px 26px rgba(0,0,0,.4)}
+/* Homepage intro fade-ins run once per browser session; on return visits the
+   chrome is simply there. */
+.no-intro header{opacity:1;animation:none}
+.no-intro .hero h1,.no-intro .hero .heb{opacity:1;animation:none}
+.no-intro .scrollcue{opacity:1;animation:fade 0s ease forwards}
