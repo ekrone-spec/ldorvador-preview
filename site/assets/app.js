@@ -1,5 +1,5 @@
 
-document.getElementById('yr').textContent=new Date().getFullYear();
+var _yr=document.getElementById('yr'); if(_yr){_yr.textContent=new Date().getFullYear();}
 if('scrollRestoration' in history){history.scrollRestoration='manual';}
 var header=document.getElementById('header');
 function onScroll(){header.classList.toggle('scrolled', window.scrollY> window.innerHeight-90);header.classList.toggle('logo-min', window.scrollY>18)}
