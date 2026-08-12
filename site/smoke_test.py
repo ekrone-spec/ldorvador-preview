@@ -102,6 +102,32 @@ def main():
             check('<html lang="%s"' % expect_lang in html,
                   '%s: wrong <html lang>' % path)
 
+    # --- no hover rule may move/hide/reveal outside @media(hover:hover):
+    #     on iOS such rules make links need two taps ---
+    css = get('assets/app.css') if not live else None
+    if css is None:
+        try:
+            import urllib.request
+            req = urllib.request.Request(LIVE + '/assets/app.css',
+                                         headers={'User-Agent': 'Mozilla/5.0'})
+            css = urllib.request.urlopen(req, timeout=20).read().decode('utf-8')
+        except Exception:
+            css = ''
+    if css:
+        gated = []
+        for m in re.finditer(r'@media\s*\(hover:\s*hover\)\s*\{', css):
+            depth, i = 1, m.end()
+            while depth and i < len(css):
+                if css[i] == '{': depth += 1
+                elif css[i] == '}': depth -= 1
+                i += 1
+            gated.append((m.start(), i))
+        for m in re.finditer(r'([^{}@]+:hover[^{]*)\{([^}]*)\}', css):
+            if re.search(r'opacity|visibility|display|transform|filter|max-height', m.group(2)) \
+               and not any(a <= m.start() < b for a, b in gated):
+                check(False, 'CSS: ungated hover rule causes double-tap on iOS: %s'
+                      % m.group(1).strip()[:70])
+
     # --- the script itself must be intact and parseable-ish ---
     js = get('assets/app.js') if not live else fetch_live('assets/app.js')
     if js is None and live:
