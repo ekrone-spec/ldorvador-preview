@@ -33,8 +33,6 @@ def finish():
     print("\n%d checks failed" % len(FAILS))
     sys.exit(1 if FAILS else 0)
 
-# Preview URL until the real domain is connected; update url= then.
-# Page is ~4.8MB today, hence the generous latency ceiling.
-probe("ldorvador preview", "https://ekrone-spec.github.io/ldorvador-preview/",
-      "Dor Vador", min_kb=100, max_s=20, want_form=True)
+probe("ldorvadortravel.com", "https://www.ldorvadortravel.com/", "Dor Vador", want_form=True)
+probe("ldorvadortravel apex redirect", "https://ldorvadortravel.com/", "Dor Vador")
 finish()
