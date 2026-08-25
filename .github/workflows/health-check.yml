@@ -1,0 +1,22 @@
+# Scheduled production health check - see scripts/health_check.py.
+# GitHub emails the repo owner automatically when a run fails.
+name: health-check
+on:
+  schedule:
+    - cron: '35 3,9,15,21 * * *'
+  workflow_dispatch:
+    inputs:
+      force_fail:
+        description: 'Set to 1 to test the failure alarm'
+        required: false
+        default: ''
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run live health checks
+        env:
+          FORCE_FAIL: ${{ inputs.force_fail }}
+        run: python3 scripts/health_check.py
