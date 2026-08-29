@@ -204,10 +204,12 @@ if(mapwrap){
        kill the rotation: try again when the page is next visible/touched. */
     function again(){ cleanup(); reveal(n); }
     function cleanup(){
+      clearTimeout(t);
       document.removeEventListener('visibilitychange', again);
       window.removeEventListener('pointerdown', again);
       window.removeEventListener('scroll', again);
     }
+    var t=setTimeout(again, 700);   // early rejections are transient: retry untouched pages too
     document.addEventListener('visibilitychange', again, {once:true});
     window.addEventListener('pointerdown', again, {once:true});
     window.addEventListener('scroll', again, {once:true, passive:true});
@@ -261,9 +263,13 @@ if(mapwrap){
     timer=setInterval(function(){ i=(i+1)%vids.length; show(i); }, HOLD);
   }
   if(eligible()) load(vids[0]);             // warm the first clip's fetch NOW
-  if(document.readyState==='loading')       // ...but only start playback once
-    document.addEventListener('DOMContentLoaded', start, {once:true});
-  else start();
+  function kickoff(){
+    /* two rAFs = after first paint: Safari rejects play() invoked pre-paint */
+    requestAnimationFrame(function(){ requestAnimationFrame(start); });
+  }
+  if(document.readyState==='loading')
+    document.addEventListener('DOMContentLoaded', kickoff, {once:true});
+  else kickoff();
   window.addEventListener('load', start, {once:true});
   window.addEventListener('resize', start);
 })();
