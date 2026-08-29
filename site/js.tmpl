@@ -199,20 +199,24 @@ if(mapwrap){
     v.dataset.loaded='1'; v.preload='auto';
     v.src=v.getAttribute('data-src'); v.load();
   }
+  var cancelRetry=null;
   function retryLater(n){
-    /* A transient play() rejection (hidden tab, busy renderer) must never
-       kill the rotation: try again when the page is next visible/touched. */
-    function again(){ cleanup(); reveal(n); }
+    /* One pending retry at most, and it only acts if its clip is still the
+       current one - stale retries replaying old clips caused a visible
+       ping-pong (1-2-1-3-2) once a user gesture unlocked autoplay. */
+    if(cancelRetry) cancelRetry();
+    function again(){ cleanup(); if(n===i) reveal(n); }
     function cleanup(){
-      clearTimeout(t);
+      clearTimeout(t); cancelRetry=null;
       document.removeEventListener('visibilitychange', again);
       window.removeEventListener('pointerdown', again);
       window.removeEventListener('scroll', again);
     }
-    var t=setTimeout(again, 700);   // early rejections are transient: retry untouched pages too
+    var t=setTimeout(again, 700);
     document.addEventListener('visibilitychange', again, {once:true});
     window.addEventListener('pointerdown', again, {once:true});
     window.addEventListener('scroll', again, {once:true, passive:true});
+    cancelRetry=cleanup;
   }
   function reveal(n){
     var v=vids[n];
@@ -236,7 +240,6 @@ if(mapwrap){
     var revealed=false;
     function onPlaying(){ if(revealed) return; revealed=true; shown(); }
     v.addEventListener('playing', onPlaying, {once:true});
-    if(!v.paused && v.readyState>=2) onPlaying();   // already going natively
     var p=v.play();
     if(p&&p.catch) p.catch(function(){
       if(!revealed) retryLater(n);   // native autoplay may still land; retry is a backstop
@@ -257,6 +260,7 @@ if(mapwrap){
     });
   });
   function show(n){
+    if(cancelRetry) cancelRetry();
     /* Call play() straight away: Safari will not fetch data for a video until
        play() is invoked (it ignores preload=auto), so waiting for canplay
        first deadlocks there. reveal() only makes the clip visible once the
