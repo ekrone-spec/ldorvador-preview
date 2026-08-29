@@ -238,7 +238,14 @@ if(mapwrap){
        Safari denies JS play() but still honours the native autoplay attribute
        on muted+playsinline video, and 'playing' fires either way. */
     var revealed=false;
-    function onPlaying(){ if(revealed) return; revealed=true; shown(); }
+    function onPlaying(){
+      if(revealed) return; revealed=true;
+      /* 'playing' means started, not painted: fading in on it can show a
+         dark un-composited frame. requestVideoFrameCallback (Safari 15.4+,
+         Chrome) fires when a real frame reaches the compositor. */
+      if(v.requestVideoFrameCallback) v.requestVideoFrameCallback(function(){ shown(); });
+      else requestAnimationFrame(function(){ shown(); });
+    }
     v.addEventListener('playing', onPlaying, {once:true});
     var p=v.play();
     if(p&&p.catch) p.catch(function(){
