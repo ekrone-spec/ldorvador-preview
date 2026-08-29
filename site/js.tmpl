@@ -230,9 +230,17 @@ if(mapwrap){
       }, FADE);
       load(vids[(n+1)%vids.length]);        // fetch the next one ahead of its turn
     }
+    /* Visibility follows the 'playing' EVENT, not the play() promise: strict
+       Safari denies JS play() but still honours the native autoplay attribute
+       on muted+playsinline video, and 'playing' fires either way. */
+    var revealed=false;
+    function onPlaying(){ if(revealed) return; revealed=true; shown(); }
+    v.addEventListener('playing', onPlaying, {once:true});
+    if(!v.paused && v.readyState>=2) onPlaying();   // already going natively
     var p=v.play();
-    if(p&&p.then) p.then(shown).catch(function(){ retryLater(n); });
-    else shown();
+    if(p&&p.catch) p.catch(function(){
+      if(!revealed) retryLater(n);   // native autoplay may still land; retry is a backstop
+    });
   }
   /* If the browser pauses the visible clip later (Energy Saver, tab tricks),
      try once to resume; failing that, hide it so the poster shows instead of
