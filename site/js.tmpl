@@ -202,7 +202,7 @@ if(mapwrap){
   function retryLater(n){
     /* A transient play() rejection (hidden tab, busy renderer) must never
        kill the rotation: try again when the page is next visible/touched. */
-    function again(){ var p=vids[n].play(); if(p&&p.catch) p.catch(function(){}); cleanup(); }
+    function again(){ cleanup(); reveal(n); }
     function cleanup(){
       document.removeEventListener('visibilitychange', again);
       window.removeEventListener('pointerdown', again);
@@ -215,17 +215,37 @@ if(mapwrap){
   function reveal(n){
     var v=vids[n];
     try{ v.currentTime=0; }catch(e){}      // always enter on the first frame
+    function shown(){
+      /* Rule: a clip is either PLAYING or INVISIBLE. It only becomes visible
+         here, after play() has actually succeeded, so a paused video (and the
+         play icon browsers draw on one) can never be on screen. */
+      vids.forEach(function(o,k){ o.style.zIndex = (k===n) ? 2 : 1; });
+      v.classList.add('on');                // only the incoming animates
+      setTimeout(function(){                // retire the others once it is covered
+        vids.forEach(function(o,k){
+          if(k!==n){ o.classList.remove('on'); o.pause(); }
+        });
+      }, FADE);
+      load(vids[(n+1)%vids.length]);        // fetch the next one ahead of its turn
+    }
     var p=v.play();
-    if(p&&p.catch) p.catch(function(){ retryLater(n); });
-    vids.forEach(function(o,k){ o.style.zIndex = (k===n) ? 2 : 1; });
-    v.classList.add('on');                  // only the incoming animates
-    setTimeout(function(){                  // retire the others once it is covered
-      vids.forEach(function(o,k){
-        if(k!==n){ o.classList.remove('on'); o.pause(); }
-      });
-    }, FADE);
-    load(vids[(n+1)%vids.length]);          // fetch the next one ahead of its turn
+    if(p&&p.then) p.then(shown).catch(function(){ retryLater(n); });
+    else shown();
   }
+  /* If the browser pauses the visible clip later (Energy Saver, tab tricks),
+     try once to resume; failing that, hide it so the poster shows instead of
+     a frozen frame wearing a play icon. */
+  vids.forEach(function(v){
+    v.addEventListener('pause', function(){
+      if(!v.classList.contains('on') || v.ended) return;
+      setTimeout(function(){
+        if(!v.paused || !v.classList.contains('on')) return;
+        var p=v.play();
+        if(p&&p.catch) p.catch(function(){ v.classList.remove('on'); });
+        setTimeout(function(){ if(v.paused) v.classList.remove('on'); }, 400);
+      }, 250);
+    });
+  });
   function show(n){
     var v=vids[n];
     load(v);
