@@ -247,10 +247,12 @@ if(mapwrap){
     });
   });
   function show(n){
-    var v=vids[n];
-    load(v);
-    if(v.readyState>=2) reveal(n);
-    else v.addEventListener('canplay', function(){ reveal(n); }, {once:true});
+    /* Call play() straight away: Safari will not fetch data for a video until
+       play() is invoked (it ignores preload=auto), so waiting for canplay
+       first deadlocks there. reveal() only makes the clip visible once the
+       play() promise resolves, which is the real "frames are ready" signal. */
+    load(vids[n]);
+    reveal(n);
   }
   function start(){
     if(started||!eligible()) return;
