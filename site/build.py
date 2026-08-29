@@ -22,14 +22,19 @@ def W(p, s):
 SITE = os.environ.get('SITE', 'https://www.ldorvadortravel.com').rstrip('/')
 PROD = os.environ.get('PROD', '1') == '1'
 
-# ---- fonts: reuse the @font-face block already embedded in the built app.css ----
-old_css = R('assets/app.css').splitlines()
-fonts = "\n".join(old_css[1:13]) + "\n" + R('fonts_extra.css')
+# ---- fonts: committed once, sourced deterministically (never re-read from
+# the build's own output, which could mutate across builds) ----
+fonts = R('fonts_embedded.css') + R('fonts_extra.css')
 
 # ---- image token map ----
 imgmap = {}
 for fn in os.listdir(os.path.join(D, 'assets', 'img')):
     imgmap['__IMG_%s__' % os.path.splitext(fn)[0]] = 'assets/img/%s' % fn
+
+# deterministic build stamp: changing css/js changes the URL, so no browser
+# can ever run a stale cached copy of either after a deploy
+import hashlib as _h
+VER = _h.md5((R('css.tmpl') + R('js.tmpl')).encode()).hexdigest()[:10]
 
 css_raw = R('css.tmpl').replace('/*__FONTS__*/', fonts)   # keeps __IMG_ tokens
 css = css_raw
@@ -252,8 +257,8 @@ HEAD = ('<!doctype html>\n<html lang="%s"%s><head><meta charset="utf-8">'
         '<link rel="apple-touch-icon" sizes="180x180" href="%sassets/img/favicon-180.png?v=2">'
         '<meta name="theme-color" content="#282819">'
         '%s<link rel="canonical" href="%s">'
-        '<title>%s</title><link rel="stylesheet" href="%sassets/app.css">%s</head><body>\n')
-TAIL = '\n<script src="%sassets/app.js" defer></script></body></html>'
+        '<title>%s</title><link rel="stylesheet" href="%sassets/app.css?v=' + VER + '">%s</head><body>\n')
+TAIL = '\n<script src="%sassets/app.js?v=' + VER + '" defer></script></body></html>'
 
 built = 0
 for code in LOCALES:

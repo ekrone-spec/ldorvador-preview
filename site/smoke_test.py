@@ -119,6 +119,9 @@ def main():
         except Exception:
             css = ''
     if css:
+        # strip data: URIs first - regex scanning megabytes of base64 is
+        # catastrophic-backtracking territory (it hung this very test)
+        css = re.sub(r'url\(data:[^)]*\)', 'url(X)', css)
         gated = []
         for m in re.finditer(r'@media\s*\(hover:\s*hover\)\s*\{', css):
             depth, i = 1, m.end()
