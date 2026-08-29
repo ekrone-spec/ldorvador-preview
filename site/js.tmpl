@@ -199,15 +199,24 @@ if(mapwrap){
     v.dataset.loaded='1'; v.preload='auto';
     v.src=v.getAttribute('data-src'); v.load();
   }
-  function abort(){
-    if(timer) clearInterval(timer);
-    vids.forEach(function(o){ o.classList.remove('on'); o.removeAttribute('src'); });
+  function retryLater(n){
+    /* A transient play() rejection (hidden tab, busy renderer) must never
+       kill the rotation: try again when the page is next visible/touched. */
+    function again(){ var p=vids[n].play(); if(p&&p.catch) p.catch(function(){}); cleanup(); }
+    function cleanup(){
+      document.removeEventListener('visibilitychange', again);
+      window.removeEventListener('pointerdown', again);
+      window.removeEventListener('scroll', again);
+    }
+    document.addEventListener('visibilitychange', again, {once:true});
+    window.addEventListener('pointerdown', again, {once:true});
+    window.addEventListener('scroll', again, {once:true, passive:true});
   }
   function reveal(n){
     var v=vids[n];
     try{ v.currentTime=0; }catch(e){}      // always enter on the first frame
     var p=v.play();
-    if(p&&p.catch) p.catch(function(){ if(n===0) abort(); });
+    if(p&&p.catch) p.catch(function(){ retryLater(n); });
     vids.forEach(function(o,k){ o.style.zIndex = (k===n) ? 2 : 1; });
     v.classList.add('on');                  // only the incoming animates
     setTimeout(function(){                  // retire the others once it is covered
@@ -229,9 +238,11 @@ if(mapwrap){
     show(0);
     timer=setInterval(function(){ i=(i+1)%vids.length; show(i); }, HOLD);
   }
-  start();                                  // begin fetching at script time,
-  if(document.readyState!=='complete')      // not after every image has loaded
-    window.addEventListener('load', start, {once:true});
+  if(eligible()) load(vids[0]);             // warm the first clip's fetch NOW
+  if(document.readyState==='loading')       // ...but only start playback once
+    document.addEventListener('DOMContentLoaded', start, {once:true});
+  else start();
+  window.addEventListener('load', start, {once:true});
   window.addEventListener('resize', start);
 })();
 
