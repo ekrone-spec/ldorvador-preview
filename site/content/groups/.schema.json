@@ -1,0 +1,21 @@
+{
+  "slug": "",
+  "title": "",
+  "subtitle": "",
+  "congregation": "",
+  "leader": "",
+  "dates": "",
+  "duration": "",
+  "group_size": "",
+  "price_note": "",
+  "hero_image": "",
+  "intro": "",
+  "included": "",
+  "not_included": "",
+  "itinerary": [
+    {"day": "", "title": "", "text": ""}
+  ],
+  "form_intro": "",
+  "notify_note": "",
+  "published": false
+}

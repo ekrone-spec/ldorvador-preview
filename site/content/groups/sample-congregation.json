@@ -1,0 +1,25 @@
+{
+  "slug": "sample-congregation",
+  "title": "Sample Congregation Heritage Journey",
+  "subtitle": "A SAMPLE group itinerary through Jewish Curaçao — for demonstration only",
+  "congregation": "Sample Congregation",
+  "leader": "Rabbi Sample",
+  "dates": "March 2027 (exact dates to be confirmed)",
+  "duration": "7 days / 6 nights",
+  "group_size": "20–35 travelers",
+  "price_note": "Final per-person pricing depends on group size and will be confirmed with your congregation.",
+  "hero_image": "assets/img/lg-willemstad.jpg",
+  "intro": "This is a SAMPLE page built to show Sample Congregation and Rabbi Sample what a private group journey to Curaçao could look like.\n\nEvery detail below — dates, itinerary, pricing note — is a placeholder for demonstration and will be tailored to your congregation before anything is finalized.",
+  "included": "Private guided touring each day\nAll accommodations (double occupancy)\nDaily breakfast and welcome Shabbat dinner\nAirport transfers in Curaçao\nEntrance fees to all sites listed in the itinerary",
+  "not_included": "International airfare to Curaçao\nLunches and dinners not otherwise noted\nTravel insurance\nGratuities for guides and drivers",
+  "itinerary": [
+    {"day": "Day 1", "title": "Arrival & Welcome", "text": "Arrive in Willemstad, settle in, and gather for a welcome dinner overlooking St. Anna Bay."},
+    {"day": "Day 2", "title": "The Snoa & Old City", "text": "Visit the historic sand-floor synagogue Mikvé Israel-Emanuel and walk the UNESCO old town of Willemstad."},
+    {"day": "Day 3", "title": "Beth Haim Cemetery", "text": "Tour one of the oldest Jewish cemeteries in the Americas and learn the stories behind its inscriptions."},
+    {"day": "Day 4", "title": "Community & Culture", "text": "Meet local community members and academics for a people-to-people exchange on Curaçao's Jewish history."},
+    {"day": "Day 5", "title": "Coast & Free Time", "text": "A day at leisure to explore Curaçao's coastline, beaches, and markets before Shabbat."}
+  ],
+  "form_intro": "If your congregation is interested in a journey like this one, let us know and we will follow up to plan the details together.",
+  "notify_note": "You will be contacted once the program and booking details are finalized.",
+  "published": true
+}
