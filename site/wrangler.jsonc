@@ -10,5 +10,12 @@
     "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
     "run_worker_first": true
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "ldorvador-interest",
+      "database_id": "5da26daa-db41-405d-8740-3d15509be27a"
+    }
+  ]
 }

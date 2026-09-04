@@ -1,0 +1,97 @@
+<!--
+  Group trip landing page template.
+  Token convention: __G_FIELD__ (all-caps) for scalar text substituted
+  directly by build_groups() in build.py from content/groups/<slug>.json.
+  Three tokens are pre-rendered HTML blocks (lists / day rows), built in
+  Python before substitution, since this build has no loop syntax:
+    __G_INCLUDED_LIST__      <ul> built from the "included" field (one <li> per line)
+    __G_NOT_INCLUDED_LIST__  <ul> built from the "not_included" field
+    __G_ITINERARY_ROWS__     day rows built from the "itinerary" array
+  All scalar tokens pass through _cesc()/_drop_empties() exactly like the
+  content tokens elsewhere on the site, so \n -> <br> and empty fields vanish
+  cleanly.
+-->
+__HEADER__
+<main id="main">
+<section class="subhero grouphero">
+  <div class="bg" style="background-image:url('__G_HERO_IMAGE__')"></div>
+  <div class="wrap inner">
+    <p class="eyebrow">__G_CONGREGATION__</p>
+    <h1>__G_TITLE__</h1>
+    <p class="grouphero-sub">__G_SUBTITLE__</p>
+    <div class="grouphero-cta"><a class="btn btn-solid" href="#register">Register Your Interest</a></div>
+  </div>
+</section>
+
+<div class="page-wrap">
+
+  <div class="group-meta">
+    <div class="gm-item"><span class="gm-label">Leader</span><span class="gm-value">__G_LEADER__</span></div>
+    <div class="gm-item"><span class="gm-label">Dates</span><span class="gm-value">__G_DATES__</span></div>
+    <div class="gm-item"><span class="gm-label">Duration</span><span class="gm-value">__G_DURATION__</span></div>
+    <div class="gm-item"><span class="gm-label">Group Size</span><span class="gm-value">__G_GROUP_SIZE__</span></div>
+  </div>
+
+  <p class="triad-body group-intro">__G_INTRO__</p>
+  <p class="group-price-note">__G_PRICE_NOTE__</p>
+
+  <div class="group-included-grid">
+    <div class="group-included">
+      <h3>What's Included</h3>
+      __G_INCLUDED_LIST__
+    </div>
+    <div class="group-notincluded">
+      <h3>Not Included</h3>
+      __G_NOT_INCLUDED_LIST__
+    </div>
+  </div>
+
+  <h2 class="group-itin-h2">Sample Itinerary</h2>
+  <div class="offer-list group-itinerary">
+    __G_ITINERARY_ROWS__
+  </div>
+
+  <section class="contact group-register" id="register">
+    <div class="sec-head" data-origin="left">
+      <p class="eyebrow">Expression of Interest</p>
+      <h2>__G_CONGREGATION__</h2>
+    </div>
+    <p class="sub">__G_FORM_INTRO__</p>
+    <p class="group-notify-note">__G_NOTIFY_NOTE__</p>
+
+    <form id="interestform" method="POST" action="/api/interest">
+      <input type="hidden" name="group" value="__G_SLUG__">
+      <input type="hidden" name="group_title" value="__G_TITLE__">
+      <div class="two">
+        <div class="field"><label for="gfn">Full Name <span class="req">*</span></label><input id="gfn" name="full_name" type="text" autocomplete="name" required></div>
+        <div class="field"><label for="ge">Email <span class="req">*</span></label><input id="ge" name="email" type="email" autocomplete="email" required></div>
+      </div>
+      <div class="two">
+        <div class="field"><label for="gp">Phone <span class="req">*</span></label><input id="gp" name="phone" type="tel" autocomplete="tel" required></div>
+        <div class="field"><label for="gt">Travelers <span class="req">*</span></label>
+          <select id="gt" name="travelers" required>
+            <option value="">Select</option>
+            <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+            <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+            <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+            <option value="10">10</option>
+          </select>
+        </div>
+      </div>
+      <div class="field room-field">
+        <label>Room Preference <span class="req">*</span></label>
+        <div class="room-options">
+          <label class="room-opt"><input type="radio" name="room" value="single" required> Single</label>
+          <label class="room-opt"><input type="radio" name="room" value="double" required> Double</label>
+        </div>
+      </div>
+      <div class="field"><label for="gc">Comments</label><textarea id="gc" name="comments"></textarea></div>
+      <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+      <button class="btn btn-solid" type="submit">Register Your Interest</button>
+      <p class="formnote" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+</div>
+</main>
+__FOOTER__

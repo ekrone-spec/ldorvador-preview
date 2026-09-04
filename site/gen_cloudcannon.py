@@ -19,6 +19,31 @@ PAGE_LABEL = {
     'itinerary': 'Itinerary page', 'header': 'Site header (all pages)',
     'footer': 'Site footer (all pages)', 'discover': 'Discover Curaçao cards',
 }
+GROUPTRIP_FIELD_LABEL = {
+    'slug': 'URL name (lowercase, hyphens; becomes /groups/<name>/)',
+    'title': 'Page headline',
+    'subtitle': 'Subtitle',
+    'congregation': 'Congregation',
+    'leader': 'Trip leader (e.g. Rabbi …)',
+    'dates': 'Dates',
+    'duration': 'Duration',
+    'group_size': 'Group size',
+    'price_note': 'Price note',
+    'hero_image': 'Hero image',
+    'intro': 'Intro',
+    'included': 'What is included',
+    'not_included': 'What is not included',
+    'itinerary': 'Itinerary',
+    'form_intro': 'Inquiry form intro',
+    'notify_note': 'Notify note',
+    'published': 'Published',
+}
+GROUPTRIP_TEXTAREA = {'intro', 'included', 'not_included', 'form_intro', 'notify_note'}
+GROUPTRIP_COMMENT = {
+    'included': 'One item per line',
+    'not_included': 'One item per line',
+    'published': 'Untick to hide the page from the website',
+}
 GROUP_LABEL = {
     'home': 'General', 'top': 'Hero', 'doors': 'Three doorways',
     'whatwedo': 'What we do', 'beginband': 'Begin your journey',
@@ -80,8 +105,41 @@ collections_config:
     disable_add: true
     disable_add_folder: true
     disable_file_actions: true
+  groups:
+    path: content/groups
+    glob:
+      - '*.json'
+      - '!.schema.json'
+    name: Group Trips
+    icon: groups
+    create:
+      path: '[relative_base_path]/{slug}.[ext]'
+    schemas:
+      default:
+        path: .schema.json
+    preview:
+      title: '{title}'
+      subtitle: '{dates}'
 
 _inputs: {}
+
+_structures:
+  itinerary_day:
+    values:
+      - value:
+          day: ''
+          title: ''
+          text: ''
+        _inputs:
+          day:
+            type: text
+            label: 'Day (e.g. Day 1)'
+          title:
+            type: text
+            label: 'Day title'
+          text:
+            type: textarea
+            label: 'Day description'
 
 paths:
   uploads: assets/img
@@ -117,6 +175,29 @@ for page, data in finputs:
             c = fcomment(text)
             if c:
                 fc.append('        comment: %s' % yq(c))
+
+# group-trip landing pages: one uniform schema, so a single file_config
+# block (rather than one per file, as content/*.json needs) covers every
+# item in the collection.
+fc.append('  - glob: content/groups/*.json')
+fc.append('    _inputs:')
+for field, label in GROUPTRIP_FIELD_LABEL.items():
+    fc.append('      %s:' % field)
+    if field == 'hero_image':
+        fc.append('        type: image')
+    elif field == 'itinerary':
+        fc.append('        type: array')
+        fc.append('        options:')
+        fc.append('          structures: itinerary_day')
+    elif field == 'published':
+        fc.append('        type: checkbox')
+    elif field in GROUPTRIP_TEXTAREA:
+        fc.append('        type: textarea')
+    else:
+        fc.append('        type: text')
+    fc.append('        label: %s' % yq(label))
+    if field in GROUPTRIP_COMMENT:
+        fc.append('        comment: %s' % yq(GROUPTRIP_COMMENT[field]))
 
 open(os.path.join(D, '..', 'cloudcannon.config.yml'), 'w', encoding='utf-8').write(
     out[0] + '\n' + '\n'.join(fc) + '\n')

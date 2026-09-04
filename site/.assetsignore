@@ -10,3 +10,5 @@ locales/
 __pycache__/
 worker.js
 content/
+migrations/
+.dev.vars

@@ -16,8 +16,41 @@ collections_config:
     disable_add: true
     disable_add_folder: true
     disable_file_actions: true
+  groups:
+    path: content/groups
+    glob:
+      - '*.json'
+      - '!.schema.json'
+    name: Group Trips
+    icon: groups
+    create:
+      path: '[relative_base_path]/{slug}.[ext]'
+    schemas:
+      default:
+        path: .schema.json
+    preview:
+      title: '{title}'
+      subtitle: '{dates}'
 
 _inputs: {}
+
+_structures:
+  itinerary_day:
+    values:
+      - value:
+          day: ''
+          title: ''
+          text: ''
+        _inputs:
+          day:
+            type: text
+            label: 'Day (e.g. Day 1)'
+          title:
+            type: text
+            label: 'Day title'
+          text:
+            type: textarea
+            label: 'Day description'
 
 paths:
   uploads: assets/img
@@ -772,11 +805,11 @@ file_config:
       defines.p_2:
         type: textarea
         label: "Paragraph 2"
-        comment: "Originally: “L’Dor Vador is shaped by the combined experience of its founders, Hann…”"
+        comment: "Originally: “L’Dor Vador’s approach is shaped by its founders’ backgrounds in journ…”"
       defines.p_3:
         type: textarea
         label: "Paragraph 3"
-        comment: "Originally: “Together, these experiences shape our perspective: we explore history …”"
+        comment: "Originally: “We share a passion for exploring historical and cultural complexities …”"
       defines.a_1:
         type: text
         label: "Link text 1"
@@ -828,7 +861,7 @@ file_config:
       howweplan.p_4:
         type: textarea
         label: "Paragraph 4"
-        comment: "Originally: “From accommodations and transportation to expert-led encounters and di…”"
+        comment: "Originally: “From accommodation and transportation to expert-led encounters and din…”"
       howweplan.a_1:
         type: text
         label: "Link text 1"
@@ -1093,7 +1126,7 @@ file_config:
       subhero.p_1:
         type: text
         label: "Paragraph 1"
-        comment: "Originally: “Example itinerary · 7 days”"
+        comment: "Originally: “Example itinerary · 5 days”"
       subhero.h1_1:
         type: text
         label: "h1_1"
@@ -1226,7 +1259,7 @@ file_config:
       subhero.p_2:
         type: textarea
         label: "Paragraph 2"
-        comment: "Originally: “We share a passion for exploring historical and cultural complexities …”"
+        comment: "Originally: “\"We share a passion for exploring historical and cultural complexities…”"
       subhero.p_3:
         type: text
         label: "Paragraph 3"
@@ -1293,7 +1326,7 @@ file_config:
       bio.p_10:
         type: textarea
         label: "Paragraph 10"
-        comment: "Originally: “Cornelis Greiwe was born in the Netherlands, and lived in Yugoslavia, …”"
+        comment: "Originally: “Born in the Netherlands and raised across Yugoslavia, Greece, and Cuba…”"
       bio.p_11:
         type: text
         label: "Paragraph 11"
@@ -1319,3 +1352,61 @@ file_config:
         type: text
         label: "Link text 2"
         comment: "Originally: “Begin a Conversation”"
+  - glob: content/groups/*.json
+    _inputs:
+      slug:
+        type: text
+        label: "URL name (lowercase, hyphens; becomes /groups/<name>/)"
+      title:
+        type: text
+        label: "Page headline"
+      subtitle:
+        type: text
+        label: "Subtitle"
+      congregation:
+        type: text
+        label: "Congregation"
+      leader:
+        type: text
+        label: "Trip leader (e.g. Rabbi …)"
+      dates:
+        type: text
+        label: "Dates"
+      duration:
+        type: text
+        label: "Duration"
+      group_size:
+        type: text
+        label: "Group size"
+      price_note:
+        type: text
+        label: "Price note"
+      hero_image:
+        type: image
+        label: "Hero image"
+      intro:
+        type: textarea
+        label: "Intro"
+      included:
+        type: textarea
+        label: "What is included"
+        comment: "One item per line"
+      not_included:
+        type: textarea
+        label: "What is not included"
+        comment: "One item per line"
+      itinerary:
+        type: array
+        options:
+          structures: itinerary_day
+        label: "Itinerary"
+      form_intro:
+        type: textarea
+        label: "Inquiry form intro"
+      notify_note:
+        type: textarea
+        label: "Notify note"
+      published:
+        type: checkbox
+        label: "Published"
+        comment: "Untick to hide the page from the website"

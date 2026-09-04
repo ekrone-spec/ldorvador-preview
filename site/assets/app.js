@@ -466,3 +466,39 @@ document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener
       .finally(function(){ btn.disabled = false; });
   });
 })();
+
+/* group interest form: async submit to /api/interest */
+(function(){
+  var f = document.getElementById('interestform');
+  if (!f) return;
+  var MSG_OK = 'Thank you \u2014 your interest has been registered. We will contact you once the program and booking details are finalized.';
+  var MSG_RATE = 'Too many submissions from this connection. Please try again in an hour or email us.';
+  var MSG_ERR = 'Something went wrong sending your message. Please email us directly at connect@ldorvadortravel.com.';
+  f.addEventListener('submit', function(e){
+    e.preventDefault();
+    var note = f.querySelector('.formnote');
+    var btn = f.querySelector('button[type=submit]');
+    function say(msg){ if(note){ note.textContent = msg; } else { alert(msg); } }
+    btn.disabled = true;
+    fetch(f.action, {method:'POST', body:new FormData(f), headers:{'Accept':'application/json'}})
+      .then(function(r){
+        return r.json().catch(function(){ return {}; }).then(function(j){ return {status:r.status, ok:r.ok, body:j}; });
+      })
+      .then(function(res){
+        if (res.ok && res.body && res.body.ok) {
+          say(MSG_OK);
+          /* keep the form's footprint so the page height does not collapse
+             (a sudden shrink mid-scroll dumped mobile users behind the page) */
+          f.style.minHeight = f.offsetHeight + 'px';
+          f.reset(); f.classList.add('sent');
+          if (note && note.scrollIntoView) note.scrollIntoView({block:'center', behavior:'smooth'});
+        } else if (res.status === 429) {
+          say(MSG_RATE);
+        } else {
+          say(MSG_ERR);
+        }
+      })
+      .catch(function(){ say(MSG_ERR); })
+      .finally(function(){ btn.disabled = false; });
+  });
+})();

@@ -152,6 +152,67 @@ def main():
             check(False, "app.js: unguarded getElementById('%s') — a missing "
                          "node here kills the whole script" % m.group(1))
 
+    # --- group trip landing pages ---
+    # Not part of the locale grid: English only, noindex, not in the sitemap,
+    # no hreflang. Discovered from content/groups/*.json (published, non-dot).
+    GROUP_FIELDS = ['full_name', 'email', 'phone', 'travelers', 'room',
+                    'comments', 'group', 'group_title', 'botcheck']
+    groups_dir = os.path.join(D, 'content', 'groups')
+    slugs = []
+    if os.path.isdir(groups_dir):
+        for fn in sorted(os.listdir(groups_dir)):
+            if fn.startswith('.') or not fn.endswith('.json'):
+                continue
+            try:
+                data = json.load(open(os.path.join(groups_dir, fn), encoding='utf-8'))
+            except Exception as e:
+                check(False, 'content/groups/%s: could not be parsed (%s)' % (fn, e))
+                continue
+            if data.get('published') is False:
+                continue
+            slug = data.get('slug') or fn[:-5]
+            slugs.append(slug)
+
+    live_groups_strict = os.environ.get('LDV_LIVE_GROUPS') == '1'
+    for slug in slugs:
+        path = 'groups/%s/index.html' % slug
+        html = get(path)
+        if html is None:
+            if live:
+                msg = '%s: not deployed on %s' % (path, label)
+                if live_groups_strict:
+                    check(False, msg)
+                else:
+                    print('  WARN  %s (set LDV_LIVE_GROUPS=1 to make this a failure)' % msg)
+            else:
+                check(False, '%s: could not be fetched' % path)
+            continue
+
+        check(html.count('<h1') == 1,
+              '%s: expected exactly one <h1>, found %d' % (path, html.count('<h1')))
+        check('name="robots" content="noindex,nofollow"' in html,
+              '%s: missing noindex,nofollow robots meta' % path)
+        check('id="interestform"' in html, '%s: missing form#interestform' % path)
+        for field in GROUP_FIELDS:
+            check('name="%s"' % field in html,
+                  '%s: missing form field name="%s"' % (path, field))
+        check('formnote' in html, '%s: form confirmation element missing' % path)
+        m = re.search(r'name="group"\s+value="([^"]*)"', html)
+        check(bool(m) and m.group(1) == slug,
+              '%s: hidden group field value does not match slug %s' % (path, slug))
+        check('rel="canonical"' in html, '%s: no canonical link' % path)
+        check('assets/app.css' in html, '%s: stylesheet not linked' % path)
+        check('assets/app.js' in html, '%s: script not linked' % path)
+        no_comments = re.sub(r'<!--.*?-->', '', html, flags=re.S)
+        check('__G_' not in no_comments, '%s: unresolved group token left in output' % path)
+        check('__C_' not in no_comments, '%s: unresolved content token left in output' % path)
+        check('id="yr"' in html, '%s: missing id="yr" (a script hook)' % path)
+
+    # the main sitemap must never list group pages (they are noindex/private)
+    sm = get('sitemap.xml')
+    if sm:
+        check('/groups/' not in sm, 'sitemap.xml: must not contain group pages')
+
     print('%s: %d check(s) failed' % (label, len(failures)))
     for f in failures:
         print('  FAIL  %s' % f)

@@ -13,4 +13,7 @@ sitemap.xml
 _redirects
 _headers
 home_selfcontained.html
+groups/
 __pycache__/
+.dev.vars
+.wrangler/

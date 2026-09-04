@@ -299,6 +299,100 @@ for code in LOCALES:
         W(out, entesc(head + body + TAIL % pre))
         built += 1
 
+# ---- group trip landing pages: content/groups/<slug>.json -> /groups/<slug>/ ----
+# English-only, noindex, not in nav, not in sitemap. See group.body.html for
+# the __G_FIELD__ token convention.
+def build_groups():
+    gdir = os.path.join(D, 'content', 'groups')
+    if not os.path.isdir(gdir):
+        return 0
+    tmpl = R('group.body.html')
+    n = 0
+    for fn in sorted(os.listdir(gdir)):
+        if fn.startswith('.') or not fn.endswith('.json'):
+            continue
+        g = json.load(open(os.path.join(gdir, fn), encoding='utf-8'))
+        if g.get('published') is False:
+            continue
+        slug = g.get('slug') or fn[:-5]
+
+        def gv(key):
+            v = g.get(key)
+            if os.environ.get('LDV_PLACEBO') and v not in (None, ''):
+                return 'Placeholder text for structural testing'
+            return _cesc(v)
+
+        def bullets(key):
+            raw = g.get(key)
+            if not raw:
+                return ''
+            items = [ln.strip() for ln in str(raw).split('\n') if ln.strip()]
+            if not items:
+                return ''
+            return '<ul>%s</ul>' % ''.join('<li>%s</li>' % _cesc(it) for it in items)
+
+        def itinerary_rows():
+            days = g.get('itinerary') or []
+            out = []
+            for d in days:
+                day = _cesc(d.get('day'))
+                title = _cesc(d.get('title'))
+                text = _cesc(d.get('text'))
+                out.append(
+                    '<div class="reveal offer group-day"><span class="on">%s</span>'
+                    '<div><h3>%s</h3><p>%s</p></div></div>' % (day, title, text))
+            return ''.join(out)
+
+        body = (tmpl.replace('__HEADER__', header)
+                    .replace('__FOOTER__', footer))
+        body = fill_content(body)
+        body = body.replace('__LANGNAV__', '')
+        # header/footer links are root-relative ("index.html", "story.html#x");
+        # this page sits two levels down at /groups/<slug>/, so rewrite them.
+        body = re.sub(r'href="(?!https?:|mailto:|#|\.\./)([a-z][\w.-]*\.html)',
+                      r'href="../../\1', body)
+        subs = {
+            '__G_SLUG__':        _cesc(slug),
+            '__G_TITLE__':       gv('title'),
+            '__G_SUBTITLE__':    gv('subtitle'),
+            '__G_CONGREGATION__':gv('congregation'),
+            '__G_LEADER__':      gv('leader'),
+            '__G_DATES__':       gv('dates'),
+            '__G_DURATION__':    gv('duration'),
+            '__G_GROUP_SIZE__':  gv('group_size'),
+            '__G_PRICE_NOTE__':  gv('price_note'),
+            '__G_HERO_IMAGE__':  '../../' + (g.get('hero_image') or ''),
+            '__G_INTRO__':       gv('intro'),
+            '__G_FORM_INTRO__':  gv('form_intro'),
+            '__G_NOTIFY_NOTE__': gv('notify_note'),
+            '__G_INCLUDED_LIST__':     bullets('included'),
+            '__G_NOT_INCLUDED_LIST__': bullets('not_included'),
+            '__G_ITINERARY_ROWS__':    itinerary_rows(),
+        }
+        for tok, val in subs.items():
+            body = body.replace(tok, val)
+        body = _drop_empties(body)
+        for k, v in imgmap.items():
+            body = body.replace(k, '../../' + v)
+
+        title = '%s | L’Dor Vador Travel' % (g.get('title') or slug)
+        canonical = '%s/groups/%s/' % (SITE, slug)
+        desc = g.get('subtitle') or g.get('title') or "L'Dor Vador Travel group journey"
+        head = ('<!doctype html>\n<html lang="en"><head><meta charset="utf-8">'
+                '<meta name="viewport" content="width=device-width, initial-scale=1">'
+                '<meta name="robots" content="noindex,nofollow">'
+                '<meta name="description" content="%s">'
+                '<link rel="canonical" href="%s">'
+                '<title>%s</title>'
+                '<link rel="stylesheet" href="../../assets/app.css?v=' + VER + '">'
+                '</head><body>\n') % (_cesc(desc), canonical, _cesc(title))
+        tail = '\n<script src="../../assets/app.js?v=' + VER + '" defer></script></body></html>'
+        W('groups/%s/index.html' % slug, entesc(head + body + tail))
+        n += 1
+    return n
+
+groups_built = build_groups()
+
 # ---- self-contained English homepage for the artifact ----
 def datauri(path):
     mt = mimetypes.guess_type(path)[0] or 'application/octet-stream'
@@ -342,4 +436,5 @@ if PROD:
 
 print('built %d pages across %s%s' % (built, ', '.join(LOCALES),
       ' [PRODUCTION: %s]' % SITE if PROD else ' [preview]'))
+print('group pages built:', groups_built)
 print('images mapped:', len(imgmap))

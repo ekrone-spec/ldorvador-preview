@@ -959,3 +959,30 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
 /* Hero clips are decoration: non-interactive, so Safari's hover media
    overlay (pause/PiP) can never attach to them. */
 .hero-video,.hero-videos{pointer-events:none}
+
+/* ---- group pages ---- */
+.grouphero .grouphero-sub{color:#f3e2c8;max-width:56ch;font-size:clamp(16px,1.6vw,20px);margin-top:14px;
+  text-shadow:0 1px 3px rgba(0,0,0,.6),0 5px 18px rgba(0,0,0,.4)}
+.grouphero-cta{margin-top:28px}
+.group-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;max-width:1000px;margin:0 auto 40px;
+  padding-bottom:32px;border-bottom:1px solid var(--line)}
+@media(max-width:720px){.group-meta{grid-template-columns:1fr 1fr;gap:20px 16px}}
+.gm-item{display:flex;flex-direction:column;gap:6px}
+.gm-label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--sage)}
+.gm-value{font-size:16px;color:var(--ink)}
+.group-intro{max-width:64ch;margin:0 auto 12px}
+.group-price-note{max-width:64ch;margin:0 auto 40px;color:var(--ink-soft);font-size:14px;font-style:italic}
+.group-included-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;max-width:1000px;margin:0 auto 60px}
+@media(max-width:720px){.group-included-grid{grid-template-columns:1fr;gap:30px}}
+.group-included h3,.group-notincluded h3{font-size:18px;color:var(--blue);margin-bottom:14px}
+.group-included ul,.group-notincluded ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
+.group-included li,.group-notincluded li{padding-left:22px;position:relative;color:var(--ink-soft);font-size:15px}
+.group-included li::before{content:"✓";position:absolute;left:0;color:var(--sage);font-weight:700}
+.group-notincluded li::before{content:"–";position:absolute;left:2px;color:var(--ink-soft)}
+.group-itin-h2{max-width:1000px;margin:0 auto 24px;font-size:clamp(24px,2.8vw,34px);color:var(--blue)}
+.group-itinerary{margin-bottom:60px}
+.group-register{background:transparent;min-height:0;display:block;padding:60px 0 0;border-top:1px solid var(--line)}
+.group-register .sub{margin-top:14px}
+.group-notify-note{color:var(--ink-soft);font-size:14px;margin-top:6px}
+.room-field .room-options{display:flex;gap:22px;margin-top:6px}
+.room-opt{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--ink);font-weight:400}

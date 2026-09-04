@@ -32,6 +32,30 @@ MANIFEST = os.path.join(D, 'test_manifest.json')
 LOCALES = ['', 'es/', 'nl/', 'he/']
 PAGES = ['index.html', 'history.html', 'story.html', 'itinerary.html', 'privacy.html']
 
+
+def group_pages():
+    """Group landing pages: groups/<slug>/index.html for every published,
+    non-dot content/groups/<slug>.json. English only — not part of LOCALES."""
+    out = []
+    gdir = os.path.join(D, 'content', 'groups')
+    if not os.path.isdir(gdir):
+        return out
+    for fn in sorted(os.listdir(gdir)):
+        if fn.startswith('.') or not fn.endswith('.json'):
+            continue
+        try:
+            data = json.load(open(os.path.join(gdir, fn), encoding='utf-8'))
+        except Exception:
+            continue
+        if data.get('published') is False:
+            continue
+        slug = data.get('slug') or fn[:-5]
+        out.append('groups/%s/index.html' % slug)
+    return out
+
+
+GROUP_PAGES = group_pages()
+
 failures = []
 def check(cond, msg):
     if not cond:
@@ -90,6 +114,11 @@ def skeletons(root):
             p = Skeleton()
             p.feed(open(path, encoding='utf-8').read())
             out[loc + page] = p.rows
+    for gpage in GROUP_PAGES:
+        path = os.path.join(root, gpage)
+        p = Skeleton()
+        p.feed(open(path, encoding='utf-8').read())
+        out[gpage] = p.rows
     return out
 
 
@@ -143,7 +172,7 @@ class Audit(HTMLParser):
             self._script = ''
         if tag == 'form':
             self.forms.append(set())
-        if tag in ('input', 'textarea') and self.forms and a.get('name'):
+        if tag in ('input', 'textarea', 'select') and self.forms and a.get('name'):
             self.forms[-1].add(a['name'])
 
     def handle_data(self, data):
@@ -162,9 +191,14 @@ def audit_layer():
             p = Audit()
             p.feed(open(os.path.join(D, loc + page), encoding='utf-8').read())
             pages[loc + page] = p
+    for gpage in GROUP_PAGES:
+        p = Audit()
+        p.feed(open(os.path.join(D, gpage), encoding='utf-8').read())
+        pages[gpage] = p
 
     for path, p in pages.items():
         base = os.path.dirname(path)
+        is_group = path in GROUP_PAGES
 
         # every asset reference resolves to a real file
         for ref in sorted(p.assets):
@@ -197,17 +231,29 @@ def audit_layer():
             except Exception as e:
                 check(False, '%s: JSON-LD does not parse (%s)' % (path, e))
 
-        # hreflang completeness
+        # hreflang completeness (group pages are English-only, standalone
+        # landing pages with no locale siblings, so they are excluded)
         html = open(os.path.join(D, path), encoding='utf-8').read()
-        for code in ('en', 'es', 'nl', 'he', 'x-default'):
-            check('hreflang="%s"' % code in html,
-                  '%s: missing hreflang %s' % (path, code))
+        if not is_group:
+            for code in ('en', 'es', 'nl', 'he', 'x-default'):
+                check('hreflang="%s"' % code in html,
+                      '%s: missing hreflang %s' % (path, code))
+        else:
+            check('hreflang=' not in html, '%s: group page must not carry hreflang' % path)
 
         # the inquiry form carries everything Web3Forms needs
-        if path.endswith('index.html'):
+        if path.endswith('index.html') and not is_group:
             need = {'access_key', 'first', 'last', 'email', 'message', 'botcheck'}
             ok = any(need <= form for form in p.forms)
             check(ok, '%s: inquiry form is missing required fields' % path)
+
+        # the group registration form carries everything the interest
+        # endpoint needs
+        if is_group:
+            need = {'full_name', 'email', 'phone', 'travelers', 'room',
+                    'comments', 'group', 'group_title', 'botcheck'}
+            ok = any(need <= form for form in p.forms)
+            check(ok, '%s: group interest form is missing required fields' % path)
 
     # sitemap <-> built pages
     sm = os.path.join(D, 'sitemap.xml')
@@ -216,6 +262,8 @@ def audit_layer():
         locs = re.findall(r'<loc>([^<]+)</loc>', open(sm).read())
         check(len(locs) == len(LOCALES) * len(PAGES),
               'sitemap has %d urls, expected %d' % (len(locs), len(LOCALES) * len(PAGES)))
+        check(not any('/groups/' in loc for loc in locs),
+              'sitemap.xml: must not contain group pages')
 
     # every css url() resolves
     css = open(os.path.join(D, 'assets/app.css'), encoding='utf-8').read()
