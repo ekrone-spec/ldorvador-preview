@@ -41,6 +41,7 @@ _structures:
           day: ''
           title: ''
           text: ''
+          image: ''
         _inputs:
           day:
             type: text
@@ -51,6 +52,25 @@ _structures:
           text:
             type: textarea
             label: 'Day description'
+          image:
+            type: image
+            label: 'Day photo (optional)'
+  vignette:
+    values:
+      - value:
+          title: ''
+          text: ''
+          image: ''
+        _inputs:
+          title:
+            type: text
+            label: 'Vignette headline'
+          text:
+            type: textarea
+            label: 'Vignette copy'
+          image:
+            type: image
+            label: 'Vignette photo'
 
 paths:
   uploads: assets/img
@@ -1378,6 +1398,15 @@ file_config:
       group_size:
         type: text
         label: "Group size"
+      start_finish:
+        type: text
+        label: "Start / finish"
+      pace:
+        type: text
+        label: "Pace"
+      accommodation:
+        type: text
+        label: "Accommodation"
       price_note:
         type: text
         label: "Price note"
@@ -1387,6 +1416,10 @@ file_config:
       intro:
         type: textarea
         label: "Intro"
+      highlights:
+        type: textarea
+        label: "Highlights"
+        comment: "One item per line"
       included:
         type: textarea
         label: "What is included"
@@ -1395,17 +1428,31 @@ file_config:
         type: textarea
         label: "What is not included"
         comment: "One item per line"
+      vignettes:
+        type: array
+        options:
+          structures: vignette
+        label: "Editorial vignettes"
       itinerary:
         type: array
         options:
           structures: itinerary_day
         label: "Itinerary"
+      gallery:
+        type: array
+        options:
+          subtype: image
+        label: "Photo gallery"
       form_intro:
         type: textarea
         label: "Inquiry form intro"
       notify_note:
         type: textarea
         label: "Notify note"
+      pdf:
+        type: text
+        label: "Trip details PDF (path, optional)"
+        comment: "Leave blank to hide the PDF download button"
       published:
         type: checkbox
         label: "Published"

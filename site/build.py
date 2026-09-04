@@ -331,17 +331,73 @@ def build_groups():
                 return ''
             return '<ul>%s</ul>' % ''.join('<li>%s</li>' % _cesc(it) for it in items)
 
+        def gimg(path):
+            return ('../../' + path) if path else ''
+
         def itinerary_rows():
             days = g.get('itinerary') or []
             out = []
-            for d in days:
+            for i, d in enumerate(days):
                 day = _cesc(d.get('day'))
                 title = _cesc(d.get('title'))
-                text = _cesc(d.get('text'))
+                paras = ''.join('<p>%s</p>' % _cesc(ln) for ln in
+                                 str(d.get('text') or '').split('\n') if ln.strip())
+                img = d.get('image')
+                img_html = ('<img src="%s" alt="" loading="lazy">' % gimg(img)) if img else ''
                 out.append(
-                    '<div class="reveal offer group-day"><span class="on">%s</span>'
-                    '<div><h3>%s</h3><p>%s</p></div></div>' % (day, title, text))
+                    '<details class="group-day" id="itin-day-%d"%s><summary><span class="gday-n">%s</span>'
+                    '<span class="gday-t">%s</span></summary>'
+                    '<div class="gday-body">%s%s</div></details>'
+                    % (i + 1, ' open' if i == 0 else '', day, title, img_html, paras))
             return ''.join(out)
+
+        def itin_glance():
+            days = g.get('itinerary') or []
+            out = []
+            for i, d in enumerate(days):
+                day = _cesc(d.get('day'))
+                title = _cesc(d.get('title'))
+                out.append('<a class="glance-row" href="#itin-day-%d">Day %s — %s</a>'
+                            % (i + 1, day.replace('Day ', '').replace('Day', '') or str(i + 1), title))
+            if not out:
+                return ''
+            return '<div class="glance-list">%s</div>' % ''.join(out)
+
+        def vignettes():
+            items = g.get('vignettes') or []
+            out = []
+            for i, v in enumerate(items):
+                title = _cesc(v.get('title'))
+                paras = ''.join('<p>%s</p>' % _cesc(ln) for ln in
+                                 str(v.get('text') or '').split('\n') if ln.strip())
+                img = v.get('image')
+                if not img:
+                    continue
+                rev = ' reverse' if i % 2 else ''
+                out.append(
+                    '<section class="bio gv%s"><div class="bio-portrait">'
+                    '<img src="%s" alt="" loading="lazy"></div>'
+                    '<div class="bio-copy"><h2>%s</h2>%s</div></section>'
+                    % (rev, gimg(img), title, paras))
+            return ''.join(out)
+
+        def gallery():
+            imgs = [p for p in (g.get('gallery') or []) if p]
+            if not imgs:
+                return ''
+            tiles = ''.join(
+                '<div class="jcard gtile" tabindex="0" data-full="%s">'
+                '<div class="img" style="background-image:url(\'%s\')"></div></div>'
+                % (gimg(p), gimg(p)) for p in imgs)
+            return ('<section class="group-gallery"><div class="sec-head" data-origin="left">'
+                    '<p class="eyebrow">In Pictures</p></div>'
+                    '<div class="gallery-grid">%s</div></section>' % tiles)
+
+        def pdf_link():
+            pdf = g.get('pdf')
+            if not pdf:
+                return ''
+            return '<a class="btn btn-line" href="%s" target="_blank" rel="noopener">Download trip details (PDF)</a>' % gimg(pdf)
 
         body = (tmpl.replace('__HEADER__', header)
                     .replace('__FOOTER__', footer))
@@ -363,11 +419,19 @@ def build_groups():
             '__G_PRICE_NOTE__':  gv('price_note'),
             '__G_HERO_IMAGE__':  '../../' + (g.get('hero_image') or ''),
             '__G_INTRO__':       gv('intro'),
+            '__G_START_FINISH__': gv('start_finish'),
+            '__G_PACE__':        gv('pace'),
+            '__G_ACCOMMODATION__': gv('accommodation'),
             '__G_FORM_INTRO__':  gv('form_intro'),
             '__G_NOTIFY_NOTE__': gv('notify_note'),
             '__G_INCLUDED_LIST__':     bullets('included'),
             '__G_NOT_INCLUDED_LIST__': bullets('not_included'),
+            '__G_HIGHLIGHTS_LIST__':   bullets('highlights'),
+            '__G_ITIN_GLANCE__':       itin_glance(),
             '__G_ITINERARY_ROWS__':    itinerary_rows(),
+            '__G_VIGNETTES__':         vignettes(),
+            '__G_GALLERY__':           gallery(),
+            '__G_PDF_LINK__':          pdf_link(),
         }
         for tok, val in subs.items():
             body = body.replace(tok, val)

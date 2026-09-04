@@ -7,15 +7,24 @@
   "dates": "",
   "duration": "",
   "group_size": "",
+  "start_finish": "",
+  "pace": "",
+  "accommodation": "",
   "price_note": "",
   "hero_image": "",
   "intro": "",
+  "highlights": "",
   "included": "",
   "not_included": "",
-  "itinerary": [
-    {"day": "", "title": "", "text": ""}
+  "vignettes": [
+    {"title": "", "text": "", "image": ""}
   ],
+  "itinerary": [
+    {"day": "", "title": "", "text": "", "image": ""}
+  ],
+  "gallery": [""],
   "form_intro": "",
   "notify_note": "",
+  "pdf": "",
   "published": false
 }

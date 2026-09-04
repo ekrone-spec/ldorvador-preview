@@ -2,40 +2,91 @@
   Group trip landing page template.
   Token convention: __G_FIELD__ (all-caps) for scalar text substituted
   directly by build_groups() in build.py from content/groups/<slug>.json.
-  Three tokens are pre-rendered HTML blocks (lists / day rows), built in
-  Python before substitution, since this build has no loop syntax:
+  Pre-rendered HTML blocks (lists / rows / cards), built in Python before
+  substitution since this build has no loop syntax:
     __G_INCLUDED_LIST__      <ul> built from the "included" field (one <li> per line)
     __G_NOT_INCLUDED_LIST__  <ul> built from the "not_included" field
-    __G_ITINERARY_ROWS__     day rows built from the "itinerary" array
+    __G_HIGHLIGHTS_LIST__    <ul> built from the "highlights" field
+    __G_ITIN_GLANCE__        "Day N — title" links built from "itinerary"
+    __G_ITINERARY_ROWS__     <details> day accordions built from "itinerary"
+    __G_VIGNETTES__          alternating image/text sections from "vignettes"
+    __G_GALLERY__            mosaic tiles + lightbox trigger from "gallery"
+    __G_PDF_LINK__           secondary "Download trip details" link from "pdf"
   All scalar tokens pass through _cesc()/_drop_empties() exactly like the
   content tokens elsewhere on the site, so \n -> <br> and empty fields vanish
-  cleanly.
+  cleanly. Sections with no content (empty arrays/strings) render nothing.
 -->
 __HEADER__
 <main id="main">
 <section class="subhero grouphero">
   <div class="bg" style="background-image:url('__G_HERO_IMAGE__')"></div>
-  <div class="wrap inner">
-    <p class="eyebrow">__G_CONGREGATION__</p>
-    <h1>__G_TITLE__</h1>
-    <p class="grouphero-sub">__G_SUBTITLE__</p>
-    <div class="grouphero-cta"><a class="btn btn-solid" href="#register">Register Your Interest</a></div>
+  <div class="wrap inner grouphero-grid">
+    <div class="grouphero-lede">
+      <p class="eyebrow">__G_CONGREGATION__</p>
+      <h1>__G_TITLE__</h1>
+      <p class="grouphero-facts">__G_DATES__ · __G_DURATION__ · __G_GROUP_SIZE__</p>
+    </div>
+    <div class="grouphero-card">
+      <p class="group-price-note">__G_PRICE_NOTE__</p>
+      <a class="btn btn-solid" href="#register">Register Your Interest</a>
+    </div>
   </div>
+  <div class="scrollcue" aria-hidden="true"><i></i></div>
 </section>
+
+<nav class="groupnav" id="groupnav" aria-label="Section navigation">
+  <div class="wrap groupnav-row">
+    <a href="#overview" data-gnav>Overview</a>
+    <a href="#itinerary" data-gnav>Itinerary</a>
+    <a href="#overview">Highlights</a>
+    <a href="#details" data-gnav>Details</a>
+    <a href="#register" data-gnav>Register</a>
+  </div>
+</nav>
 
 <div class="page-wrap">
 
-  <div class="group-meta">
-    <div class="gm-item"><span class="gm-label">Leader</span><span class="gm-value">__G_LEADER__</span></div>
-    <div class="gm-item"><span class="gm-label">Dates</span><span class="gm-value">__G_DATES__</span></div>
-    <div class="gm-item"><span class="gm-label">Duration</span><span class="gm-value">__G_DURATION__</span></div>
-    <div class="gm-item"><span class="gm-label">Group Size</span><span class="gm-value">__G_GROUP_SIZE__</span></div>
-  </div>
+  <section id="overview" class="group-overview">
+    <p class="triad-body group-intro">__G_INTRO__</p>
 
-  <p class="triad-body group-intro">__G_INTRO__</p>
-  <p class="group-price-note">__G_PRICE_NOTE__</p>
+    <div class="group-cards">
+      <div class="group-card">
+        <h3>Details</h3>
+        <ul class="group-facts">
+          <li><span>Dates</span><b>__G_DATES__</b></li>
+          <li><span>Duration</span><b>__G_DURATION__</b></li>
+          <li><span>Group size</span><b>__G_GROUP_SIZE__</b></li>
+          <li><span>Start / finish</span><b>__G_START_FINISH__</b></li>
+          <li><span>Pace</span><b>__G_PACE__</b></li>
+          <li><span>Accommodation</span><b>__G_ACCOMMODATION__</b></li>
+        </ul>
+      </div>
+      <div class="group-card">
+        <h3>Itinerary at a glance</h3>
+        __G_ITIN_GLANCE__
+      </div>
+      <div class="group-card">
+        <h3>Highlights</h3>
+        __G_HIGHLIGHTS_LIST__
+      </div>
+    </div>
+  </section>
 
-  <div class="group-included-grid">
+  __G_VIGNETTES__
+
+  <section id="itinerary" class="group-itinerary-section">
+    <div class="sec-head" data-origin="left">
+      <p class="eyebrow">Day by Day</p>
+      <h2>Sample Itinerary</h2>
+    </div>
+    <div class="group-itinerary">
+      __G_ITINERARY_ROWS__
+    </div>
+  </section>
+
+  __G_GALLERY__
+
+  <section id="details" class="group-included-grid">
     <div class="group-included">
       <h3>What's Included</h3>
       __G_INCLUDED_LIST__
@@ -44,12 +95,7 @@ __HEADER__
       <h3>Not Included</h3>
       __G_NOT_INCLUDED_LIST__
     </div>
-  </div>
-
-  <h2 class="group-itin-h2">Sample Itinerary</h2>
-  <div class="offer-list group-itinerary">
-    __G_ITINERARY_ROWS__
-  </div>
+  </section>
 
   <section class="contact group-register" id="register">
     <div class="sec-head" data-origin="left">
@@ -57,17 +103,20 @@ __HEADER__
       <h2>__G_CONGREGATION__</h2>
     </div>
     <p class="sub">__G_FORM_INTRO__</p>
-    <p class="group-notify-note">__G_NOTIFY_NOTE__</p>
 
-    <form id="interestform" method="POST" action="/api/interest">
+    <form id="interestform" class="group-form-card" method="POST" action="/api/interest">
       <input type="hidden" name="group" value="__G_SLUG__">
       <input type="hidden" name="group_title" value="__G_TITLE__">
-      <div class="two">
-        <div class="field"><label for="gfn">Full Name <span class="req">*</span></label><input id="gfn" name="full_name" type="text" autocomplete="name" required></div>
-        <div class="field"><label for="ge">Email <span class="req">*</span></label><input id="ge" name="email" type="email" autocomplete="email" required></div>
-      </div>
-      <div class="two">
+      <fieldset>
+        <legend>About you</legend>
+        <div class="two">
+          <div class="field"><label for="gfn">Full Name <span class="req">*</span></label><input id="gfn" name="full_name" type="text" autocomplete="name" required></div>
+          <div class="field"><label for="ge">Email <span class="req">*</span></label><input id="ge" name="email" type="email" autocomplete="email" required></div>
+        </div>
         <div class="field"><label for="gp">Phone <span class="req">*</span></label><input id="gp" name="phone" type="tel" autocomplete="tel" required></div>
+      </fieldset>
+      <fieldset>
+        <legend>Your trip</legend>
         <div class="field"><label for="gt">Travelers <span class="req">*</span></label>
           <select id="gt" name="travelers" required>
             <option value="">Select</option>
@@ -77,21 +126,35 @@ __HEADER__
             <option value="10">10</option>
           </select>
         </div>
-      </div>
-      <div class="field room-field">
-        <label>Room Preference <span class="req">*</span></label>
-        <div class="room-options">
-          <label class="room-opt"><input type="radio" name="room" value="single" required> Single</label>
-          <label class="room-opt"><input type="radio" name="room" value="double" required> Double</label>
+        <div class="field room-field">
+          <label>Room Preference <span class="req">*</span></label>
+          <div class="room-options">
+            <label class="room-opt"><input type="radio" name="room" value="single" required><span>Single</span></label>
+            <label class="room-opt"><input type="radio" name="room" value="double" required><span>Double</span></label>
+          </div>
         </div>
-      </div>
-      <div class="field"><label for="gc">Comments</label><textarea id="gc" name="comments"></textarea></div>
+        <div class="field"><label for="gc">Comments</label><textarea id="gc" name="comments"></textarea></div>
+      </fieldset>
       <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
-      <button class="btn btn-solid" type="submit">Register Your Interest</button>
+      <div class="group-form-actions">
+        <button class="btn btn-solid" type="submit">Register Your Interest</button>
+        __G_PDF_LINK__
+      </div>
+      <p class="group-notify-note">__G_NOTIFY_NOTE__</p>
       <p class="formnote" role="status" aria-live="polite"></p>
     </form>
   </section>
 
 </div>
+
+<div class="grouptray" id="grouptray">
+  <div class="wrap"><a class="btn btn-solid" href="#register">Register Your Interest</a></div>
+</div>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button class="lb-close" type="button" aria-label="Close photo">&times;</button>
+  <figure class="lb-fig"><img alt=""><figcaption id="lb-cap"></figcaption></figure>
+</div>
+
 </main>
 __FOOTER__

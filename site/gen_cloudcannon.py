@@ -28,20 +28,29 @@ GROUPTRIP_FIELD_LABEL = {
     'dates': 'Dates',
     'duration': 'Duration',
     'group_size': 'Group size',
+    'start_finish': 'Start / finish',
+    'pace': 'Pace',
+    'accommodation': 'Accommodation',
     'price_note': 'Price note',
     'hero_image': 'Hero image',
     'intro': 'Intro',
+    'highlights': 'Highlights',
     'included': 'What is included',
     'not_included': 'What is not included',
+    'vignettes': 'Editorial vignettes',
     'itinerary': 'Itinerary',
+    'gallery': 'Photo gallery',
     'form_intro': 'Inquiry form intro',
     'notify_note': 'Notify note',
+    'pdf': 'Trip details PDF (path, optional)',
     'published': 'Published',
 }
-GROUPTRIP_TEXTAREA = {'intro', 'included', 'not_included', 'form_intro', 'notify_note'}
+GROUPTRIP_TEXTAREA = {'intro', 'highlights', 'included', 'not_included', 'form_intro', 'notify_note'}
 GROUPTRIP_COMMENT = {
+    'highlights': 'One item per line',
     'included': 'One item per line',
     'not_included': 'One item per line',
+    'pdf': 'Leave blank to hide the PDF download button',
     'published': 'Untick to hide the page from the website',
 }
 GROUP_LABEL = {
@@ -130,6 +139,7 @@ _structures:
           day: ''
           title: ''
           text: ''
+          image: ''
         _inputs:
           day:
             type: text
@@ -140,6 +150,25 @@ _structures:
           text:
             type: textarea
             label: 'Day description'
+          image:
+            type: image
+            label: 'Day photo (optional)'
+  vignette:
+    values:
+      - value:
+          title: ''
+          text: ''
+          image: ''
+        _inputs:
+          title:
+            type: text
+            label: 'Vignette headline'
+          text:
+            type: textarea
+            label: 'Vignette copy'
+          image:
+            type: image
+            label: 'Vignette photo'
 
 paths:
   uploads: assets/img
@@ -189,6 +218,14 @@ for field, label in GROUPTRIP_FIELD_LABEL.items():
         fc.append('        type: array')
         fc.append('        options:')
         fc.append('          structures: itinerary_day')
+    elif field == 'vignettes':
+        fc.append('        type: array')
+        fc.append('        options:')
+        fc.append('          structures: vignette')
+    elif field == 'gallery':
+        fc.append('        type: array')
+        fc.append('        options:')
+        fc.append('          subtype: image')
     elif field == 'published':
         fc.append('        type: checkbox')
     elif field in GROUPTRIP_TEXTAREA:

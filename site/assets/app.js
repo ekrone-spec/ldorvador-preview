@@ -502,3 +502,27 @@ document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener
       .finally(function(){ btn.disabled = false; });
   });
 })();
+
+/* Group trip page: underline the current anchor-nav link, and show/hide the
+   mobile sticky CTA once the hero has scrolled by and #register is reached. */
+(function(){
+  var nav = document.getElementById('groupnav');
+  var tray = document.getElementById('grouptray');
+  var register = document.getElementById('register');
+  if (!nav && !tray) return;
+  var links = nav ? nav.querySelectorAll('a[data-gnav]') : [];
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if (!en.isIntersecting) return;
+      var id = '#' + en.target.id;
+      links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === id); });
+      if (tray) tray.classList.toggle('show', en.target.id !== 'register' && window.scrollY > window.innerHeight * 0.6);
+    });
+  }, {rootMargin:'-45% 0px -50% 0px'});
+  document.querySelectorAll('#overview,#itinerary,#details,#register').forEach(function(s){ io.observe(s); });
+  if (tray) window.addEventListener('scroll', function(){
+    var pastHero = window.scrollY > window.innerHeight * 0.6;
+    var atRegister = register && register.getBoundingClientRect().top < window.innerHeight * 0.7;
+    tray.classList.toggle('show', pastHero && !atRegister);
+  }, {passive:true});
+})();
