@@ -27,7 +27,16 @@ robots.txt + sitemap.xml, live form key).
    `SITE=https://www.ldorvadortravel.com` and `PROD=1`.
 2. **Web3Forms** (done) — key baked into build.py; recipient includes
    connect@ (verify with a live test at cutover).
-3. **CloudCannon** (done 2026-08-11) — site `ldorvador-preview` connected to
+3. **D1 database** `ldorvador-interest` (id `5da26daa-db41-405d-8740-3d15509be27a`,
+   bound as `DB` in `wrangler.jsonc`) — stores group trip Expression of
+   Interest submissions. Migrations in `site/migrations/`.
+4. **Worker secrets** `TURNSTILE_SECRET` and `RESEND_API_KEY` — protect the
+   `/api/interest` endpoints. Names only here; see the Secrets section below
+   for where each value comes from and how to rotate it.
+5. **Cloudflare Access** app "LDV interest export" (team
+   `tcstudio.cloudflareaccess.com`) — gates `GET /api/interest/*`. Allowed
+   emails: connect@ldorvadortravel.com, erik@tcstudio.io. One-time PIN login.
+6. **CloudCannon** (done 2026-08-11) — site `ldorvador-preview` connected to
    the repo in headless mode (cloudcannon.config.yml at repo root; CloudCannon
    edits and commits, Cloudflare builds). Hannah uses a Client Sharing
    password link. Apply to the partner program before the trial ends for the
@@ -104,3 +113,92 @@ that no longer exists would be worse. It is no longer invisible: CI runs
 `site/check_translations.py` on every push and opens a "translation-drift"
 issue listing exactly which strings need retranslating in `site/locales.py`,
 then closes it once they are done.
+
+## Group trip landing pages & Expression of Interest
+
+**What it is.** Each congregation/synagogue group trip gets its own landing
+page built from `site/content/groups/<slug>.json` by `build_groups()` in
+`build.py` (template `group.body.html`). Output lands at
+`/groups/<slug>/`. English only, `noindex`, and deliberately left out of
+`sitemap.xml` — these pages are for sharing a direct link with one
+congregation, not for search or general site nav. `content/groups/
+sample-congregation.json` is the working example CloudCannon and the build
+were developed against; before launch either untick its `published` field
+(hides it from the built site but keeps the file for reference) or delete
+`site/content/groups/sample-congregation.json` outright.
+
+**Creating a page in CloudCannon.** Hannah opens the "Group Trips"
+collection, clicks Add, and fills in the fields below; `slug` becomes the
+page URL (`/groups/<slug>/`) so it must be lowercase with hyphens only.
+Saving commits and rebuilds — live in ~4 minutes, same pipeline as the rest
+of the site.
+
+- `slug` — URL name (lowercase, hyphens; becomes `/groups/<name>/`)
+- `title` / `subtitle` — page headline / subtitle
+- `congregation`, `leader` — e.g. "Rabbi …"
+- `dates`, `duration`, `group_size`, `start_finish`, `pace`, `accommodation`,
+  `price_note` — trip-facts row
+- `hero_image` — top banner photo
+- `intro`, `highlights`, `included`, `not_included` — highlights/included/
+  not_included are one item per line
+- `vignettes` / `itinerary` — repeating editorial blocks and day-by-day plan
+- `gallery` — photo gallery
+- `form_intro`, `notify_note` — text shown around the inquiry form
+- `pdf` — optional trip-details PDF path; blank hides the download button
+- `published` — untick to hide the page from the built site without deleting it
+
+**Registration flow.** The page's form posts to `POST /api/interest` in
+`worker.js`. On success the Worker: verifies the Turnstile token server-side,
+rejects if the hidden `botcheck` honeypot field is filled, writes one row to
+the D1 `interest` table (via a migration-managed schema in
+`site/migrations/`), then sends two emails through Resend — a confirmation to
+the registrant from `connect@ldorvadortravel.com`, and an internal
+notification to `NOTIFY_TO` (default `connect@ldorvadortravel.com,
+erik@tcstudio.io`). Anti-abuse limits, all enforced in `worker.js`:
+5 submissions/hour per IP, a per-email+group dedupe window of 24h (repeat
+returns success silently, no duplicate row), a cap of 200 rows/group/day, and
+a global cap of 150 emailed submissions/day. Once a cap is hit the row is
+still written to D1 (nothing is lost) but no confirmation/notification email
+is sent for it — check D1 directly to see submissions that landed silently.
+
+**Exporting registrations.** Go to
+`https://www.ldorvadortravel.com/api/interest/<slug>.csv` (or `.json`, or
+`/api/interest/` for the per-group summary). Cloudflare Access intercepts the
+request and asks for a one-time PIN sent to an allowed email
+(connect@ldorvadortravel.com or erik@tcstudio.io); enter the code and the
+file downloads/loads. To add or remove allowed emails: Cloudflare Zero Trust
+dashboard -> Access -> Applications -> "LDV interest export" -> edit the
+policy's email list. To change who gets the internal notification email,
+edit the `NOTIFY_TO` value under `vars` in `wrangler.jsonc` (comma-separated
+addresses) and redeploy.
+
+**Secrets** (names only — never values here):
+
+- `TURNSTILE_SECRET` — from the Cloudflare Turnstile dashboard for the
+  widget's site key baked into `build.py` (that site key is public by
+  design). Rotate by generating a new secret key in the Turnstile dashboard
+  for the same widget, then push it to the Worker.
+- `RESEND_API_KEY` — from Resend, under the `ldorvadortravel.com` domain
+  verified in erik@tcstudio.io's Resend account. Rotate by creating a new key
+  in Resend, then pushing it to the Worker and revoking the old key.
+- To push either secret: `npx wrangler versions secret put NAME` if there are
+  undeployed Worker versions, otherwise `npx wrangler secret put NAME`.
+
+**Local testing.** `.dev.vars` (gitignored) holds local values for
+`WEB3FORMS_KEY`, `TURNSTILE_SECRET`, `RESEND_API_KEY`, `ACCESS_TEAM_DOMAIN`,
+`ACCESS_AUD`. `TURNSTILE_SECRET=1x0000000000000000000000000000000AA` is
+Cloudflare's always-pass test secret key (paired with the always-pass test
+site key), so local form submissions succeed captcha without hitting the
+real Turnstile service. `RESEND_API_KEY` must be left as an invalid
+placeholder (e.g. `re_test_invalid`) locally — a real key would actually
+send email from the dev environment. Apply the D1 schema locally with
+`npx wrangler d1 migrations apply ldorvador-interest --local` before testing
+form submissions against the local Worker.
+
+**Querying D1 directly.** For a quick look without waiting on the export
+endpoint:
+
+```
+npx wrangler d1 execute ldorvador-interest --remote --json --command \
+  "SELECT created_at, group_slug, full_name, email FROM interest ORDER BY created_at DESC LIMIT 20"
+```
