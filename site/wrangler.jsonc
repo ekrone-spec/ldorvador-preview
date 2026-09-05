@@ -23,7 +23,7 @@
     // ACCESS_TEAM_DOMAIN and ACCESS_AUD: fill in once Erik creates the
     // Cloudflare Access app protecting /api/interest/* exports. Left blank
     // means the export endpoint fails closed (always 404).
-    "ACCESS_TEAM_DOMAIN": "",
-    "ACCESS_AUD": ""
+    "ACCESS_TEAM_DOMAIN": "tcstudio.cloudflareaccess.com",
+    "ACCESS_AUD": "f4d00354389fef8f3283be0cfb5fc7b18efe41c73f54581ebce7a8be4c86d7c3"
   }
 }
