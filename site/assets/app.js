@@ -528,30 +528,49 @@ document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener
   var tray = document.getElementById('grouptray');
   var register = document.getElementById('register');
   if (!nav && !tray) return;
-  var links = nav ? nav.querySelectorAll('a[data-gnav]') : [];
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(en){
-      if (!en.isIntersecting) return;
-      var id = '#' + en.target.id;
-      links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === id); });
-      if (tray) tray.classList.toggle('show', en.target.id !== 'register' && window.scrollY > window.innerHeight * 0.6);
-    });
-  }, {rootMargin:'-45% 0px -50% 0px'});
-  document.querySelectorAll('#overview,#itinerary,#details,#register').forEach(function(s){ io.observe(s); });
-  var spacer = document.querySelector('.grouphero-spacer');
-  if (nav && spacer) {
+  var links = nav ? [].slice.call(nav.querySelectorAll('a[data-gnav]')) : [];
+  var sections = links.map(function(a){ return document.getElementById(a.getAttribute('href').slice(1)); });
+
+  // Exactly one link is ever active: pick the section whose top is closest
+  // above the nav line (i.e. the last one we've scrolled past), falling back
+  // to the first section if none has been reached yet. At the bottom of the
+  // page Register always wins, even if its own section is short enough that
+  // a later section's line would otherwise win.
+  function updateActive(){
+    if (!links.length) return;
     var hdr = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hdr')) || 108;
-    var navH = nav.offsetHeight;
+    var gnav = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--gnav')) || nav.offsetHeight;
+    var line = hdr + gnav + 20; // matches #overview,#itinerary,... scroll-margin-top exactly
+    var atBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 2);
+    var activeIdx = 0;
+    for (var i = 0; i < sections.length; i++) {
+      var s = sections[i];
+      if (!s) continue;
+      if (s.getBoundingClientRect().top <= line + 1) activeIdx = i;
+    }
+    if (atBottom) activeIdx = links.length - 1;
+    links.forEach(function(a, i){ a.classList.toggle('active', i === activeIdx); });
+    if (tray) tray.classList.toggle('show', window.scrollY > window.innerHeight * 0.6 && sections[activeIdx] !== register);
+  }
+  updateActive();
+  window.addEventListener('scroll', updateActive, {passive:true});
+  window.addEventListener('resize', updateActive);
+
+  var spacer = document.querySelector('.grouphero-spacer');
+  var heroEl = document.querySelector('.grouphero');
+  if (spacer && heroEl) {
+    var syncSpacer = function(){ spacer.style.height = heroEl.offsetHeight + 'px'; };
+    syncSpacer(); window.addEventListener('resize', syncSpacer);
+    if (window.ResizeObserver) new ResizeObserver(syncSpacer).observe(heroEl);
+  }
+  if (nav && spacer) {
+    var hdr2 = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hdr')) || 108;
+    var navH2 = nav.offsetHeight;
     var hio = new IntersectionObserver(function(es){
       nav.classList.toggle('out', !es[0].isIntersecting);
-    }, {rootMargin: '-' + (hdr + navH) + 'px 0px 0px 0px'});
+    }, {rootMargin: '-' + (hdr2 + navH2) + 'px 0px 0px 0px'});
     hio.observe(spacer);
   }
-  if (tray) window.addEventListener('scroll', function(){
-    var pastHero = window.scrollY > window.innerHeight * 0.6;
-    var atRegister = register && register.getBoundingClientRect().top < window.innerHeight * 0.7;
-    tray.classList.toggle('show', pastHero && !atRegister);
-  }, {passive:true});
 })();
 
 /* Group trip page: the day-by-day flow is styled as an always-open staggered

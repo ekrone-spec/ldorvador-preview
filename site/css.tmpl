@@ -17,6 +17,7 @@
   --heb:'Frank Ruhl Libre','Iowan Old Style',serif;
   --wrap:1220px;
   --hdr:108px; /* fixed-header height; slim band pegs beneath it */
+  --gnav:60px; /* group-page sub-nav height: 14px*2 padding + ~1.3em of 13px uppercase text + 1px border */
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -915,8 +916,13 @@ header.scrolled .navtoggle span,.header-solid .navtoggle span{background:var(--g
   nav.main,.header-cta{display:none}
   /* the curtain footer cannot work when the footer is taller than the screen:
      its top would sit above the viewport and be unreachable */
-  footer{position:static!important;visibility:visible!important}
-  .below{margin-bottom:0!important}
+  footer{position:relative!important;z-index:21;visibility:visible!important}
+  /* the fixed-footer curtain trick (JS reserves margin-bottom == footer
+     height so the footer only appears once the page has scrolled past it)
+     is desktop-only; on mobile the footer is static and in normal flow, so
+     that reserved margin on .gcurtain left a gap of empty space at the very
+     bottom that exposed the fixed .grouphero behind it before the footer. */
+  .below,.gcurtain{margin-bottom:0!important}
 }
 @media(min-width:981px){.mobilenav{display:none!important}}
 
@@ -954,9 +960,14 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
    the cream page-wrap that follows it in flow slides up over it. The spacer
    reserves the hero's own height in normal flow so nothing overlaps at the
    top of the page; page-wrap then carries the curtain forward as it scrolls. */
-.grouphero{position:fixed;top:0;left:0;right:0;height:88vh;min-height:0;padding:0;z-index:1}
+/* Grid, not flex: row 1 is an empty reserve that's *at least* header+nav tall
+   but grows to fill any slack (via 1fr) so the lede still reads as
+   bottom-anchored on tall viewports; row 2 (the actual content) can never
+   start higher than that reserve, so it can never land under the fixed nav. */
+.grouphero{position:fixed;top:0;left:0;right:0;height:auto;min-height:88vh;padding:0;z-index:1;
+  display:grid;grid-template-rows:minmax(calc(var(--hdr) + var(--gnav)),1fr) auto;overflow:hidden}
 .grouphero-spacer{height:88vh}
-.grouphero-grid{display:block;width:100%;max-width:100%}
+.grouphero-grid{grid-row:2;display:block;width:100%;max-width:100%}
 .grouphero-lede{max-width:70ch;min-width:0}
 .grouphero-lede h1{font-size:clamp(48px,6.5vw,96px);line-height:1.02}
 .grouphero-facts{color:#f3e2c8;font-size:clamp(14px,1.3vw,17px);margin-top:16px;letter-spacing:.02em;
@@ -971,7 +982,7 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
 @media(max-width:820px){.grouphero-lede h1{font-size:clamp(36px,10vw,48px)}}
 
 .gcurtain{position:relative;z-index:20;background:var(--cream)}
-#overview,#itinerary,#details,#register{scroll-margin-top:calc(var(--hdr) + 58px + 20px)}
+#overview,#itinerary,#highlights,#details,#register{scroll-margin-top:calc(var(--hdr) + var(--gnav) + 20px)}
 
 .groupnav{position:fixed;top:var(--hdr);left:0;right:0;z-index:960;background:rgba(14,16,10,.32);
   backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.25);transition:background .3s ease,border-color .3s ease}
@@ -999,7 +1010,8 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
 .group-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:none;margin:0}
 @media(max-width:900px){.group-cards{grid-template-columns:1fr;gap:20px}}
 .group-card{background:var(--cream);border:1px solid var(--line);padding:28px 26px;border-radius:2px;min-width:0}
-.group-card h3{font-size:19px;color:var(--blue);margin-bottom:16px}
+.gcurtain .group-card h3{font-family:var(--display);font-size:clamp(26px,2.2vw,30px);font-weight:600;
+  color:var(--blue);margin-bottom:22px}
 .group-facts{list-style:none;padding:0;margin:0;display:flex;flex-direction:column}
 .group-facts li{display:flex;flex-direction:column;gap:4px;padding:14px 0;border-bottom:1px solid var(--line);font-size:18px}
 .group-facts li:last-child{border-bottom:0;padding-bottom:0}
