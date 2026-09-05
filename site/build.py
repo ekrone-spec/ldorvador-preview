@@ -24,7 +24,7 @@ PROD = os.environ.get('PROD', '1') == '1'
 # Cloudflare Turnstile site key for the group interest form. Default is
 # Cloudflare's documented always-pass test key; override with the real
 # site key in production.
-TURNSTILE_SITEKEY = os.environ.get('LDV_TURNSTILE_SITEKEY', '1x00000000000000000000AA')
+TURNSTILE_SITEKEY = os.environ.get('LDV_TURNSTILE_SITEKEY', '0x4AAAAAAEobauMj4oBBez0V')
 
 # ---- fonts: committed once, sourced deterministically (never re-read from
 # the build's own output, which could mutate across builds) ----
