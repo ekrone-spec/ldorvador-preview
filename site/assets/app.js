@@ -33,7 +33,7 @@ if(mapwrap){
 
 /* curtain footer: the page lifts to reveal the fixed footer beneath it */
 (function(){
-  var f=document.querySelector('footer'), below=document.querySelector('.below');
+  var f=document.querySelector('footer'), below=document.querySelector('.below, .gcurtain');
   if(!f||!below) return;
   function layout(){
     var h=f.offsetHeight;
@@ -520,6 +520,15 @@ document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener
     });
   }, {rootMargin:'-45% 0px -50% 0px'});
   document.querySelectorAll('#overview,#itinerary,#details,#register').forEach(function(s){ io.observe(s); });
+  var spacer = document.querySelector('.grouphero-spacer');
+  if (nav && spacer) {
+    var hdr = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hdr')) || 108;
+    var navH = nav.offsetHeight;
+    var hio = new IntersectionObserver(function(es){
+      nav.classList.toggle('out', !es[0].isIntersecting);
+    }, {rootMargin: '-' + (hdr + navH) + 'px 0px 0px 0px'});
+    hio.observe(spacer);
+  }
   if (tray) window.addEventListener('scroll', function(){
     var pastHero = window.scrollY > window.innerHeight * 0.6;
     var atRegister = register && register.getBoundingClientRect().top < window.innerHeight * 0.7;

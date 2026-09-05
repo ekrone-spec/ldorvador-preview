@@ -950,23 +950,35 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
    The generic `section{padding:120px 0}` and ad hoc margins were stacking on
    top of each other; every group-page section below gets its padding zeroed
    and spacing applied exactly once via margin. */
-.grouphero{min-height:88vh}
-.grouphero-grid{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;width:100%;max-width:100%}
-.grouphero-lede{max-width:64ch;min-width:0}
-.grouphero-facts{color:#f3e2c8;font-size:clamp(14px,1.3vw,17px);margin-top:14px;letter-spacing:.02em;
+/* Curtain: hero is pinned to the viewport (position:fixed, low z-index) while
+   the cream page-wrap that follows it in flow slides up over it. The spacer
+   reserves the hero's own height in normal flow so nothing overlaps at the
+   top of the page; page-wrap then carries the curtain forward as it scrolls. */
+.grouphero{position:fixed;top:0;left:0;right:0;height:88vh;min-height:0;padding:0;z-index:1}
+.grouphero-spacer{height:88vh}
+.grouphero-grid{display:block;width:100%;max-width:100%}
+.grouphero-lede{max-width:70ch;min-width:0}
+.grouphero-lede h1{font-size:clamp(48px,6.5vw,96px);line-height:1.02}
+.grouphero-facts{color:#f3e2c8;font-size:clamp(14px,1.3vw,17px);margin-top:16px;letter-spacing:.02em;
   text-shadow:0 1px 3px rgba(0,0,0,.6),0 5px 18px rgba(0,0,0,.4)}
-.grouphero-card{flex:0 0 auto;background:rgba(20,20,12,.42);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.22);
-  border-radius:2px;padding:22px 26px;display:flex;flex-direction:column;gap:16px;min-width:240px;max-width:100%}
-.grouphero-card .group-price-note{margin:0;max-width:none;color:#f3e2c8}
-@media(max-width:820px){.grouphero-grid{flex-direction:column;align-items:flex-start}.grouphero-card{width:100%;min-width:0}}
+.grouphero-lede .group-price-note{margin:20px 0 0;max-width:52ch;color:#f3e2c8}
+.grouphero-lede .grouphero-cta{display:inline-flex;margin-top:24px}
+@media(max-width:820px){.grouphero-lede h1{font-size:clamp(36px,10vw,48px)}}
 
-.groupnav{position:sticky;top:var(--hdr);z-index:850;background:var(--cream);border-bottom:1px solid var(--line)}
+.gcurtain{position:relative;z-index:20;background:var(--cream)}
+#overview,#itinerary,#details,#register{scroll-margin-top:calc(var(--hdr) + 58px + 20px)}
+
+.groupnav{position:fixed;top:var(--hdr);left:0;right:0;z-index:960;background:rgba(14,16,10,.32);
+  backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.25);transition:background .3s ease,border-color .3s ease}
 .groupnav-row{display:flex;gap:clamp(18px,3vw,40px);overflow-x:auto;padding:14px 24px;scrollbar-width:none}
 .groupnav-row::-webkit-scrollbar{display:none}
 .groupnav-row a{white-space:nowrap;font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--ink-soft);text-decoration:none;padding-bottom:4px;border-bottom:1.5px solid transparent;transition:.2s}
-.groupnav-row a:hover{color:var(--ink)}
+  color:#f3e2c8;text-decoration:none;padding-bottom:4px;border-bottom:1.5px solid transparent;transition:.2s}
+.groupnav-row a:hover{color:#fff}
 .groupnav-row a.active{color:var(--sage);border-bottom-color:var(--sage)}
+.groupnav.out{background:var(--cream);border-bottom-color:var(--line)}
+.groupnav.out .groupnav-row a{color:var(--ink-soft)}
+.groupnav.out .groupnav-row a:hover{color:var(--ink)}
 
 .group-overview{padding:0 0 var(--gsec,clamp(64px,8vw,96px))}
 .group-intro{max-width:60ch;margin:0 auto 40px}
