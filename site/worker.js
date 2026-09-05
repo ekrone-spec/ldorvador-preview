@@ -115,8 +115,8 @@ async function sendInterestEmails(env, fields, groupCount) {
   const { full_name, email, phone, travelers, room, comments, group_slug, group_title, group_dates } = fields;
   const firstName = (full_name || '').trim().split(/\s+/)[0] || full_name;
   const titleForCopy = group_title || group_slug;
-  const dateLine = group_dates ? ` (${escapeHtml(group_dates)})` : '';
-  const dateLineText = group_dates ? ` (${group_dates})` : '';
+  const dateLine = group_dates ? `, ${escapeHtml(group_dates)}` : '';
+  const dateLineText = group_dates ? `, ${group_dates}` : '';
 
   const registrantHtml = `
     <p>Hi ${escapeHtml(firstName)},</p>
