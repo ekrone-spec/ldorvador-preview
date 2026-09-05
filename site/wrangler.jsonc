@@ -17,5 +17,13 @@
       "database_name": "ldorvador-interest",
       "database_id": "5da26daa-db41-405d-8740-3d15509be27a"
     }
-  ]
+  ],
+  "vars": {
+    "NOTIFY_TO": "connect@ldorvadortravel.com,erik@tcstudio.io",
+    // ACCESS_TEAM_DOMAIN and ACCESS_AUD: fill in once Erik creates the
+    // Cloudflare Access app protecting /api/interest/* exports. Left blank
+    // means the export endpoint fails closed (always 404).
+    "ACCESS_TEAM_DOMAIN": "",
+    "ACCESS_AUD": ""
+  }
 }

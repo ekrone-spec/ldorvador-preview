@@ -107,6 +107,7 @@ __HEADER__
     <form id="interestform" class="group-form-card" method="POST" action="/api/interest">
       <input type="hidden" name="group" value="__G_SLUG__">
       <input type="hidden" name="group_title" value="__G_TITLE__">
+      <input type="hidden" name="group_dates" value="__G_DATES__">
       <fieldset>
         <legend>About you</legend>
         <div class="two">
@@ -136,6 +137,7 @@ __HEADER__
         <div class="field"><label for="gc">Comments</label><textarea id="gc" name="comments"></textarea></div>
       </fieldset>
       <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+      <div class="cf-turnstile" data-sitekey="__TURNSTILE_SITEKEY__" data-theme="light" data-size="flexible" data-appearance="interaction-only"></div>
       <div class="group-form-actions">
         <button class="btn btn-solid" type="submit">Register Your Interest</button>
         __G_PDF_LINK__

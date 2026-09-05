@@ -21,6 +21,10 @@ def W(p, s):
 # Production by default. For a preview build: PROD=0 SITE=<url> python3 build.py
 SITE = os.environ.get('SITE', 'https://www.ldorvadortravel.com').rstrip('/')
 PROD = os.environ.get('PROD', '1') == '1'
+# Cloudflare Turnstile site key for the group interest form. Default is
+# Cloudflare's documented always-pass test key; override with the real
+# site key in production.
+TURNSTILE_SITEKEY = os.environ.get('LDV_TURNSTILE_SITEKEY', '1x00000000000000000000AA')
 
 # ---- fonts: committed once, sourced deterministically (never re-read from
 # the build's own output, which could mutate across builds) ----
@@ -432,6 +436,7 @@ def build_groups():
             '__G_VIGNETTES__':         vignettes(),
             '__G_GALLERY__':           gallery(),
             '__G_PDF_LINK__':          pdf_link(),
+            '__TURNSTILE_SITEKEY__':   _cesc(TURNSTILE_SITEKEY),
         }
         for tok, val in subs.items():
             body = body.replace(tok, val)
@@ -449,6 +454,7 @@ def build_groups():
                 '<link rel="canonical" href="%s">'
                 '<title>%s</title>'
                 '<link rel="stylesheet" href="../../assets/app.css?v=' + VER + '">'
+                '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>'
                 '</head><body>\n') % (_cesc(desc), canonical, _cesc(title))
         tail = '\n<script src="../../assets/app.js?v=' + VER + '" defer></script></body></html>'
         W('groups/%s/index.html' % slug, entesc(head + body + tail))
@@ -483,7 +489,7 @@ W('_headers', '''/*
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; media-src 'self'; connect-src 'self' https://api.web3forms.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; media-src 'self'; connect-src 'self' https://api.web3forms.com https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'
 ''')
 if PROD:
     W('robots.txt', 'User-agent: *\nAllow: /\n\nSitemap: %s/sitemap.xml\n' % SITE)

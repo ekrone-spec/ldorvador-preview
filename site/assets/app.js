@@ -474,11 +474,23 @@ document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener
   var MSG_OK = 'Thank you \u2014 your interest has been registered. We will contact you once the program and booking details are finalized.';
   var MSG_RATE = 'Too many submissions from this connection. Please try again in an hour or email us.';
   var MSG_ERR = 'Something went wrong sending your message. Please email us directly at connect@ldorvadortravel.com.';
+  var MSG_CAPTCHA = 'Please complete the verification and try again.';
+  var MSG_CAPTCHA_DOWN = 'Verification is temporarily unavailable. Please try again in a minute.';
+  function resetTurnstile(){
+    if (window.turnstile && typeof window.turnstile.reset === 'function') {
+      try { window.turnstile.reset(); } catch (e) {}
+    }
+  }
   f.addEventListener('submit', function(e){
     e.preventDefault();
     var note = f.querySelector('.formnote');
     var btn = f.querySelector('button[type=submit]');
     function say(msg){ if(note){ note.textContent = msg; } else { alert(msg); } }
+    var tsInput = f.querySelector('[name="cf-turnstile-response"]');
+    if (window.turnstile && (!tsInput || !tsInput.value)) {
+      say(MSG_CAPTCHA);
+      return;
+    }
     btn.disabled = true;
     fetch(f.action, {method:'POST', body:new FormData(f), headers:{'Accept':'application/json'}})
       .then(function(r){
@@ -494,6 +506,12 @@ document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener
           if (note && note.scrollIntoView) note.scrollIntoView({block:'center', behavior:'smooth'});
         } else if (res.status === 429) {
           say(MSG_RATE);
+        } else if (res.status === 400 && res.body && res.body.error === 'captcha') {
+          say(MSG_CAPTCHA);
+          resetTurnstile();
+        } else if (res.status === 503 && res.body && res.body.error === 'captcha_unavailable') {
+          say(MSG_CAPTCHA_DOWN);
+          resetTurnstile();
         } else {
           say(MSG_ERR);
         }
