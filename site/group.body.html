@@ -8,7 +8,11 @@
     __G_NOT_INCLUDED_LIST__  <ul> built from the "not_included" field
     __G_HIGHLIGHTS_LIST__    <ul> built from the "highlights" field
     __G_ITIN_GLANCE__        "Day N — title" links built from "itinerary"
-    __G_ITINERARY_ROWS__     <details> day accordions built from "itinerary"
+    __G_ITINERARY_ROWS__     plain div.group-day per day (id="day-N"), built
+      from "itinerary" (day/title/image/text): a staggered flow, not an
+      accordion. All days render open; css.tmpl lays the eyebrow, title,
+      image and paragraphs out on an alternating image/text grid with a
+      center-gutter timeline rule + dot per day.
     __G_VIGNETTES__          alternating image/text sections from "vignettes"
     __G_GALLERY__            mosaic tiles + lightbox trigger from "gallery"
     __G_PDF_LINK__           secondary "Download trip details" link from "pdf"

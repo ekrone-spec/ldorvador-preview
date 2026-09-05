@@ -553,3 +553,15 @@ document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener
     tray.classList.toggle('show', pastHero && !atRegister);
   }, {passive:true});
 })();
+
+/* Group trip page: the day-by-day flow is styled as an always-open staggered
+   list, not an accordion (CSS alone can't force this — a closed <details>'s
+   non-summary content is skipped from the parent's own layout sizing by the
+   browser even when display is overridden, which collapses the day box and
+   overlaps the next day). Force every day open on load and ignore clicks on
+   its heading so it can never collapse. */
+document.querySelectorAll('details.group-day').forEach(function(d){
+  d.open = true;
+  var s = d.querySelector(':scope > summary');
+  if (s) s.addEventListener('click', function(e){ e.preventDefault(); });
+});

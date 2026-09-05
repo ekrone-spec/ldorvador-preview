@@ -349,10 +349,10 @@ def build_groups():
                 img = d.get('image')
                 img_html = ('<img src="%s" alt="" loading="lazy">' % gimg(img)) if img else ''
                 out.append(
-                    '<details class="group-day" id="itin-day-%d"%s><summary><span class="gday-n">%s</span>'
-                    '<span class="gday-t">%s</span></summary>'
-                    '<div class="gday-body">%s%s</div></details>'
-                    % (i + 1, ' open' if i == 0 else '', day, title, img_html, paras))
+                    '<div class="group-day" id="day-%d"><div class="gday-head"><span class="gday-n">%s</span>'
+                    '<span class="gday-t">%s</span></div>'
+                    '<div class="gday-body">%s%s</div></div>'
+                    % (i + 1, day, title, img_html, paras))
             return ''.join(out)
 
         def itin_glance():
@@ -361,7 +361,7 @@ def build_groups():
             for i, d in enumerate(days):
                 day = _cesc(d.get('day'))
                 title = _cesc(d.get('title'))
-                out.append('<a class="glance-row" href="#itin-day-%d">Day %s — %s</a>'
+                out.append('<a class="glance-row" href="#day-%d">Day %s — %s</a>'
                             % (i + 1, day.replace('Day ', '').replace('Day', '') or str(i + 1), title))
             if not out:
                 return ''
