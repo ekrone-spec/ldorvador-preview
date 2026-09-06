@@ -670,12 +670,8 @@ def print_page(g, slug):
     cover_contact = '<p class="cover-contact">%s</p>' % ' &middot; '.join(cover_contact_bits)
 
     # ---- stacked lockup (cover, on-photo, cream) and compact lockup (closing page) ----
-    stack_mark = ('<div class="brand-stack-mark"><span class="bm-name">'
-                  '<span class="bm-word">L&rsquo;Dor</span><span class="bm-word">Vador</span></span>'
-                  '<span class="bm-tag">Heritage Travel</span></div>')
-    compact_mark = ('<div class="brand-compact-mark"><span class="bc-name">'
-                     '<span class="bc-word">L&rsquo;Dor</span><span class="bc-word">Vador</span></span>'
-                     '<span class="bc-tag">Heritage Travel</span></div>')
+    stack_mark = '<div class="brand p-brand-stack"><span class="brand-stack"><span class="brand-word">L&rsquo;Dor</span><span class="brand-word">Vador</span></span><span class="brand-tx">Heritage Travel</span></div>'
+    compact_mark = '<header class="logo-min header-solid p-brand-compact"><div class="brand"><span class="brand-stack"><span class="brand-word">L&rsquo;Dor</span><span class="brand-word">Vador</span></span><span class="brand-tx">Heritage Travel</span></div></header>'
 
     # ---- assemble the 4 sheets, then number pages 2-4 ----
     sheets = []
@@ -763,18 +759,18 @@ def print_page(g, slug):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>%(title)s | Trip Details</title>
+<link rel="stylesheet" href="../../assets/app.css?v=%(ver)s">
 <style>
-  %(display_face)s
   @page { size: Letter; margin: 0; }
   *{box-sizing:border-box}
-  body{margin:0;background:#fff9f3;color:#282819;font-family:Georgia,'Times New Roman',serif;font-size:12.5pt;line-height:1.6}
-  h1,h2,h3{font-family:'Fraunces',Georgia,'Times New Roman',serif;font-weight:600;color:#282819;margin:0 0 .3em}
+  body{margin:0;background:#fff9f3;color:#282819;font-family:var(--body);font-size:12.5pt;line-height:1.6}
+  h1,h2,h3{font-family:var(--display);font-weight:600;color:#282819;margin:0 0 .3em}
   p{margin:0 0 .7em}
   .sheet{position:relative;page-break-after:always;width:8.5in;height:11in;overflow:hidden}
   .sheet:last-child{page-break-after:auto}
   .sheet.page{padding:0.75in 0.6in}
-  .p-eyebrow{text-transform:uppercase;letter-spacing:.22em;font-size:9.5pt;font-weight:700;color:#7d9065;font-family:Helvetica,Arial,sans-serif;margin:0 0 .6em}
-  .p-eyebrow-sm{text-transform:uppercase;letter-spacing:.18em;font-size:9pt;font-weight:700;color:#8fa49b;font-family:Helvetica,Arial,sans-serif;margin:0 0 .3em}
+  .p-eyebrow{text-transform:uppercase;letter-spacing:.22em;font-size:9.5pt;font-weight:700;color:#7d9065;font-family:var(--body);margin:0 0 .6em}
+  .p-eyebrow-sm{text-transform:uppercase;letter-spacing:.18em;font-size:9pt;font-weight:700;color:#8fa49b;font-family:var(--body);margin:0 0 .3em}
 
   /* ---- cover: full-bleed photo, no padding ---- */
   .sheet.cover{background:#282819}
@@ -783,30 +779,34 @@ def print_page(g, slug):
   .cover-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,20,10,.42) 0%%,rgba(20,20,10,0) 30%%,rgba(20,20,10,0) 55%%,rgba(20,20,10,.86) 100%%)}
 
   /* stacked lockup, top-right, on-photo cream — mirrors .brand-stack from css.tmpl */
-  .brand-stack-mark{position:absolute;left:0.6in;top:0.55in;display:flex;flex-direction:column;align-items:flex-end;line-height:.9}
-  .bm-name{display:flex;flex-direction:column;align-items:flex-end;line-height:.9}
-  .bm-word{font-family:'Cormorant Garamond','Fraunces',Georgia,serif;font-weight:600;font-size:52pt;line-height:.9;letter-spacing:.004em;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.28)}
-  .bm-tag{font-family:'Century Gothic','Questrial','Futura','Trebuchet MS','Hanken Grotesk',sans-serif;font-weight:400;font-size:6.1pt;line-height:1;letter-spacing:.1em;text-transform:uppercase;color:#fff;margin-top:5.2pt;text-shadow:0 1px 10px rgba(0,0,0,.28)}
-
-  /* compact lockup, single row, for the closing page */
-  .brand-compact-mark{position:absolute;left:0.6in;bottom:0.55in;display:flex;align-items:center;gap:10pt}
-  .bc-name{display:flex;flex-direction:column;align-items:flex-end;line-height:.9}
-  .bc-word{font-family:'Cormorant Garamond','Fraunces',Georgia,serif;font-weight:600;font-size:14pt;line-height:.9;color:#282819}
-  .bc-tag{font-family:Helvetica,Arial,sans-serif;font-weight:400;font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:#282819;opacity:.85;padding-left:10pt;border-left:1px solid #282819}
+  /* Lockups use the SITE's own .brand rules from app.css; print only positions them
+     and pins the on-photo / on-light colours the site applies by context. */
+  .p-brand-stack{position:absolute;left:0.6in;top:0.55in;--logo:85px}
+  .p-brand-stack .brand-word{color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.28)}
+  .p-brand-stack .brand-tx{color:#fff;opacity:1;text-shadow:0 1px 10px rgba(0,0,0,.28)}
+  .p-brand-compact{position:absolute;left:0.6in;bottom:0.55in}
+  .p-brand-compact .brand-word{color:var(--green-d);text-shadow:none}
+  .p-brand-compact .brand-tx{color:var(--green-d)}
+  /* neutralise site-wide layout rules that must not leak into print */
+  .sheet section,.sheet footer{all:revert}
+  .p-brand-compact{background:none;box-shadow:none;height:auto;width:auto;padding:0;margin:0;position:absolute;left:0.6in;bottom:0.55in;inset:auto auto 0.55in 0.6in}
+  .p-brand-compact::before,.p-brand-compact::after{content:none}
+  .p-brand-compact,.p-brand-compact .brand{border:0!important}
+  .sheet a{color:inherit;text-decoration:none}
 
   .cover-text{position:absolute;left:0.6in;right:0.6in;bottom:1.5in;color:#fffdfa}
   .cover-text .p-eyebrow.on-photo{color:rgba(255,253,250,.85)}
   .cover-text h1{font-size:40pt;color:#fffdfa;line-height:1.04;margin:.1em 0 .3em}
-  .p-facts{font-size:12.5pt;color:#f3ead9;font-family:Helvetica,Arial,sans-serif;letter-spacing:.01em;margin-bottom:.4in}
+  .p-facts{font-size:12.5pt;color:#f3ead9;font-family:var(--body);letter-spacing:.01em;margin-bottom:.4in}
   .cover-led{display:flex;align-items:center;gap:.2in;padding-top:.3in;border-top:1px solid rgba(255,253,250,.35)}
   .led-portraits{display:flex}
   .led-p{width:0.8in;height:0.8in;border-radius:50%%;overflow:hidden;border:1.5px solid #e6d9c2;margin-right:-0.16in;box-shadow:0 0 0 3px #282819}
   .led-p:last-child{margin-right:0}
   .led-p img{width:100%%;height:100%%;object-fit:cover;display:block}
-  .led-names{font-family:Helvetica,Arial,sans-serif;font-size:10.5pt;color:#fffdfa;margin:0;line-height:1.4}
+  .led-names{font-family:var(--body);font-size:10.5pt;color:#fffdfa;margin:0;line-height:1.4}
   .led-role{display:block;text-transform:uppercase;letter-spacing:.14em;font-size:8pt;color:#e6d9c2;margin-top:.15em}
   .led-with{display:block;font-style:italic;color:#f3ead9}
-  .cover-strip{position:absolute;left:0;right:0;bottom:0;background:#fff9f3;color:#282819;padding:.3in 0.6in;font-family:Helvetica,Arial,sans-serif;font-size:9.5pt;letter-spacing:.02em}
+  .cover-strip{position:absolute;left:0;right:0;bottom:0;background:#fff9f3;color:#282819;padding:.3in 0.6in;font-family:var(--body);font-size:9.5pt;letter-spacing:.02em}
   .cover-contact{margin:0}
 
   /* ---- journey / at-a-glance (page 2) ---- */
@@ -816,7 +816,7 @@ def print_page(g, slug):
   .glance-list{display:flex;flex-direction:column}
   .glance-item{padding:10px 0;border-bottom:1px solid #ebe1d1}
   .glance-item:first-child{padding-top:0}
-  .gl-label{display:block;text-transform:uppercase;letter-spacing:.1em;font-size:9pt;font-family:Helvetica,Arial,sans-serif;color:#8a8270;margin-bottom:3px}
+  .gl-label{display:block;text-transform:uppercase;letter-spacing:.1em;font-size:9pt;font-family:var(--body);color:#8a8270;margin-bottom:3px}
   .gl-value{display:block;font-size:12pt}
   .p-highlights{list-style:none;margin:0;padding:0;column-count:1}
   .p-highlights li{position:relative;padding-left:1.05em;margin:.45em 0}
@@ -831,7 +831,7 @@ def print_page(g, slug):
   .p-day1 p{margin:0 0 .35em}
 
   /* ---- day by day grid (page 3) ---- */
-  .p-runhead{display:flex;justify-content:space-between;font-family:Helvetica,Arial,sans-serif;font-size:8.5pt;text-transform:uppercase;letter-spacing:.14em;color:#8a8270;border-bottom:1px solid #ebe1d1;padding-bottom:10px;margin-bottom:.3in}
+  .p-runhead{display:flex;justify-content:space-between;font-family:var(--body);font-size:8.5pt;text-transform:uppercase;letter-spacing:.14em;color:#8a8270;border-bottom:1px solid #ebe1d1;padding-bottom:10px;margin-bottom:.3in}
   .sheet.day-page{padding-top:0.55in;padding-bottom:0.55in}
   .day-grid{display:grid;grid-template-columns:1fr 1fr;gap:.3in .5in}
   .p-day{break-inside:avoid;page-break-inside:avoid}
@@ -840,8 +840,8 @@ def print_page(g, slug):
   .p-day-img img{width:100%%;height:100%%;object-fit:cover;display:block}
   .p-day-body h3{font-size:16pt;margin-bottom:.15em}
   .p-day-body p{margin:0 0 .25em;font-size:11pt}
-  .p-day-meta{font-family:Helvetica,Arial,sans-serif;font-size:9.5pt;color:#8a8270;margin-top:.1em;margin-bottom:0}
-  .p-pageno{position:absolute;right:0.6in;bottom:0.55in;font-size:9pt;color:#8a8270;font-family:Helvetica,Arial,sans-serif;margin:0}
+  .p-day-meta{font-family:var(--body);font-size:9.5pt;color:#8a8270;margin-top:.1em;margin-bottom:0}
+  .p-pageno{position:absolute;right:0.6in;bottom:0.55in;font-size:9pt;color:#8a8270;font-family:var(--body);margin:0}
 
   /* ---- closing page: hosts / included / contact ---- */
   .closing-page{padding-bottom:1.3in}
@@ -851,7 +851,7 @@ def print_page(g, slug):
   .host-portrait img{width:100%%;height:100%%;object-fit:cover}
   .host-copy{flex:1}
   .host-col h3{font-size:13pt;margin-bottom:.05em}
-  .host-role{font-family:Helvetica,Arial,sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:8.5pt;color:#7d9065;margin-bottom:.3em}
+  .host-role{font-family:var(--body);text-transform:uppercase;letter-spacing:.1em;font-size:8.5pt;color:#7d9065;margin-bottom:.3em}
   .host-col p{font-size:9.5pt;line-height:1.38;margin:0 0 .3em}
   .included-cols{margin-bottom:.3in}
 
@@ -864,7 +864,7 @@ def print_page(g, slug):
 </head><body>
 %(body)s
 </body></html>""" % dict(
-        title=title, display_face=_print_display_face(), body=body_html,
+        title=title, ver=VER, body=body_html,
     )
     return html
 
