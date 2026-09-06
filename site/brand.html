@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>L'Dor Vador — Brand Reference</title>
+<link rel="stylesheet" href="assets/app.css">
+<style>
+  /* This page borrows the site's real tokens/fonts from assets/app.css and adds
+     only the reference-page chrome below. Not linked from the site; not in the sitemap. */
+  body{background:var(--cream);font-size:16px}
+  .refwrap{max-width:1100px;margin:0 auto;padding:40px 24px 120px}
+  .refhead{margin-bottom:56px}
+  .refhead h1{font-family:var(--display);font-weight:600;font-size:44px;color:var(--ink)}
+  .refhead p{color:var(--ink-soft);margin-top:10px;font-size:15px}
+  section.ref{margin:64px 0;padding-top:32px;border-top:1px solid var(--line)}
+  section.ref h2{font-family:var(--display);font-weight:600;font-size:26px;color:var(--ink);margin-bottom:6px}
+  section.ref .sub{color:var(--ink-soft);font-size:13.5px;margin-bottom:24px}
+  .swrow{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
+  .sw{border:1px solid var(--line);border-radius:2px;overflow:hidden;background:#fff}
+  .sw .chip{height:70px}
+  .sw .lbl{padding:10px 12px;font-size:12px;line-height:1.5}
+  .sw .lbl b{display:block;font-family:var(--body);font-size:12px}
+  .sw .lbl code{font-size:11px;color:var(--ink-soft)}
+  .specrow{display:flex;align-items:baseline;gap:18px;padding:14px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .specrow .meta{font-size:12px;color:var(--ink-soft);margin-left:auto;white-space:nowrap}
+  .btnrow{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+  .photobox{position:relative;height:220px;border-radius:2px;overflow:hidden;background:linear-gradient(135deg,#6b7a52,#8fa49b)}
+  .photobox::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,12,26,0) 40%,rgba(6,12,26,.6) 100%)}
+  .photobox .lockup{position:absolute;right:24px;bottom:18px;z-index:2;display:flex;flex-direction:column;align-items:flex-end;line-height:.9}
+  .photobox .lockup .bw{font-family:var(--display);font-weight:600;font-size:34px;line-height:.9;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.28)}
+  .photobox .lockup .tx{font-family:var(--tagline);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:#fff;margin-top:4px}
+  .lightlockup{display:flex;flex-direction:row;align-items:center;gap:14px}
+  .lightlockup .bw{font-family:var(--display);font-weight:600;font-size:20px;line-height:.9;color:var(--ink)}
+  .lightlockup .tx{font-family:var(--tagline);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);padding-left:15px;border-left:1px solid var(--ink);opacity:.85}
+  .mockframe{border:1px solid var(--line);border-radius:2px;overflow:hidden;max-width:640px}
+  .mockhead{background:#fff9f3;padding:18px 26px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}
+  .mockbody{background:#fffdfa;padding:30px 26px;color:var(--ink)}
+  .mockbody h3{font-family:var(--display);font-weight:600;font-size:22px;color:var(--ink);margin-bottom:10px}
+  .mockbody p{color:var(--ink-soft);font-size:14px;line-height:1.6;margin-bottom:16px}
+  .mockfoot{background:var(--footer);color:#c3c8b0;padding:26px;display:flex;justify-content:space-between;align-items:flex-end}
+  .mockfoot .bw{color:#fff}
+  .mockfoot .tx{color:#c3c8b0}
+  .pdfcover{width:340px;aspect-ratio:8.5/11;background:linear-gradient(160deg,#7d9065,#282819);border-radius:2px;position:relative;color:#fff;display:flex;flex-direction:column;justify-content:flex-end;padding:26px;box-shadow:0 20px 50px -20px rgba(0,0,0,.4)}
+  .pdfcover .bw{font-family:var(--display);font-weight:600;font-size:30px;color:#fffdfa;line-height:.9;text-align:right}
+  .pdfcover .tx{font-family:var(--tagline);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#fff9f3;text-align:right;margin-top:6px}
+  .cardex{background:var(--cream);border:1px solid var(--line);border-radius:2px;padding:28px 26px;max-width:340px}
+  .cardex h3{font-family:var(--display);font-weight:600;font-size:22px;color:var(--ink)}
+  .cardex p{color:var(--ink-soft);font-size:14px;margin-top:10px;line-height:1.6}
+  .fieldex{max-width:340px}
+  .fieldex label{display:block;font-weight:700;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:9px}
+  .fieldex input{width:100%;background:#fff;border:1.5px solid var(--line);padding:15px;font-size:17px;font-family:var(--body);color:var(--ink);min-height:54px;border-radius:0}
+</style>
+</head>
+<body>
+<div class="refwrap">
+  <div class="refhead">
+    <p class="eyebrow">Internal reference — not part of the site</p>
+    <h1>L'Dor Vador Brand Guide</h1>
+    <p>Every value on this page is pulled from the live homepage's own CSS (css.tmpl / assets/app.css) and fonts. See BRAND.md for the full write-up.</p>
+  </div>
+
+  <section class="ref">
+    <h2>Logo lockup</h2>
+    <p class="sub">Stacked (hero/on-photo) and compact single-row (scrolled/on-light) forms.</p>
+    <div class="photobox">
+      <div class="lockup"><span class="bw">L'Dor</span><span class="bw">Vador</span><span class="tx">Heritage Travel</span></div>
+    </div>
+    <div style="height:20px"></div>
+    <div class="lightlockup">
+      <span style="display:flex;flex-direction:column;line-height:.9"><span class="bw">L'Dor</span><span class="bw">Vador</span></span>
+      <span class="tx">Heritage Travel</span>
+    </div>
+  </section>
+
+  <section class="ref">
+    <h2>Colour</h2>
+    <p class="sub">Tokens from css.tmpl :root — hex values are exact.</p>
+    <div class="swrow">
+      <div class="sw"><div class="chip" style="background:#fff9f3"></div><div class="lbl"><b>cream</b><code>#fff9f3</code></div></div>
+      <div class="sw"><div class="chip" style="background:#fffdfa"></div><div class="lbl"><b>white</b><code>#fffdfa</code></div></div>
+      <div class="sw"><div class="chip" style="background:#282819"></div><div class="lbl"><b>ink / green-d / footer</b><code>#282819</code></div></div>
+      <div class="sw"><div class="chip" style="background:#555a45"></div><div class="lbl"><b>ink-soft / olive</b><code>#555a45</code></div></div>
+      <div class="sw"><div class="chip" style="background:#7d9065"></div><div class="lbl"><b>sage</b><code>#7d9065</code></div></div>
+      <div class="sw"><div class="chip" style="background:#ba9a76"></div><div class="lbl"><b>camel</b><code>#ba9a76</code></div></div>
+      <div class="sw"><div class="chip" style="background:#e4c39c"></div><div class="lbl"><b>sand</b><code>#e4c39c</code></div></div>
+      <div class="sw"><div class="chip" style="background:#8fa49b"></div><div class="lbl"><b>slate</b><code>#8fa49b</code></div></div>
+      <div class="sw"><div class="chip" style="background:#ebe1d1"></div><div class="lbl"><b>line</b><code>#ebe1d1</code></div></div>
+    </div>
+  </section>
+
+  <section class="ref">
+    <h2>Typography</h2>
+    <p class="sub">Actual homepage sizes, at real weights and families.</p>
+    <div class="specrow"><span style="font-family:var(--display);font-weight:600;font-size:56px;line-height:1.02;color:var(--ink)">Hero heading</span><span class="meta">--display 600, clamp(40,5.6vw,82px)</span></div>
+    <div class="specrow"><span style="font-family:var(--display);font-weight:600;font-size:40px;color:var(--ink)">Section heading</span><span class="meta">--display 600, clamp(28-34,~4-5vw,48-66px)</span></div>
+    <div class="specrow"><span style="font-size:21px;line-height:1.62;color:var(--ink)">A lede paragraph reads at 21px with generous 1.62 line-height.</span><span class="meta">--body 400, 21px</span></div>
+    <div class="specrow"><span style="font-size:18px;line-height:1.6;color:var(--ink)">Body copy sits at the site default, 18px over 1.6 line-height.</span><span class="meta">--body 400, 18px</span></div>
+    <div class="specrow"><span class="eyebrow">Eyebrow label</span><span class="meta">--body 700, 12.5px, .26em</span></div>
+    <div class="specrow"><span class="serif-i" style="font-size:26px;color:var(--ink)">An italic pull-quote in Fraunces</span><span class="meta">--serif 400 italic</span></div>
+  </section>
+
+  <section class="ref">
+    <h2>Components</h2>
+    <p class="sub">Buttons, links, hairline, form field, card.</p>
+    <div class="btnrow">
+      <a class="btn btn-solid" href="#">Inquire about a trip</a>
+      <a class="btn btn-yellow" href="#">Secondary action</a>
+      <a class="btn btn-line" style="color:var(--ink)" href="#">Outline button</a>
+      <a class="tlink" href="#">Text link ›</a>
+    </div>
+    <div style="height:26px"></div>
+    <div class="fieldex"><label>Email address</label><input placeholder="you@example.com"></div>
+    <div style="height:26px"></div>
+    <div class="cardex"><h3>Trip card</h3><p>Cards use a 1px hairline border, cream fill, and the system's single 2px radius.</p></div>
+  </section>
+
+  <section class="ref">
+    <h2>Layout &amp; rhythm</h2>
+    <p class="sub">Gutter clamp(24px,5.5vw,110px); section bands run tight/medium/large clamp() paddings; only photo/card containers get the 2px radius.</p>
+  </section>
+
+  <section class="ref">
+    <h2>Email application</h2>
+    <div class="mockframe">
+      <div class="mockhead"><span class="lightlockup"><span style="display:flex;flex-direction:column;line-height:.9"><span class="bw">L'Dor</span><span class="bw">Vador</span></span><span class="tx">Heritage Travel</span></span></div>
+      <div class="mockbody"><h3>Your Curaçao itinerary</h3><p>Warm, unhurried copy in the site's body face, ink on cream.</p><a class="btn btn-solid" href="#">View trip details</a></div>
+      <div class="mockfoot"><span style="display:flex;flex-direction:column;align-items:flex-end;line-height:.9"><span class="bw" style="font-size:22px">L'Dor</span><span class="bw" style="font-size:22px">Vador</span><span class="tx" style="font-size:8px;margin-top:4px">Heritage Travel</span></span><span style="font-size:11px">connect@ldorvadortravel.com</span></div>
+    </div>
+  </section>
+
+  <section class="ref">
+    <h2>Print / PDF application</h2>
+    <div class="pdfcover"><span class="bw">L'Dor</span><span class="bw">Vador</span><span class="tx">Heritage Travel</span></div>
+  </section>
+</div>
+</body>
+</html>
