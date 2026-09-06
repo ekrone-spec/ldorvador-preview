@@ -15,7 +15,8 @@
       center-gutter timeline rule + dot per day.
     __G_VIGNETTES__          alternating image/text sections from "vignettes"
     __G_GALLERY__            mosaic tiles + lightbox trigger from "gallery"
-    __G_PDF_LINK__           secondary "Download trip details" link from "pdf"
+    __G_PDF_LINK__           secondary "Download trip details" link from "pdf" (register section)
+    __G_PDF_LINK_HERO__      same, outline style, next to the hero CTA
   All scalar tokens pass through _cesc()/_drop_empties() exactly like the
   content tokens elsewhere on the site, so \n -> <br> and empty fields vanish
   cleanly. Sections with no content (empty arrays/strings) render nothing.
@@ -40,7 +41,10 @@ __HEADER__
       <h1>__G_TITLE__</h1>
       <p class="grouphero-facts">__G_DATES__ · __G_DURATION__ · __G_GROUP_SIZE__</p>
       <p class="group-price-note">__G_PRICE_NOTE__</p>
-      <a class="btn btn-solid grouphero-cta" href="#register">Register Your Interest</a>
+      <div class="grouphero-ctas">
+        <a class="btn btn-solid grouphero-cta" href="#register">Register Your Interest</a>
+        __G_PDF_LINK_HERO__
+      </div>
     </div>
   </div>
   <div class="scrollcue" aria-hidden="true"><i></i></div>
@@ -112,6 +116,7 @@ __HEADER__
       <input type="hidden" name="group" value="__G_SLUG__">
       <input type="hidden" name="group_title" value="__G_TITLE__">
       <input type="hidden" name="group_dates" value="__G_DATES__">
+      <input type="hidden" name="contact_phone" value="__G_CONTACT_PHONE__">
       <fieldset>
         <legend>About you</legend>
         <div class="two">

@@ -12,6 +12,23 @@ import i18n
 
 D = os.path.dirname(os.path.abspath(__file__))
 def R(p): return open(os.path.join(D, p), encoding='utf-8').read()
+
+_print_display_face_cache = None
+def _print_display_face():
+    """The site's display serif (Fraunces, weight 600), inlined for print.html
+    so headless Chrome embeds the real face in the PDF instead of falling
+    back to a generic serif. Just one weight/style is pulled out of
+    fonts_embedded.css to keep the PDF small."""
+    global _print_display_face_cache
+    if _print_display_face_cache is None:
+        css = R('fonts_embedded.css')
+        blocks = re.findall(r"@font-face\{[^}]*\}", css)
+        match = next((b for b in blocks if "font-family:'Fraunces'" in b
+                      and 'font-weight:600' in b and 'font-style:normal' in b), None)
+        if not match:
+            match = next((b for b in blocks if "font-family:'Fraunces'" in b), '')
+        _print_display_face_cache = match or ''
+    return _print_display_face_cache
 def W(p, s):
     # LDV_OUT_DIR: full_test.py builds into a temp dir; unset = normal build
     full = os.path.join(os.environ.get('LDV_OUT_DIR') or D, p)
@@ -310,7 +327,7 @@ def build_groups():
     gdir = os.path.join(D, 'content', 'groups')
     if not os.path.isdir(gdir):
         return 0
-    tmpl = R('group.body.html')
+    tmpl = re.sub(r'^\s*<!--.*?-->\s*', '', R('group.body.html'), count=1, flags=re.S)
     n = 0
     for fn in sorted(os.listdir(gdir)):
         if fn.startswith('.') or not fn.endswith('.json'):
@@ -401,7 +418,14 @@ def build_groups():
             pdf = g.get('pdf')
             if not pdf:
                 return ''
-            return '<a class="btn btn-line" href="%s" target="_blank" rel="noopener">Download trip details (PDF)</a>' % gimg(pdf)
+            return '<a class="btn btn-line" href="%s" download>Download trip details (PDF)</a>' % gimg(pdf)
+
+        def pdf_link_hero():
+            pdf = g.get('pdf')
+            if not pdf:
+                return ''
+            return ('<a class="btn btn-line on-photo grouphero-pdf" href="%s" download>'
+                    'Download trip details (PDF)</a>' % gimg(pdf))
 
         body = (tmpl.replace('__HEADER__', header)
                     .replace('__FOOTER__', footer))
@@ -426,6 +450,7 @@ def build_groups():
             '__G_START_FINISH__': gv('start_finish'),
             '__G_PACE__':        gv('pace'),
             '__G_ACCOMMODATION__': gv('accommodation'),
+            '__G_CONTACT_PHONE__': gv('contact_phone'),
             '__G_FORM_INTRO__':  gv('form_intro'),
             '__G_NOTIFY_NOTE__': gv('notify_note'),
             '__G_INCLUDED_LIST__':     bullets('included'),
@@ -436,6 +461,7 @@ def build_groups():
             '__G_VIGNETTES__':         vignettes(),
             '__G_GALLERY__':           gallery(),
             '__G_PDF_LINK__':          pdf_link(),
+            '__G_PDF_LINK_HERO__':     pdf_link_hero(),
             '__TURNSTILE_SITEKEY__':   _cesc(TURNSTILE_SITEKEY),
         }
         for tok, val in subs.items():
@@ -458,8 +484,167 @@ def build_groups():
                 '</head><body>\n') % (_cesc(desc), canonical, _cesc(title))
         tail = '\n<script src="../../assets/app.js?v=' + VER + '" defer></script></body></html>'
         W('groups/%s/index.html' % slug, entesc(head + body + tail))
+        W('groups/%s/print.html' % slug, entesc(print_page(g, slug)))
         n += 1
     return n
+
+# ---- printable trip-details page: content/groups/<slug>.json -> /groups/<slug>/print.html ----
+# Self-contained (inline CSS), noindex, not in the sitemap or golden manifest.
+# Rendered to PDF locally by make_pdf.py — the Cloudflare build has no Chrome.
+def print_page(g, slug):
+    def pv(key):
+        return _cesc(g.get(key) or '')
+
+    def pimg(path):
+        return ('../../' + path) if path else ''
+
+    def bullets(key):
+        raw = g.get(key)
+        if not raw:
+            return ''
+        items = [ln.strip() for ln in str(raw).split('\n') if ln.strip()]
+        if not items:
+            return ''
+        return '<ul>%s</ul>' % ''.join('<li>%s</li>' % _cesc(it) for it in items)
+
+    def days():
+        out = []
+        for d in (g.get('itinerary') or []):
+            day = _cesc(d.get('day'))
+            title = _cesc(d.get('title'))
+            paras = ''.join('<p>%s</p>' % _cesc(ln) for ln in
+                             str(d.get('text') or '').split('\n') if ln.strip())
+            img = d.get('image')
+            img_html = ('<img src="%s" alt="">' % pimg(img)) if img else ''
+            out.append('<div class="p-day">%s<div class="p-day-copy"><h3>%s &middot; %s</h3>%s</div></div>'
+                        % (img_html, day, title, paras))
+        return ''.join(out)
+
+    title = pv('title')
+    congregation = pv('congregation')
+    subtitle = pv('subtitle')
+    dates = pv('dates')
+    duration = pv('duration')
+    group_size = pv('group_size')
+    leader = pv('leader')
+    hero = pimg(g.get('hero_image'))
+    intro = ''.join('<p>%s</p>' % _cesc(ln) for ln in
+                     str(g.get('intro') or '').split('\n') if ln.strip())
+    page_url = '%s/groups/%s/' % (SITE, slug)
+    contact_email = pv('contact_email') or 'connect@ldorvadortravel.com'
+    contact_phone = pv('contact_phone')
+
+    glance_rows = ''.join(
+        '<tr><th>%s</th><td>%s</td></tr>' % (label, val) for label, val in [
+            ('Dates', dates), ('Duration', duration), ('Group size', group_size),
+            ('Start / finish', pv('start_finish')), ('Pace', pv('pace')),
+            ('Accommodation', pv('accommodation')),
+        ] if val)
+
+    contact_rows = ''
+    if contact_email:
+        contact_rows += '<p>Email: <b>%s</b></p>' % contact_email
+    if contact_phone:
+        contact_rows += '<p>Phone: <b>%s</b></p>' % contact_phone
+    contact_rows += '<p>Online: <b>%s</b></p>' % page_url
+
+    price_note = pv('price_note')
+
+    html = """<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>%(title)s | Trip Details</title>
+<style>
+  %(display_face)s
+  @page { size: Letter; margin: 0; }
+  *{box-sizing:border-box}
+  body{margin:0;background:#fff9f3;color:#282819;font-family:Georgia,'Times New Roman',serif;font-size:13.5pt;line-height:1.5}
+  h1,h2,h3{font-family:'Fraunces',Georgia,'Times New Roman',serif;font-weight:600;color:#282819;margin:0 0 .3em}
+  .p-body{padding:0 0.6in 0.6in}
+  .p-cover{position:relative;margin:0 0 24px;height:3.2in;overflow:hidden;background:#282819}
+  .p-cover img{width:100%%;height:100%%;object-fit:cover;opacity:.82}
+  .p-cover-text{position:absolute;left:0;right:0;bottom:0;padding:28px 40px;color:#fffdfa;background:linear-gradient(0deg,rgba(20,20,10,.72),rgba(20,20,10,0))}
+  .p-eyebrow{text-transform:uppercase;letter-spacing:.22em;font-size:11pt;font-weight:700;color:#e6d9c2;font-family:Helvetica,Arial,sans-serif}
+  .p-cover-text h1{font-size:28pt;color:#fffdfa;margin:.15em 0}
+  .p-facts{font-size:13pt;color:#f3ead9;font-family:Helvetica,Arial,sans-serif}
+  section{margin:0 0 26px}
+  h2{font-size:17pt;border-bottom:2px solid #ebe1d1;padding-bottom:6px;margin-bottom:12px}
+  table.glance{width:100%%;border-collapse:collapse;font-size:13pt}
+  table.glance th{text-align:left;color:#555a45;font-weight:700;padding:6px 14px 6px 0;width:34%%;vertical-align:top;font-family:Helvetica,Arial,sans-serif;font-size:11.5pt;text-transform:uppercase;letter-spacing:.06em}
+  table.glance td{padding:6px 0;vertical-align:top}
+  table.glance tr{border-bottom:1px solid #ebe1d1}
+  ul{margin:.2em 0;padding-left:1.3em}
+  li{margin:.35em 0}
+  .p-cols{display:flex;gap:36px}
+  .p-cols > div{flex:1}
+  .p-day{display:flex;gap:16px;margin-bottom:16px;page-break-inside:avoid}
+  .p-day img{width:1.6in;height:1.15in;object-fit:cover;border-radius:4px;flex:none}
+  .p-day-copy h3{font-size:13.5pt;color:#555a45;margin-bottom:.25em}
+  .p-day-copy p{margin:.25em 0}
+  .p-price{font-style:italic;color:#555a45}
+  .p-contact{background:#f3ead9;border-radius:8px;padding:20px 26px;page-break-inside:avoid}
+  .p-contact p{margin:.3em 0;font-size:13pt}
+  .p-footer{margin-top:18px;font-size:10pt;color:#8a8270;font-family:Helvetica,Arial,sans-serif}
+</style>
+</head><body>
+
+<div class="p-cover">
+  %(hero_img)s
+  <div class="p-cover-text">
+    <p class="p-eyebrow">%(congregation)s</p>
+    <h1>%(title)s</h1>
+    <p class="p-facts">%(dates)s &middot; %(duration)s &middot; %(group_size)s%(leader_suffix)s</p>
+  </div>
+</div>
+
+<div class="p-body">
+<section>
+  <h2>Overview</h2>
+  %(intro)s
+</section>
+
+<section>
+  <h2>At a Glance</h2>
+  <table class="glance">%(glance_rows)s</table>
+</section>
+
+%(highlights_section)s
+
+<section>
+  <h2>Day by Day</h2>
+  %(days)s
+</section>
+
+<section class="p-cols">
+  <div><h2>What's Included</h2>%(included)s</div>
+  <div><h2>Not Included</h2>%(not_included)s</div>
+</section>
+
+%(price_section)s
+
+<section class="p-contact">
+  <h2 style="border:0;margin-bottom:8px">Questions or to Register Your Interest</h2>
+  %(contact_rows)s
+</section>
+
+<p class="p-footer">L'Dor Vador Travel &middot; %(page_url)s</p>
+</div>
+
+</body></html>""" % dict(
+        title=title, congregation=congregation, subtitle=subtitle,
+        display_face=_print_display_face(),
+        hero_img=('<img src="%s" alt="">' % hero) if hero else '',
+        dates=dates, duration=duration, group_size=group_size,
+        leader_suffix=(' &middot; Led by %s' % leader) if leader else '',
+        intro=intro, glance_rows=glance_rows,
+        highlights_section=('<section><h2>Highlights</h2>%s</section>' % bullets('highlights')) if g.get('highlights') else '',
+        days=days(),
+        included=bullets('included'), not_included=bullets('not_included'),
+        price_section=('<section><p class="p-price">%s</p></section>' % price_note) if price_note else '',
+        contact_rows=contact_rows, page_url=page_url,
+    )
+    return html
 
 groups_built = build_groups()
 

@@ -111,47 +111,211 @@ async function sendResendEmail(env, payload) {
   return resp;
 }
 
-async function sendInterestEmails(env, fields, groupCount) {
-  const { full_name, email, phone, travelers, room, comments, group_slug, group_title, group_dates } = fields;
+const MAX_PDF_BYTES = 5 * 1024 * 1024;
+const BASE64_CHUNK = 0x8000;
+
+function bytesToBase64(bytes) {
+  let binary = '';
+  for (let i = 0; i < bytes.length; i += BASE64_CHUNK) {
+    const chunk = bytes.subarray(i, i + BASE64_CHUNK);
+    binary += String.fromCharCode.apply(null, chunk);
+  }
+  return btoa(binary);
+}
+
+function sanitizeFilename(name) {
+  const base = String(name || 'trip-details').trim().replace(/[^A-Za-z0-9 _.-]/g, '').trim() || 'trip-details';
+  return `${base}.pdf`;
+}
+
+async function fetchGroupPdfBase64(env, request, groupSlug) {
+  try {
+    const pdfUrl = new URL('/assets/pdf/' + groupSlug + '.pdf', request.url);
+    const resp = await env.ASSETS.fetch(new Request(pdfUrl));
+    if (!resp.ok) {
+      console.warn(`No trip-details PDF for group "${groupSlug}" (status ${resp.status})`);
+      return null;
+    }
+    const buf = await resp.arrayBuffer();
+    if (buf.byteLength > MAX_PDF_BYTES) {
+      console.warn(`Trip-details PDF for group "${groupSlug}" is ${buf.byteLength} bytes, exceeds ${MAX_PDF_BYTES} cap; skipping attachment`);
+      return null;
+    }
+    return bytesToBase64(new Uint8Array(buf));
+  } catch (err) {
+    console.warn(`Failed to fetch trip-details PDF for group "${groupSlug}"`, err);
+    return null;
+  }
+}
+
+/* ---- Branded email shell (inline-styled, table-based; no external images) ---- */
+const EMAIL_COLORS = {
+  cream: '#fff9f3',
+  ink: '#282819',
+  inkSoft: '#555a45',
+  sage: '#7d9065',
+  blue: '#282819',
+  blue2: '#3d4a30',
+  footer: '#282819',
+  line: '#ebe1d1',
+  white: '#fffdfa',
+};
+const EMAIL_SERIF = "'Cormorant Garamond', Georgia, 'Times New Roman', serif";
+const EMAIL_SANS = "-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif";
+
+function emailWordmark(size) {
+  const s = size || 22;
+  return `<span style="font-family:${EMAIL_SERIF};font-size:${s}px;color:${EMAIL_COLORS.white};letter-spacing:.02em;">L&rsquo;Dor Vador</span>`;
+}
+
+function emailShell({ title, preheader, eyebrow, heading, bodyHtml, footerNote }) {
+  return `<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>${title}</title>
+</head>
+<body style="margin:0;padding:0;background:${EMAIL_COLORS.cream};">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">${preheader}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${EMAIL_COLORS.cream};">
+<tr><td align="center" style="padding:28px 16px;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:${EMAIL_COLORS.white};">
+  <tr><td style="background:${EMAIL_COLORS.footer};padding:22px 32px;" align="center">
+    ${emailWordmark(24)}<br>
+    <span style="font-family:${EMAIL_SANS};font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:${EMAIL_COLORS.sage};">Heritage Travel</span>
+  </td></tr>
+  <tr><td style="padding:36px 32px 8px;">
+    <p style="margin:0 0 10px;font-family:${EMAIL_SANS};font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:${EMAIL_COLORS.sage};font-weight:600;">${eyebrow}</p>
+    <h1 style="margin:0 0 18px;font-family:${EMAIL_SERIF};font-weight:600;font-size:32px;line-height:1.2;color:${EMAIL_COLORS.ink};">${heading}</h1>
+    <hr style="border:none;border-top:1px solid ${EMAIL_COLORS.line};margin:0 0 22px;">
+  </td></tr>
+  <tr><td style="padding:0 32px 36px;font-family:${EMAIL_SANS};font-size:17px;line-height:1.6;color:${EMAIL_COLORS.ink};">
+    ${bodyHtml}
+  </td></tr>
+  <tr><td style="background:${EMAIL_COLORS.footer};padding:28px 32px;" align="center">
+    ${emailWordmark(18)}
+    <p style="margin:12px 0 0;font-family:${EMAIL_SANS};font-size:13px;line-height:1.6;color:${EMAIL_COLORS.sage};">
+      ${footerNote}<br>
+      <a href="mailto:connect@ldorvadortravel.com" style="color:${EMAIL_COLORS.sage};">connect@ldorvadortravel.com</a><br>
+      <a href="https://www.ldorvadortravel.com" style="color:${EMAIL_COLORS.sage};">www.ldorvadortravel.com</a>
+    </p>
+  </td></tr>
+</table>
+</td></tr>
+</table>
+</body></html>`;
+}
+
+function emailButton(href, label) {
+  return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 4px;">
+  <tr><td style="background:${EMAIL_COLORS.blue};padding:0;">
+    <a href="${href}" style="display:inline-block;padding:14px 28px;font-family:${EMAIL_SANS};font-size:15px;font-weight:600;letter-spacing:.03em;color:${EMAIL_COLORS.white};text-decoration:none;">${label}</a>
+  </td></tr>
+</table>`;
+}
+
+async function sendInterestEmails(env, fields, groupCount, request) {
+  const { full_name, email, phone, travelers, room, comments, group_slug, group_title, group_dates, contact_phone } = fields;
   const firstName = (full_name || '').trim().split(/\s+/)[0] || full_name;
   const titleForCopy = group_title || group_slug;
   const dateLine = group_dates ? `, ${escapeHtml(group_dates)}` : '';
   const dateLineText = group_dates ? `, ${group_dates}` : '';
+  const groupUrl = `https://www.ldorvadortravel.com/groups/${group_slug}/`;
+  const phoneSentence = contact_phone ? `Questions? Reply to this email or call ${contact_phone}.` : 'Questions? Reply to this email.';
+  const phoneSentenceHtml = contact_phone
+    ? `Questions? Reply to this email or call ${escapeHtml(contact_phone)}.`
+    : 'Questions? Reply to this email.';
 
-  const registrantHtml = `
-    <p>Hi ${escapeHtml(firstName)},</p>
-    <p>Thank you for registering your interest in <strong>${escapeHtml(titleForCopy)}</strong>${dateLine}.</p>
-    <p>This is not a booking. We will contact you once the program and booking details are finalized.</p>
-    <p>Warmly,<br>Hannah &amp; Cornelis<br>L'Dor Vador Travel</p>
-    <p style="color:#888;font-size:12px;">www.ldorvadortravel.com</p>
-  `;
+  const pdfBase64 = await fetchGroupPdfBase64(env, request, group_slug);
+  const attachmentFilename = sanitizeFilename(titleForCopy);
+  const pdfSentenceHtml = pdfBase64
+    ? `The trip details are attached as a PDF, and always available on <a href="${groupUrl}" style="color:${EMAIL_COLORS.sage};">the trip page</a>.`
+    : `The trip details are always available on <a href="${groupUrl}" style="color:${EMAIL_COLORS.sage};">the trip page</a>.`;
+  const pdfSentenceText = pdfBase64
+    ? `The trip details are attached as a PDF, and always available at ${groupUrl}.`
+    : `The trip details are always available at ${groupUrl}.`;
+
+  const registrantHtml = emailShell({
+    title: `We've registered your interest — ${escapeHtml(titleForCopy)}`,
+    preheader: `Your expression of interest for ${escapeHtml(titleForCopy)} has been received.`,
+    eyebrow: 'Expression of interest received',
+    heading: escapeHtml(titleForCopy),
+    bodyHtml: `
+      ${group_dates ? `<p style="margin:0 0 18px;font-family:${EMAIL_SANS};font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:${EMAIL_COLORS.inkSoft};">${escapeHtml(group_dates)}</p>` : ''}
+      <p style="margin:0 0 16px;">Hi ${escapeHtml(firstName)},</p>
+      <p style="margin:0 0 16px;">We've registered your interest in <strong>${escapeHtml(titleForCopy)}</strong>${dateLine}.</p>
+      <p style="margin:0 0 16px;">${pdfSentenceHtml}</p>
+      <p style="margin:0 0 22px;">This is not a booking. We will contact you once the program and booking details are finalized.</p>
+      ${emailButton(groupUrl, 'View the trip page')}
+      <p style="margin:26px 0 16px;">${phoneSentenceHtml}</p>
+      <p style="margin:0;">Warmly,<br>Hannah &amp; Cornelis<br>L&rsquo;Dor Vador Travel</p>
+    `,
+    footerNote: 'L&rsquo;Dor Vador Travel',
+  });
   const registrantText =
     `Hi ${firstName},\n\n` +
-    `Thank you for registering your interest in ${titleForCopy}${dateLineText}.\n\n` +
+    `We've registered your interest in ${titleForCopy}${dateLineText}.\n\n` +
+    `${pdfSentenceText}\n\n` +
     `This is not a booking. We will contact you once the program and booking details are finalized.\n\n` +
+    `View the trip page: ${groupUrl}\n\n` +
+    `${phoneSentence}\n\n` +
     `Warmly,\nHannah & Cornelis\nL'Dor Vador Travel\n\nwww.ldorvadortravel.com`;
+
+  const registrantPayload = {
+    from: "L'Dor Vador Travel <connect@ldorvadortravel.com>",
+    to: [email],
+    reply_to: 'connect@ldorvadortravel.com',
+    subject: `We've registered your interest — ${titleForCopy}`,
+    html: registrantHtml,
+    text: registrantText,
+  };
+  if (pdfBase64) {
+    registrantPayload.attachments = [{ filename: attachmentFilename, content: pdfBase64 }];
+  }
 
   const notifyTo = (env.NOTIFY_TO || DEFAULT_NOTIFY_TO).split(',').map((s) => s.trim()).filter(Boolean);
   const notifyText =
     `Group: ${titleForCopy} (${group_slug})\n` +
     `Name: ${full_name}\nEmail: ${email}\nPhone: ${phone || ''}\n` +
     `Travelers: ${travelers}\nRoom: ${room || ''}\nComments: ${comments || ''}\n\n` +
-    `Registrations for this group so far: ${groupCount}`;
+    `Registrations for this group so far: ${groupCount}\n` +
+    `PDF attached to confirmation: ${pdfBase64 ? 'yes' : 'no'}`;
+
+  function notifyRow(label, value) {
+    return `<tr>
+      <td style="padding:8px 12px 8px 0;font-family:${EMAIL_SANS};font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:${EMAIL_COLORS.inkSoft};white-space:nowrap;vertical-align:top;">${label}</td>
+      <td style="padding:8px 0;font-family:${EMAIL_SANS};font-size:16px;color:${EMAIL_COLORS.ink};border-bottom:1px solid ${EMAIL_COLORS.line};">${value || '&mdash;'}</td>
+    </tr>`;
+  }
+  const notifyHtml = emailShell({
+    title: `Expression of interest: ${escapeHtml(titleForCopy)} — ${escapeHtml(full_name)}`,
+    preheader: `New expression of interest from ${escapeHtml(full_name)} for ${escapeHtml(titleForCopy)}.`,
+    eyebrow: 'New expression of interest',
+    heading: escapeHtml(titleForCopy),
+    bodyHtml: `
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;">
+        ${notifyRow('Group', `${escapeHtml(titleForCopy)} (${escapeHtml(group_slug)})`)}
+        ${notifyRow('Name', escapeHtml(full_name))}
+        ${notifyRow('Email', escapeHtml(email))}
+        ${notifyRow('Phone', escapeHtml(phone || ''))}
+        ${notifyRow('Travelers', escapeHtml(String(travelers)))}
+        ${notifyRow('Room', escapeHtml(room || ''))}
+        ${notifyRow('Comments', escapeHtml(comments || ''))}
+      </table>
+      <p style="margin:0 0 8px;">Registrations for this group so far: <strong>${groupCount}</strong></p>
+      <p style="margin:0;">PDF attached to confirmation: <strong>${pdfBase64 ? 'yes' : 'no'}</strong></p>
+    `,
+    footerNote: 'L&rsquo;Dor Vador Travel &mdash; internal notification',
+  });
 
   const results = await Promise.allSettled([
-    sendResendEmail(env, {
-      from: "L'Dor Vador Travel <connect@ldorvadortravel.com>",
-      to: [email],
-      reply_to: 'connect@ldorvadortravel.com',
-      subject: `We've registered your interest — ${titleForCopy}`,
-      html: registrantHtml,
-      text: registrantText,
-    }),
+    sendResendEmail(env, registrantPayload),
     sendResendEmail(env, {
       from: "L'Dor Vador Travel <connect@ldorvadortravel.com>",
       to: notifyTo,
       reply_to: 'connect@ldorvadortravel.com',
       subject: `Expression of interest: ${titleForCopy} — ${full_name}`,
+      html: notifyHtml,
       text: notifyText,
     }),
   ]);
@@ -203,6 +367,7 @@ async function handleInterestPost(request, env, url) {
   }
 
   const group_dates = clampStr(fields.group_dates, 200);
+  const contact_phone = clampStr(fields.contact_phone, 60);
 
   const ip = request.headers.get('CF-Connecting-IP') || '';
   const ip_hash = await sha256Hex(ip + IP_SALT);
@@ -268,8 +433,9 @@ async function handleInterestPost(request, env, url) {
     try {
       const sent = await sendInterestEmails(
         env,
-        { full_name, email, phone, travelers, room, comments, group_slug, group_title, group_dates },
-        groupCountToday + 1
+        { full_name, email, phone, travelers, room, comments, group_slug, group_title, group_dates, contact_phone },
+        groupCountToday + 1,
+        request
       );
       if (sent) {
         const rowId = insertResult && insertResult.meta && insertResult.meta.last_row_id;

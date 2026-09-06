@@ -42,6 +42,8 @@ GROUPTRIP_FIELD_LABEL = {
     'gallery': 'Photo gallery',
     'form_intro': 'Inquiry form intro',
     'notify_note': 'Notify note',
+    'contact_email': 'Contact email (shown on the PDF)',
+    'contact_phone': 'Contact phone (shown on the PDF)',
     'pdf': 'Trip details PDF (path, optional)',
     'published': 'Published',
 }

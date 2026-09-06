@@ -994,7 +994,10 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
   line-height:1.5;padding:10px 14px;background:rgba(14,16,10,.42);border-radius:2px;display:inline-block;
   text-shadow:0 1px 3px rgba(0,0,0,.6)}
 .grouphero-lede .grouphero-cta{display:inline-flex;margin-top:24px}
-@media(max-width:820px){.grouphero-lede h1{font-size:clamp(36px,10vw,48px)}}
+.grouphero-ctas{display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+.grouphero-ctas .grouphero-cta{margin-top:24px}
+.grouphero-ctas .grouphero-pdf{margin-top:24px;font-size:16px}
+@media(max-width:820px){.grouphero-lede h1{font-size:clamp(36px,10vw,48px)}.grouphero-ctas{flex-direction:column;align-items:flex-start}}
 
 .gcurtain{position:relative;z-index:20;background:var(--cream)}
 #overview,#itinerary,#highlights,#details,#register{scroll-margin-top:calc(var(--hdr) + var(--gnav) + 20px)}

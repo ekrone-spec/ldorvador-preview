@@ -1449,6 +1449,12 @@ file_config:
       notify_note:
         type: textarea
         label: "Notify note"
+      contact_email:
+        type: text
+        label: "Contact email (shown on the PDF)"
+      contact_phone:
+        type: text
+        label: "Contact phone (shown on the PDF)"
       pdf:
         type: text
         label: "Trip details PDF (path, optional)"

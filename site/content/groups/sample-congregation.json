@@ -44,6 +44,8 @@
   ],
   "form_intro": "If your congregation is interested in a journey like this one, let us know and we will follow up to plan the details together.",
   "notify_note": "You will be contacted once the program and booking details are finalized.",
-  "pdf": "",
+  "contact_email": "connect@ldorvadortravel.com",
+  "contact_phone": "+1 (000) 000-0000",
+  "pdf": "assets/pdf/sample-congregation.pdf",
   "published": true
 }
