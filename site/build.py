@@ -491,6 +491,49 @@ def build_groups():
 # ---- printable trip-details page: content/groups/<slug>.json -> /groups/<slug>/print.html ----
 # Self-contained (inline CSS), noindex, not in the sitemap or golden manifest.
 # Rendered to PDF locally by make_pdf.py — the Cloudflare build has no Chrome.
+_story_bios_cache = None
+def _story_bios():
+    """Hosts content for the trip-details PDF, pulled from content/story.json
+    so the hosts page is identical across every group's brochure. Hannah's
+    bio is a run of discrete p_2.. paragraphs (one, p_3, continues an inline
+    link that splits p_2 — rejoined here); Cornelis's is one long p_10 field
+    with blank-line-separated paragraphs."""
+    global _story_bios_cache
+    if _story_bios_cache is None:
+        try:
+            story = json.load(open(os.path.join(D, 'content', 'story.json'), encoding='utf-8'))
+            bio = story.get('bio') or {}
+        except Exception:
+            bio = {}
+        hannah_p1 = ' '.join(x for x in [bio.get('p_2'), bio.get('a_1'), bio.get('p_3')] if x)
+        hannah = {
+            'name': bio.get('h2_1') or 'Hannah Berkeley Cohen',
+            'role': bio.get('p_1') or 'Co-founder',
+            'paras': [p for p in [hannah_p1, bio.get('p_4')] if p][:2],
+        }
+        cornelis_paras = [p.strip() for p in str(bio.get('p_10') or '').split('\n\n') if p.strip()]
+        cornelis = {
+            'name': bio.get('h2_2') or 'Cornelis Greiwe',
+            'role': bio.get('p_9') or 'Co-founder',
+            'paras': cornelis_paras[:2],
+        }
+        _story_bios_cache = (hannah, cornelis)
+    return _story_bios_cache
+
+
+def _cap_words(text, limit=110):
+    """Truncate at the sentence end nearest to (but not over) `limit` words,
+    so a bio never runs long on the printed page but never cuts mid-thought."""
+    words = text.split()
+    if len(words) <= limit:
+        return text
+    head = ' '.join(words[:limit])
+    cut = max(head.rfind('. '), head.rfind('.” '), head.rfind('? '), head.rfind('! '))
+    if cut > 0:
+        return head[:cut + 1]
+    return head.rstrip('.,;: ') + '.'
+
+
 def print_page(g, slug):
     def pv(key):
         return _cesc(g.get(key) or '')
@@ -507,48 +550,243 @@ def print_page(g, slug):
             return ''
         return '<ul>%s</ul>' % ''.join('<li>%s</li>' % _cesc(it) for it in items)
 
-    def days():
-        out = []
-        for d in (g.get('itinerary') or []):
-            day = _cesc(d.get('day'))
-            title = _cesc(d.get('title'))
-            paras = ''.join('<p>%s</p>' % _cesc(ln) for ln in
-                             str(d.get('text') or '').split('\n') if ln.strip())
-            img = d.get('image')
-            img_html = ('<img src="%s" alt="">' % pimg(img)) if img else ''
-            out.append('<div class="p-day">%s<div class="p-day-copy"><h3>%s &middot; %s</h3>%s</div></div>'
-                        % (img_html, day, title, paras))
-        return ''.join(out)
+    def bullet_items(key):
+        raw = g.get(key)
+        if not raw:
+            return ''
+        items = [ln.strip() for ln in str(raw).split('\n') if ln.strip()]
+        return ''.join('<li>%s</li>' % _cesc(it) for it in items)
 
     title = pv('title')
     congregation = pv('congregation')
-    subtitle = pv('subtitle')
     dates = pv('dates')
     duration = pv('duration')
     group_size = pv('group_size')
     leader = pv('leader')
+    leader_image = g.get('leader_image')
     hero = pimg(g.get('hero_image'))
     intro = ''.join('<p>%s</p>' % _cesc(ln) for ln in
                      str(g.get('intro') or '').split('\n') if ln.strip())
     page_url = '%s/groups/%s/' % (SITE, slug)
     contact_email = pv('contact_email') or 'connect@ldorvadortravel.com'
     contact_phone = pv('contact_phone')
+    price_note = pv('price_note')
 
-    glance_rows = ''.join(
-        '<tr><th>%s</th><td>%s</td></tr>' % (label, val) for label, val in [
+    glance_items = ''.join(
+        '<div class="glance-item"><span class="gl-label">%s</span><span class="gl-value">%s</span></div>'
+        % (label, val) for label, val in [
             ('Dates', dates), ('Duration', duration), ('Group size', group_size),
             ('Start / finish', pv('start_finish')), ('Pace', pv('pace')),
             ('Accommodation', pv('accommodation')),
         ] if val)
 
+    # ---- day-by-day ----
+    itinerary = g.get('itinerary') or []
+
+    def day_meta(d):
+        date = _cesc(d.get('date'))
+        overnight = _cesc(d.get('overnight'))
+        meals = _cesc(d.get('meals'))
+        bits = []
+        if overnight:
+            bits.append('Overnight in %s' % overnight)
+        if meals:
+            bits.append('(%s)' % meals)
+        return ' &middot; '.join(bits)
+
+    def day_block(d, solo=False):
+        day = _cesc(d.get('day'))
+        date = _cesc(d.get('date'))
+        dtitle = _cesc(d.get('title'))
+        paras = ''.join('<p>%s</p>' % _cesc(ln) for ln in
+                         str(d.get('text') or '').split('\n') if ln.strip())
+        img = d.get('image')
+        eyebrow = '%s%s' % (day, ' &middot; %s' % date if date else '')
+        meta = day_meta(d)
+        meta_html = ('<p class="p-day-meta">%s</p>' % meta) if meta else ''
+        img_cls = 'p-day-img solo' if solo else 'p-day-img'
+        noimg_cls = 'p-day-noimg solo' if solo else 'p-day-noimg'
+        if img:
+            media_html = '<div class="%s"><img src="%s" alt=""></div>' % (img_cls, pimg(img))
+        else:
+            media_html = '<div class="%s"><span>%s</span></div>' % (noimg_cls, dtitle)
+        cls = 'p-day solo' if solo else 'p-day'
+        return ('<div class="%s"><div class="p-day-body">%s'
+                '<p class="p-eyebrow-sm">%s</p><h3>%s</h3>%s%s</div></div>'
+                % (cls, media_html, eyebrow, dtitle, paras, meta_html))
+
+    def day1_feature(d):
+        day = _cesc(d.get('day'))
+        date = _cesc(d.get('date'))
+        dtitle = _cesc(d.get('title'))
+        paras = ''.join('<p>%s</p>' % _cesc(ln) for ln in
+                         str(d.get('text') or '').split('\n') if ln.strip())
+        img = pimg(d.get('image') or g.get('hero_image'))
+        eyebrow = '%s%s' % (day, ' &middot; %s' % date if date else '')
+        meta = day_meta(d)
+        meta_html = ('<p class="p-day-meta">%s</p>' % meta) if meta else ''
+        return ('<div class="p-day1"><p class="p-eyebrow-sm">%s</p><h3>%s</h3>'
+                '<div class="p-day1-img"><img src="%s" alt=""></div>%s%s</div>'
+                % (eyebrow, dtitle, img, paras, meta_html))
+
+    per_page = 2
+    day1_block_html = day1_feature(itinerary[0]) if itinerary else ''
+    day_sheets = []
+    rest_days = itinerary[1:]  # day 1 is the page-2 feature; the run starts at day 2
+    for i in range(0, len(rest_days), per_page):
+        chunk = rest_days[i:i + per_page]
+        solo = len(chunk) == 1
+        day_sheets.append(''.join(day_block(d, solo=solo) for d in chunk))
+
+    # ---- hosts page (same across every group PDF) ----
+    hannah, cornelis = _story_bios()
+    def host_col(h, img):
+        budget = 110
+        kept = []
+        for p in h['paras']:
+            if budget <= 0:
+                break
+            words = p.split()
+            if len(words) <= budget:
+                kept.append(p)
+                budget -= len(words)
+            else:
+                kept.append(_cap_words(p, budget))
+                budget = 0
+        paras = ''.join('<p>%s</p>' % _cesc(p) for p in kept)
+        return ('<div class="host-col"><div class="host-portrait"><img src="../../%s" alt=""></div>'
+                '<h3>%s</h3><p class="host-role">%s</p>%s</div>'
+                % (img, _cesc(h['name']), _cesc(h['role']), paras))
+    hosts_html = host_col(hannah, 'assets/img/hannah.jpg') + host_col(cornelis, 'assets/img/cornelis.jpg')
+
+    included = bullets('included')
+    not_included = bullets('not_included')
+
     contact_rows = ''
     if contact_email:
-        contact_rows += '<p>Email: <b>%s</b></p>' % contact_email
+        contact_rows += '<p>Email &middot; <b>%s</b></p>' % contact_email
     if contact_phone:
-        contact_rows += '<p>Phone: <b>%s</b></p>' % contact_phone
-    contact_rows += '<p>Online: <b>%s</b></p>' % page_url
+        contact_rows += '<p>Phone &middot; <b>%s</b></p>' % contact_phone
+    contact_rows += '<p>Online &middot; <b>%s</b></p>' % page_url
 
-    price_note = pv('price_note')
+    # ---- led-by row on the cover ----
+    led_portraits = ('<div class="led-portraits">'
+                     '<span class="led-p"><img src="../../assets/img/hannah.jpg" alt=""></span>'
+                     '<span class="led-p"><img src="../../assets/img/cornelis.jpg" alt=""></span>'
+                     + ('<span class="led-p"><img src="%s" alt=""></span>' % pimg(leader_image) if leader and leader_image else '')
+                     + '</div>')
+    led_names = ('<p class="led-names">Hannah Berkeley Cohen &amp; Cornelis Greiwe'
+                 '<br><span class="led-role">Co-founders</span>'
+                 + ('<br><span class="led-with">with %s</span>' % leader if leader else '') + '</p>')
+    led_row = '<div class="cover-led">%s%s</div>' % (led_portraits, led_names)
+
+    cover_contact_bits = [b for b in [contact_email, contact_phone, 'www.ldorvadortravel.com'] if b]
+    cover_contact = '<p class="cover-contact">%s</p>' % ' &middot; '.join(cover_contact_bits)
+
+    # ---- assemble sheets, then number every interior sheet ----
+    sheets = []
+    sheets.append(('cover', """
+<div class="sheet cover">
+  %(hero_img)s
+  <div class="cover-scrim"></div>
+  <div class="cover-mark"><span class="cm-name">L&rsquo;Dor Vador</span><span class="cm-sub">Heritage Travel</span></div>
+  <div class="cover-text">
+    <p class="p-eyebrow">%(congregation)s</p>
+    <h1>%(title)s</h1>
+    <p class="p-facts">%(dates)s &middot; %(duration)s &middot; %(group_size)s</p>
+    %(led_row)s
+    <div class="cover-strip">%(cover_contact)s</div>
+  </div>
+</div>""" % dict(
+        hero_img=('<img src="%s" alt="">' % hero) if hero else '',
+        congregation=congregation, title=title, dates=dates, duration=duration,
+        group_size=group_size, led_row=led_row, cover_contact=cover_contact,
+    )))
+
+    sheets.append(('body', """
+<div class="sheet page">
+  <div class="p-cols journey">
+    <div class="journey-copy">
+      <p class="p-eyebrow">Overview</p>
+      <h2>The Journey</h2>
+      %(intro)s
+      %(highlights)s
+    </div>
+    <div class="journey-glance">
+      <p class="p-eyebrow">At a Glance</p>
+      <div class="glance-list">%(glance_items)s</div>
+    </div>
+  </div>
+  %(day1)s
+</div>""" % dict(
+        intro=intro,
+        highlights=('<p class="p-eyebrow" style="margin-top:1.6em">Highlights</p><ul class="p-highlights">%s</ul>'
+                     % bullet_items('highlights')) if g.get('highlights') else '',
+        glance_items=glance_items,
+        day1=day1_block_html,
+    )))
+
+    for chunk_html in day_sheets:
+        sheets.append(('day', """
+<div class="sheet page day-page">
+  <div class="p-runhead"><span>%(title)s &middot; Day by day</span></div>
+  %(days)s
+</div>""" % dict(title=title, days=chunk_html)))
+
+    sheets.append(('hosts', """
+<div class="sheet page">
+  <p class="p-eyebrow">Your Hosts</p>
+  <h2>Local, on the ground, in the details</h2>
+  <div class="hosts-cols">%(hosts)s</div>
+  <div class="hosts-pergola">
+    <img src="../../assets/img/founders-pergola.jpg" alt="">
+    <p class="hosts-caption">Hannah and Cornelis, Willemstad</p>
+  </div>
+</div>""" % dict(hosts=hosts_html)))
+
+    sheets.append(('last', """
+<div class="sheet page">
+  <div class="p-cols">
+    <div><p class="p-eyebrow">What&rsquo;s Included</p>%(included)s</div>
+    <div><p class="p-eyebrow">Not Included</p>%(not_included)s</div>
+  </div>
+  %(price_section)s
+  <div class="p-contact">
+    <p class="p-eyebrow">Questions or to Register Your Interest</p>
+    %(contact_rows)s
+  </div>
+  <p class="p-footer">L&rsquo;Dor Vador Travel &middot; Willemstad, Cura&ccedil;ao &middot; www.ldorvadortravel.com</p>
+</div>""" % dict(
+        included=included, not_included=not_included,
+        price_section=('<p class="p-price">%s</p>' % price_note) if price_note else '',
+        contact_rows=contact_rows,
+    )))
+
+    back_image = pimg('assets/img/lg-coast.jpg')
+    sheets.append(('back', """
+<div class="sheet cover back-cover">
+  <img src="%(back_image)s" alt="">
+  <div class="cover-scrim back-scrim"></div>
+  <div class="cover-mark"><span class="cm-name">L&rsquo;Dor Vador</span><span class="cm-sub">Heritage Travel</span></div>
+  <div class="back-text">
+    <p class="back-line">From generation to generation.</p>
+  </div>
+  <p class="back-url">%(page_url)s</p>
+</div>""" % dict(back_image=back_image, page_url=page_url)))
+
+    # number interior sheets (2..N); the cover and the closing page carry no number
+    numbered = []
+    n = 1
+    for kind, markup in sheets:
+        if kind not in ('body', 'day', 'hosts', 'last'):
+            numbered.append(markup)
+            continue
+        n += 1
+        m = markup.rstrip()
+        if m.endswith('</div>'):
+            m = m[:-len('</div>')] + ('<p class="p-pageno">%d</p></div>' % n)
+        numbered.append(m)
+    body_html = ''.join(numbered)
 
     html = """<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
@@ -559,90 +797,106 @@ def print_page(g, slug):
   %(display_face)s
   @page { size: Letter; margin: 0; }
   *{box-sizing:border-box}
-  body{margin:0;background:#fff9f3;color:#282819;font-family:Georgia,'Times New Roman',serif;font-size:13.5pt;line-height:1.5}
+  body{margin:0;background:#fff9f3;color:#282819;font-family:Georgia,'Times New Roman',serif;font-size:12.5pt;line-height:1.6}
   h1,h2,h3{font-family:'Fraunces',Georgia,'Times New Roman',serif;font-weight:600;color:#282819;margin:0 0 .3em}
-  .p-body{padding:0 0.6in 0.6in}
-  .p-cover{position:relative;margin:0 0 24px;height:3.2in;overflow:hidden;background:#282819}
-  .p-cover img{width:100%%;height:100%%;object-fit:cover;opacity:.82}
-  .p-cover-text{position:absolute;left:0;right:0;bottom:0;padding:28px 40px;color:#fffdfa;background:linear-gradient(0deg,rgba(20,20,10,.72),rgba(20,20,10,0))}
-  .p-eyebrow{text-transform:uppercase;letter-spacing:.22em;font-size:11pt;font-weight:700;color:#e6d9c2;font-family:Helvetica,Arial,sans-serif}
-  .p-cover-text h1{font-size:28pt;color:#fffdfa;margin:.15em 0}
-  .p-facts{font-size:13pt;color:#f3ead9;font-family:Helvetica,Arial,sans-serif}
-  section{margin:0 0 26px}
-  h2{font-size:17pt;border-bottom:2px solid #ebe1d1;padding-bottom:6px;margin-bottom:12px}
-  table.glance{width:100%%;border-collapse:collapse;font-size:13pt}
-  table.glance th{text-align:left;color:#555a45;font-weight:700;padding:6px 14px 6px 0;width:34%%;vertical-align:top;font-family:Helvetica,Arial,sans-serif;font-size:11.5pt;text-transform:uppercase;letter-spacing:.06em}
-  table.glance td{padding:6px 0;vertical-align:top}
-  table.glance tr{border-bottom:1px solid #ebe1d1}
-  ul{margin:.2em 0;padding-left:1.3em}
-  li{margin:.35em 0}
-  .p-cols{display:flex;gap:36px}
+  p{margin:0 0 .7em}
+  .sheet{position:relative;page-break-after:always;width:8.5in;height:11in;overflow:hidden}
+  .sheet:last-child{page-break-after:auto}
+  .sheet.page{padding:0.75in}
+  .p-eyebrow{text-transform:uppercase;letter-spacing:.22em;font-size:9.5pt;font-weight:700;color:#7d9065;font-family:Helvetica,Arial,sans-serif;margin:0 0 .6em}
+  .p-eyebrow-sm{text-transform:uppercase;letter-spacing:.18em;font-size:9pt;font-weight:700;color:#8fa49b;font-family:Helvetica,Arial,sans-serif;margin:0 0 .3em}
+
+  /* ---- cover: full-bleed photo, no padding ---- */
+  .sheet.cover{background:#282819}
+  .sheet.cover > img{position:absolute;inset:0;width:100%%;height:100%%;object-fit:cover}
+  .sheet.cover .led-p img{position:static;inset:auto}
+  .cover-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,20,10,.42) 0%%,rgba(20,20,10,0) 30%%,rgba(20,20,10,0) 55%%,rgba(20,20,10,.86) 100%%)}
+  .cover-mark{position:absolute;left:0.6in;top:0.55in;color:#fffdfa;font-family:Helvetica,Arial,sans-serif}
+  .cover-mark .cm-name{display:block;font-family:'Fraunces',Georgia,serif;font-size:15pt;font-weight:600}
+  .cover-mark .cm-sub{display:block;font-size:8.5pt;letter-spacing:.28em;text-transform:uppercase;color:#e6d9c2;margin-top:.15em}
+  .cover-text{position:absolute;left:0.6in;right:0.6in;bottom:0;color:#fffdfa;padding-bottom:0.55in}
+  .cover-text .p-eyebrow{color:#e6d9c2}
+  .cover-text h1{font-size:42pt;color:#fffdfa;line-height:1.04;margin:.1em 0 .3em}
+  .p-facts{font-size:12.5pt;color:#f3ead9;font-family:Helvetica,Arial,sans-serif;letter-spacing:.01em;margin-bottom:.5in}
+  .cover-led{display:flex;align-items:center;gap:.2in;padding-top:.35in;border-top:1px solid rgba(255,253,250,.35)}
+  .led-portraits{display:flex}
+  .led-p{width:0.9in;height:0.9in;border-radius:50%%;overflow:hidden;border:1.5px solid #e6d9c2;margin-right:-0.18in;box-shadow:0 0 0 3px #282819}
+  .led-p:last-child{margin-right:0}
+  .led-p img{width:100%%;height:100%%;object-fit:cover;display:block}
+  .led-names{font-family:Helvetica,Arial,sans-serif;font-size:11pt;color:#fffdfa;margin:0;line-height:1.4}
+  .led-role{display:block;text-transform:uppercase;letter-spacing:.14em;font-size:8pt;color:#e6d9c2;margin-top:.15em}
+  .cover-strip{background:#fff9f3;color:#282819;margin:.4in -0.6in 0;padding:.32in 0.6in;font-family:Helvetica,Arial,sans-serif;font-size:9.5pt;letter-spacing:.02em}
+  .cover-contact{margin:0}
+
+  /* ---- back cover ---- */
+  .back-cover .cover-mark{color:#fffdfa}
+  .back-scrim{background:linear-gradient(180deg,rgba(20,20,10,.5) 0%%,rgba(20,20,10,.25) 40%%,rgba(20,20,10,.55) 100%%)}
+  .back-text{position:absolute;left:0.6in;right:0.6in;top:50%%;transform:translateY(-50%%)}
+  .back-line{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:30pt;color:#fff9f3;margin:0;line-height:1.2}
+  .back-url{position:absolute;left:0.6in;bottom:0.55in;color:#f3ead9;font-family:Helvetica,Arial,sans-serif;font-size:9.5pt;letter-spacing:.05em;margin:0}
+
+  /* ---- journey / at-a-glance ---- */
+  .p-cols{display:flex;gap:0.55in}
   .p-cols > div{flex:1}
-  .p-day{display:flex;gap:16px;margin-bottom:16px;page-break-inside:avoid}
-  .p-day img{width:1.6in;height:1.15in;object-fit:cover;border-radius:4px;flex:none}
-  .p-day-copy h3{font-size:13.5pt;color:#555a45;margin-bottom:.25em}
-  .p-day-copy p{margin:.25em 0}
-  .p-price{font-style:italic;color:#555a45}
-  .p-contact{background:#f3ead9;border-radius:8px;padding:20px 26px;page-break-inside:avoid}
-  .p-contact p{margin:.3em 0;font-size:13pt}
-  .p-footer{margin-top:18px;font-size:10pt;color:#8a8270;font-family:Helvetica,Arial,sans-serif}
+  .journey-glance{border-left:1px solid #ebe1d1;padding-left:0.55in;max-width:2.6in}
+  .glance-list{display:flex;flex-direction:column}
+  .glance-item{padding:10px 0;border-bottom:1px solid #ebe1d1}
+  .glance-item:first-child{padding-top:0}
+  .gl-label{display:block;text-transform:uppercase;letter-spacing:.1em;font-size:9pt;font-family:Helvetica,Arial,sans-serif;color:#8a8270;margin-bottom:3px}
+  .gl-value{display:block;font-size:12pt}
+  .p-highlights{list-style:none;margin:0;padding:0;column-count:1}
+  .p-highlights li{position:relative;padding-left:1.05em;margin:.45em 0}
+  .p-highlights li::before{content:'';position:absolute;left:0;top:.55em;width:5px;height:5px;background:#7d9065;border-radius:50%%}
+  ul.p-highlights{padding-left:0}
+
+  /* ---- day 1 feature (bottom of page 2) ---- */
+  .p-day1{break-inside:avoid;page-break-inside:avoid;margin-top:.35in;padding-top:.25in;border-top:1px solid #ebe1d1}
+  .p-day1 h3{font-size:18pt;margin-bottom:.2em}
+  .p-day1-img{width:100%%;height:2.15in;overflow:hidden;margin:.25em 0 .35em}
+  .p-day1-img img{width:100%%;height:100%%;object-fit:cover;display:block}
+  .p-day1 p{margin:0 0 .35em}
+
+  /* ---- day by day ---- */
+  .p-runhead{font-family:Helvetica,Arial,sans-serif;font-size:8.5pt;text-transform:uppercase;letter-spacing:.14em;color:#8a8270;border-bottom:1px solid #ebe1d1;padding-bottom:10px;margin-bottom:.3in}
+  .sheet.day-page{padding-top:0.55in;padding-bottom:0.55in}
+  .p-day{break-inside:avoid;page-break-inside:avoid;margin-bottom:.3in}
+  .p-day:last-child{margin-bottom:0}
+  .p-day-body{width:100%%}
+  .p-day-img{width:100%%;height:2.7in;overflow:hidden;margin-bottom:.2em}
+  .p-day-img img{width:100%%;height:100%%;object-fit:cover;display:block}
+  .p-day-noimg{width:100%%;min-height:1.5in;border:1px solid #cddbc5;background:#f4f1e6;display:flex;align-items:center;justify-content:center;margin-bottom:.2em;padding:0.3in}
+  .p-day-noimg span{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:18pt;color:#7d9065;text-align:center}
+  .p-day-img.solo{height:5.7in}
+  .p-day-noimg.solo{min-height:5.7in}
+  .p-day-copy h3,.p-day-body h3{font-size:20pt;margin-bottom:.2em}
+  .p-day-body p{margin:0 0 .3em}
+  .p-day-meta{font-family:Helvetica,Arial,sans-serif;font-size:9.5pt;color:#8a8270;margin-top:.1em;margin-bottom:0}
+  .p-pageno{position:absolute;right:0.75in;bottom:0.55in;font-size:9pt;color:#8a8270;font-family:Helvetica,Arial,sans-serif;margin:0}
+
+  /* ---- hosts ---- */
+  .hosts-cols{display:flex;gap:0.55in;margin-top:.15em}
+  .host-col{flex:1}
+  .host-portrait{width:2.4in;height:2.4in;overflow:hidden;margin-bottom:.25em}
+  .host-portrait img{width:100%%;height:100%%;object-fit:cover}
+  .host-col h3{font-size:15pt;margin-bottom:.05em}
+  .host-role{font-family:Helvetica,Arial,sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:9pt;color:#7d9065;margin-bottom:.4em}
+  .host-col p{font-size:10pt;line-height:1.38;margin:0 0 .4em}
+  .hosts-pergola{margin-top:.25in}
+  .hosts-pergola img{width:100%%;height:1.5in;object-fit:cover;display:block}
+  .hosts-caption{font-family:Helvetica,Arial,sans-serif;font-size:9pt;color:#8a8270;margin-top:.3em}
+
+  /* ---- included / contact ---- */
+  ul{margin:.2em 0;padding-left:1.2em}
+  li{margin:.35em 0}
+  .p-price{font-style:italic;color:#555a45;margin-top:.5in}
+  .p-contact{margin-top:.5in;padding-top:.35in;border-top:1px solid #ebe1d1}
+  .p-contact p{margin:.3em 0;font-size:12.5pt}
+  .p-footer{position:absolute;left:0.75in;right:0.75in;bottom:0.55in;font-size:9pt;color:#8a8270;font-family:Helvetica,Arial,sans-serif;margin:0}
 </style>
 </head><body>
-
-<div class="p-cover">
-  %(hero_img)s
-  <div class="p-cover-text">
-    <p class="p-eyebrow">%(congregation)s</p>
-    <h1>%(title)s</h1>
-    <p class="p-facts">%(dates)s &middot; %(duration)s &middot; %(group_size)s%(leader_suffix)s</p>
-  </div>
-</div>
-
-<div class="p-body">
-<section>
-  <h2>Overview</h2>
-  %(intro)s
-</section>
-
-<section>
-  <h2>At a Glance</h2>
-  <table class="glance">%(glance_rows)s</table>
-</section>
-
-%(highlights_section)s
-
-<section>
-  <h2>Day by Day</h2>
-  %(days)s
-</section>
-
-<section class="p-cols">
-  <div><h2>What's Included</h2>%(included)s</div>
-  <div><h2>Not Included</h2>%(not_included)s</div>
-</section>
-
-%(price_section)s
-
-<section class="p-contact">
-  <h2 style="border:0;margin-bottom:8px">Questions or to Register Your Interest</h2>
-  %(contact_rows)s
-</section>
-
-<p class="p-footer">L'Dor Vador Travel &middot; %(page_url)s</p>
-</div>
-
+%(body)s
 </body></html>""" % dict(
-        title=title, congregation=congregation, subtitle=subtitle,
-        display_face=_print_display_face(),
-        hero_img=('<img src="%s" alt="">' % hero) if hero else '',
-        dates=dates, duration=duration, group_size=group_size,
-        leader_suffix=(' &middot; Led by %s' % leader) if leader else '',
-        intro=intro, glance_rows=glance_rows,
-        highlights_section=('<section><h2>Highlights</h2>%s</section>' % bullets('highlights')) if g.get('highlights') else '',
-        days=days(),
-        included=bullets('included'), not_included=bullets('not_included'),
-        price_section=('<section><p class="p-price">%s</p></section>' % price_note) if price_note else '',
-        contact_rows=contact_rows, page_url=page_url,
+        title=title, display_face=_print_display_face(), body=body_html,
     )
     return html
 

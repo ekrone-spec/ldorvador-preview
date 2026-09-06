@@ -4,6 +4,7 @@
   "subtitle": "",
   "congregation": "",
   "leader": "",
+  "leader_image": "",
   "dates": "",
   "duration": "",
   "group_size": "",
@@ -20,7 +21,7 @@
     {"title": "", "text": "", "image": ""}
   ],
   "itinerary": [
-    {"day": "", "title": "", "text": "", "image": ""}
+    {"day": "", "title": "", "text": "", "image": "", "date": "", "meals": "", "overnight": ""}
   ],
   "gallery": [""],
   "form_intro": "",

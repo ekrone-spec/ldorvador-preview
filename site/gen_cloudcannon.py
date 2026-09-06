@@ -25,6 +25,7 @@ GROUPTRIP_FIELD_LABEL = {
     'subtitle': 'Subtitle',
     'congregation': 'Congregation',
     'leader': 'Trip leader (e.g. Rabbi …)',
+    'leader_image': 'Trip leader portrait (optional, shown on PDF cover)',
     'dates': 'Dates',
     'duration': 'Duration',
     'group_size': 'Group size',
@@ -142,6 +143,9 @@ _structures:
           title: ''
           text: ''
           image: ''
+          date: ''
+          meals: ''
+          overnight: ''
         _inputs:
           day:
             type: text
@@ -155,6 +159,15 @@ _structures:
           image:
             type: image
             label: 'Day photo (optional)'
+          date:
+            type: text
+            label: 'Date (optional, e.g. Sun, March 14)'
+          meals:
+            type: text
+            label: 'Meals included (optional, e.g. B, L, D)'
+          overnight:
+            type: text
+            label: 'Overnight location (optional)'
   vignette:
     values:
       - value:
@@ -214,7 +227,7 @@ fc.append('  - glob: content/groups/*.json')
 fc.append('    _inputs:')
 for field, label in GROUPTRIP_FIELD_LABEL.items():
     fc.append('      %s:' % field)
-    if field == 'hero_image':
+    if field in ('hero_image', 'leader_image'):
         fc.append('        type: image')
     elif field == 'itinerary':
         fc.append('        type: array')

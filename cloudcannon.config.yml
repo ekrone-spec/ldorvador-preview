@@ -42,6 +42,9 @@ _structures:
           title: ''
           text: ''
           image: ''
+          date: ''
+          meals: ''
+          overnight: ''
         _inputs:
           day:
             type: text
@@ -55,6 +58,15 @@ _structures:
           image:
             type: image
             label: 'Day photo (optional)'
+          date:
+            type: text
+            label: 'Date (optional, e.g. Sun, March 14)'
+          meals:
+            type: text
+            label: 'Meals included (optional, e.g. B, L, D)'
+          overnight:
+            type: text
+            label: 'Overnight location (optional)'
   vignette:
     values:
       - value:
@@ -1389,6 +1401,9 @@ file_config:
       leader:
         type: text
         label: "Trip leader (e.g. Rabbi …)"
+      leader_image:
+        type: image
+        label: "Trip leader portrait (optional, shown on PDF cover)"
       dates:
         type: text
         label: "Dates"
