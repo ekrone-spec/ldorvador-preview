@@ -149,23 +149,40 @@ async function fetchGroupPdfBase64(env, request, groupSlug) {
 }
 
 /* ---- Branded email shell (inline-styled, table-based; no external images) ---- */
+/* Matches site/BRAND.md's "Email" application section and the mock in brand.html:
+   light compact header (cream, ink lockup), cream/white body, dark footer band. */
 const EMAIL_COLORS = {
   cream: '#fff9f3',
   ink: '#282819',
   inkSoft: '#555a45',
   sage: '#7d9065',
   blue: '#282819',
-  blue2: '#3d4a30',
   footer: '#282819',
+  footerBody: '#c3c8b0',
   line: '#ebe1d1',
   white: '#fffdfa',
 };
-const EMAIL_SERIF = "'Cormorant Garamond', Georgia, 'Times New Roman', serif";
-const EMAIL_SANS = "-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif";
+const EMAIL_SERIF = "'Fraunces', Georgia, 'Times New Roman', serif";
+const EMAIL_SANS = "'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif";
 
-function emailWordmark(size) {
-  const s = size || 22;
-  return `<span style="font-family:${EMAIL_SERIF};font-size:${s}px;color:${EMAIL_COLORS.white};letter-spacing:.02em;">L&rsquo;Dor Vador</span>`;
+/* Compact lockup on a light ground (header): stacked "L'Dor / Vador" + hairline + tagline, in a row. */
+function emailHeaderLockup() {
+  return `<table role="presentation" cellpadding="0" cellspacing="0"><tr>
+    <td style="font-family:${EMAIL_SERIF};font-weight:600;font-size:26px;line-height:.95;color:${EMAIL_COLORS.ink};" valign="middle">
+      L&rsquo;Dor<br>Vador
+    </td>
+    <td style="padding-left:15px;border-left:1px solid ${EMAIL_COLORS.ink};" valign="middle">
+      <span style="font-family:${EMAIL_SANS};font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:rgba(40,40,25,.85);">Heritage Travel</span>
+    </td>
+  </tr></table>`;
+}
+
+/* Stacked lockup on the dark footer ground: cream wordmark, right-aligned, tagline below. */
+function emailFooterLockup() {
+  return `<div style="font-family:${EMAIL_SERIF};font-weight:600;font-size:22px;line-height:.95;color:${EMAIL_COLORS.white};text-align:right;">
+    L&rsquo;Dor<br>Vador
+  </div>
+  <div style="font-family:${EMAIL_SANS};font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:${EMAIL_COLORS.footerBody};margin-top:6px;text-align:right;">Heritage Travel</div>`;
 }
 
 function emailShell({ title, preheader, eyebrow, heading, bodyHtml, footerNote }) {
@@ -180,25 +197,31 @@ function emailShell({ title, preheader, eyebrow, heading, bodyHtml, footerNote }
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${EMAIL_COLORS.cream};">
 <tr><td align="center" style="padding:28px 16px;">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:${EMAIL_COLORS.white};">
-  <tr><td style="background:${EMAIL_COLORS.footer};padding:22px 32px;" align="center">
-    ${emailWordmark(24)}<br>
-    <span style="font-family:${EMAIL_SANS};font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:${EMAIL_COLORS.sage};">Heritage Travel</span>
+  <tr><td align="left" style="background:${EMAIL_COLORS.cream};padding:22px 32px;border-bottom:1px solid ${EMAIL_COLORS.line};">
+    ${emailHeaderLockup()}
   </td></tr>
   <tr><td style="padding:36px 32px 8px;">
-    <p style="margin:0 0 10px;font-family:${EMAIL_SANS};font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:${EMAIL_COLORS.sage};font-weight:600;">${eyebrow}</p>
-    <h1 style="margin:0 0 18px;font-family:${EMAIL_SERIF};font-weight:600;font-size:32px;line-height:1.2;color:${EMAIL_COLORS.ink};">${heading}</h1>
+    <p style="margin:0 0 10px;font-family:${EMAIL_SANS};font-size:12.5px;letter-spacing:.26em;text-transform:uppercase;color:${EMAIL_COLORS.sage};font-weight:700;">${eyebrow}</p>
+    <h1 style="margin:0 0 18px;font-family:${EMAIL_SERIF};font-weight:600;font-size:30px;line-height:1.2;color:${EMAIL_COLORS.ink};">${heading}</h1>
     <hr style="border:none;border-top:1px solid ${EMAIL_COLORS.line};margin:0 0 22px;">
   </td></tr>
-  <tr><td style="padding:0 32px 36px;font-family:${EMAIL_SANS};font-size:17px;line-height:1.6;color:${EMAIL_COLORS.ink};">
+  <tr><td style="padding:0 32px 36px;font-family:${EMAIL_SANS};font-size:18px;line-height:1.6;color:${EMAIL_COLORS.inkSoft};">
     ${bodyHtml}
   </td></tr>
-  <tr><td style="background:${EMAIL_COLORS.footer};padding:28px 32px;" align="center">
-    ${emailWordmark(18)}
-    <p style="margin:12px 0 0;font-family:${EMAIL_SANS};font-size:13px;line-height:1.6;color:${EMAIL_COLORS.sage};">
-      ${footerNote}<br>
-      <a href="mailto:connect@ldorvadortravel.com" style="color:${EMAIL_COLORS.sage};">connect@ldorvadortravel.com</a><br>
-      <a href="https://www.ldorvadortravel.com" style="color:${EMAIL_COLORS.sage};">www.ldorvadortravel.com</a>
-    </p>
+  <tr><td style="background:${EMAIL_COLORS.footer};padding:32px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+      <td valign="bottom" align="left" style="width:40%;">
+        ${emailFooterLockup()}
+      </td>
+      <td valign="bottom" align="right" style="width:60%;font-family:${EMAIL_SANS};font-size:13px;line-height:1.7;color:${EMAIL_COLORS.footerBody};">
+        ${footerNote}<br>
+        <a href="mailto:connect@ldorvadortravel.com" style="color:${EMAIL_COLORS.footerBody};">connect@ldorvadortravel.com</a><br>
+        <a href="https://www.ldorvadortravel.com" style="color:${EMAIL_COLORS.footerBody};">www.ldorvadortravel.com</a>
+      </td>
+    </tr></table>
+    <div style="border-top:1px solid rgba(255,253,250,.18);margin-top:22px;padding-top:14px;text-align:center;font-family:${EMAIL_SANS};font-size:12px;color:${EMAIL_COLORS.footerBody};">
+      L&rsquo;Dor Vador Travel &middot; Willemstad, Cura&ccedil;ao &middot; www.ldorvadortravel.com
+    </div>
   </td></tr>
 </table>
 </td></tr>
@@ -208,8 +231,8 @@ function emailShell({ title, preheader, eyebrow, heading, bodyHtml, footerNote }
 
 function emailButton(href, label) {
   return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 4px;">
-  <tr><td style="background:${EMAIL_COLORS.blue};padding:0;">
-    <a href="${href}" style="display:inline-block;padding:14px 28px;font-family:${EMAIL_SANS};font-size:15px;font-weight:600;letter-spacing:.03em;color:${EMAIL_COLORS.white};text-decoration:none;">${label}</a>
+  <tr><td style="background:${EMAIL_COLORS.blue};padding:0;border-radius:0;">
+    <a href="${href}" style="display:inline-block;height:52px;line-height:52px;padding:0 32px;font-family:${EMAIL_SANS};font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:${EMAIL_COLORS.cream};text-decoration:none;">${label}</a>
   </td></tr>
 </table>`;
 }

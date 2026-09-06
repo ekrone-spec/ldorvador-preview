@@ -582,9 +582,15 @@ def print_page(g, slug):
 
     # ---- day-by-day ----
     itinerary = g.get('itinerary') or []
+    rest_days = itinerary[1:]  # day 1 is the page-2 feature; the grid starts at day 2
+    n_rest = len(rest_days)
+    # photo sizing per plan: <=6 remaining days -> 1.7in; <=8 -> 1.3in; beyond 8, no photo
+    if n_rest <= 6:
+        grid_photo_h = '1.7in'
+    else:
+        grid_photo_h = '1.3in'
 
     def day_meta(d):
-        date = _cesc(d.get('date'))
         overnight = _cesc(d.get('overnight'))
         meals = _cesc(d.get('meals'))
         bits = []
@@ -594,7 +600,7 @@ def print_page(g, slug):
             bits.append('(%s)' % meals)
         return ' &middot; '.join(bits)
 
-    def day_block(d, solo=False):
+    def day_cell(d, idx):
         day = _cesc(d.get('day'))
         date = _cesc(d.get('date'))
         dtitle = _cesc(d.get('title'))
@@ -604,16 +610,11 @@ def print_page(g, slug):
         eyebrow = '%s%s' % (day, ' &middot; %s' % date if date else '')
         meta = day_meta(d)
         meta_html = ('<p class="p-day-meta">%s</p>' % meta) if meta else ''
-        img_cls = 'p-day-img solo' if solo else 'p-day-img'
-        noimg_cls = 'p-day-noimg solo' if solo else 'p-day-noimg'
-        if img:
-            media_html = '<div class="%s"><img src="%s" alt=""></div>' % (img_cls, pimg(img))
-        else:
-            media_html = '<div class="%s"><span>%s</span></div>' % (noimg_cls, dtitle)
-        cls = 'p-day solo' if solo else 'p-day'
-        return ('<div class="%s"><div class="p-day-body">%s'
+        show_img = img and idx < 8  # drop photos for the 7th+ grid day
+        media_html = '<div class="p-day-img"><img src="%s" alt=""></div>' % pimg(img) if show_img else ''
+        return ('<div class="p-day"><div class="p-day-body">%s'
                 '<p class="p-eyebrow-sm">%s</p><h3>%s</h3>%s%s</div></div>'
-                % (cls, media_html, eyebrow, dtitle, paras, meta_html))
+                % (media_html, eyebrow, dtitle, paras, meta_html))
 
     def day1_feature(d):
         day = _cesc(d.get('day'))
@@ -629,34 +630,19 @@ def print_page(g, slug):
                 '<div class="p-day1-img"><img src="%s" alt=""></div>%s%s</div>'
                 % (eyebrow, dtitle, img, paras, meta_html))
 
-    per_page = 2
     day1_block_html = day1_feature(itinerary[0]) if itinerary else ''
-    day_sheets = []
-    rest_days = itinerary[1:]  # day 1 is the page-2 feature; the run starts at day 2
-    for i in range(0, len(rest_days), per_page):
-        chunk = rest_days[i:i + per_page]
-        solo = len(chunk) == 1
-        day_sheets.append(''.join(day_block(d, solo=solo) for d in chunk))
+    day_grid_html = ''.join(day_cell(d, i) for i, d in enumerate(rest_days))
 
-    # ---- hosts page (same across every group PDF) ----
+    # ---- hosts (compact block on the closing page) ----
     hannah, cornelis = _story_bios()
     def host_col(h, img):
-        budget = 110
-        kept = []
-        for p in h['paras']:
-            if budget <= 0:
-                break
-            words = p.split()
-            if len(words) <= budget:
-                kept.append(p)
-                budget -= len(words)
-            else:
-                kept.append(_cap_words(p, budget))
-                budget = 0
-        paras = ''.join('<p>%s</p>' % _cesc(p) for p in kept)
+        one_para = ' '.join(h['paras'])
+        text = _cap_words(one_para, 60)
+        # if capping at 60 leaves a very short sentence, that's fine; if the
+        # whole bio is under 45 words the source copy is used as-is
         return ('<div class="host-col"><div class="host-portrait"><img src="../../%s" alt=""></div>'
-                '<h3>%s</h3><p class="host-role">%s</p>%s</div>'
-                % (img, _cesc(h['name']), _cesc(h['role']), paras))
+                '<div class="host-copy"><h3>%s</h3><p class="host-role">%s</p><p>%s</p></div></div>'
+                % (img, _cesc(h['name']), _cesc(h['role']), _cesc(text)))
     hosts_html = host_col(hannah, 'assets/img/hannah.jpg') + host_col(cornelis, 'assets/img/cornelis.jpg')
 
     included = bullets('included')
@@ -683,24 +669,33 @@ def print_page(g, slug):
     cover_contact_bits = [b for b in [contact_email, contact_phone, 'www.ldorvadortravel.com'] if b]
     cover_contact = '<p class="cover-contact">%s</p>' % ' &middot; '.join(cover_contact_bits)
 
-    # ---- assemble sheets, then number every interior sheet ----
+    # ---- stacked lockup (cover, on-photo, cream) and compact lockup (closing page) ----
+    stack_mark = ('<div class="brand-stack-mark"><span class="bm-name">'
+                  '<span class="bm-word">L&rsquo;Dor</span><span class="bm-word">Vador</span></span>'
+                  '<span class="bm-tag">Heritage Travel</span></div>')
+    compact_mark = ('<div class="brand-compact-mark"><span class="bc-name">'
+                     '<span class="bc-word">L&rsquo;Dor</span><span class="bc-word">Vador</span></span>'
+                     '<span class="bc-tag">Heritage Travel</span></div>')
+
+    # ---- assemble the 4 sheets, then number pages 2-4 ----
     sheets = []
     sheets.append(('cover', """
 <div class="sheet cover">
   %(hero_img)s
   <div class="cover-scrim"></div>
-  <div class="cover-mark"><span class="cm-name">L&rsquo;Dor Vador</span><span class="cm-sub">Heritage Travel</span></div>
+  %(stack_mark)s
   <div class="cover-text">
-    <p class="p-eyebrow">%(congregation)s</p>
+    <p class="p-eyebrow on-photo">%(congregation)s</p>
     <h1>%(title)s</h1>
     <p class="p-facts">%(dates)s &middot; %(duration)s &middot; %(group_size)s</p>
     %(led_row)s
-    <div class="cover-strip">%(cover_contact)s</div>
   </div>
+  <div class="cover-strip">%(cover_contact)s</div>
 </div>""" % dict(
         hero_img=('<img src="%s" alt="">' % hero) if hero else '',
         congregation=congregation, title=title, dates=dates, duration=duration,
-        group_size=group_size, led_row=led_row, cover_contact=cover_contact,
+        group_size=group_size, led_row=led_row, stack_mark=stack_mark,
+        cover_contact=cover_contact,
     )))
 
     sheets.append(('body', """
@@ -726,27 +721,17 @@ def print_page(g, slug):
         day1=day1_block_html,
     )))
 
-    for chunk_html in day_sheets:
-        sheets.append(('day', """
+    sheets.append(('day', """
 <div class="sheet page day-page">
-  <div class="p-runhead"><span>%(title)s &middot; Day by day</span></div>
-  %(days)s
-</div>""" % dict(title=title, days=chunk_html)))
-
-    sheets.append(('hosts', """
-<div class="sheet page">
-  <p class="p-eyebrow">Your Hosts</p>
-  <h2>Local, on the ground, in the details</h2>
-  <div class="hosts-cols">%(hosts)s</div>
-  <div class="hosts-pergola">
-    <img src="../../assets/img/founders-pergola.jpg" alt="">
-    <p class="hosts-caption">Hannah and Cornelis, Willemstad</p>
-  </div>
-</div>""" % dict(hosts=hosts_html)))
+  <div class="p-runhead"><span>%(title)s</span><span>Day by day</span></div>
+  <div class="day-grid" style="--gh:%(gh)s">%(days)s</div>
+</div>""" % dict(title=title, days=day_grid_html, gh=grid_photo_h)))
 
     sheets.append(('last', """
-<div class="sheet page">
-  <div class="p-cols">
+<div class="sheet page closing-page">
+  <p class="p-eyebrow">Your Hosts</p>
+  <div class="hosts-cols">%(hosts)s</div>
+  <div class="p-cols included-cols">
     <div><p class="p-eyebrow">What&rsquo;s Included</p>%(included)s</div>
     <div><p class="p-eyebrow">Not Included</p>%(not_included)s</div>
   </div>
@@ -755,33 +740,18 @@ def print_page(g, slug):
     <p class="p-eyebrow">Questions or to Register Your Interest</p>
     %(contact_rows)s
   </div>
-  <p class="p-footer">L&rsquo;Dor Vador Travel &middot; Willemstad, Cura&ccedil;ao &middot; www.ldorvadortravel.com</p>
+  %(compact_mark)s
 </div>""" % dict(
+        hosts=hosts_html,
         included=included, not_included=not_included,
         price_section=('<p class="p-price">%s</p>' % price_note) if price_note else '',
         contact_rows=contact_rows,
+        compact_mark=compact_mark,
     )))
 
-    back_image = pimg('assets/img/lg-coast.jpg')
-    sheets.append(('back', """
-<div class="sheet cover back-cover">
-  <img src="%(back_image)s" alt="">
-  <div class="cover-scrim back-scrim"></div>
-  <div class="cover-mark"><span class="cm-name">L&rsquo;Dor Vador</span><span class="cm-sub">Heritage Travel</span></div>
-  <div class="back-text">
-    <p class="back-line">From generation to generation.</p>
-  </div>
-  <p class="back-url">%(page_url)s</p>
-</div>""" % dict(back_image=back_image, page_url=page_url)))
-
-    # number interior sheets (2..N); the cover and the closing page carry no number
-    numbered = []
-    n = 1
-    for kind, markup in sheets:
-        if kind not in ('body', 'day', 'hosts', 'last'):
-            numbered.append(markup)
-            continue
-        n += 1
+    # number pages 2-4; the cover carries no number
+    numbered = [sheets[0][1]]
+    for n, (kind, markup) in enumerate(sheets[1:], start=2):
         m = markup.rstrip()
         if m.endswith('</div>'):
             m = m[:-len('</div>')] + ('<p class="p-pageno">%d</p></div>' % n)
@@ -802,7 +772,7 @@ def print_page(g, slug):
   p{margin:0 0 .7em}
   .sheet{position:relative;page-break-after:always;width:8.5in;height:11in;overflow:hidden}
   .sheet:last-child{page-break-after:auto}
-  .sheet.page{padding:0.75in}
+  .sheet.page{padding:0.75in 0.6in}
   .p-eyebrow{text-transform:uppercase;letter-spacing:.22em;font-size:9.5pt;font-weight:700;color:#7d9065;font-family:Helvetica,Arial,sans-serif;margin:0 0 .6em}
   .p-eyebrow-sm{text-transform:uppercase;letter-spacing:.18em;font-size:9pt;font-weight:700;color:#8fa49b;font-family:Helvetica,Arial,sans-serif;margin:0 0 .3em}
 
@@ -811,31 +781,35 @@ def print_page(g, slug):
   .sheet.cover > img{position:absolute;inset:0;width:100%%;height:100%%;object-fit:cover}
   .sheet.cover .led-p img{position:static;inset:auto}
   .cover-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,20,10,.42) 0%%,rgba(20,20,10,0) 30%%,rgba(20,20,10,0) 55%%,rgba(20,20,10,.86) 100%%)}
-  .cover-mark{position:absolute;left:0.6in;top:0.55in;color:#fffdfa;font-family:Helvetica,Arial,sans-serif}
-  .cover-mark .cm-name{display:block;font-family:'Fraunces',Georgia,serif;font-size:15pt;font-weight:600}
-  .cover-mark .cm-sub{display:block;font-size:8.5pt;letter-spacing:.28em;text-transform:uppercase;color:#e6d9c2;margin-top:.15em}
-  .cover-text{position:absolute;left:0.6in;right:0.6in;bottom:0;color:#fffdfa;padding-bottom:0.55in}
-  .cover-text .p-eyebrow{color:#e6d9c2}
-  .cover-text h1{font-size:42pt;color:#fffdfa;line-height:1.04;margin:.1em 0 .3em}
-  .p-facts{font-size:12.5pt;color:#f3ead9;font-family:Helvetica,Arial,sans-serif;letter-spacing:.01em;margin-bottom:.5in}
-  .cover-led{display:flex;align-items:center;gap:.2in;padding-top:.35in;border-top:1px solid rgba(255,253,250,.35)}
+
+  /* stacked lockup, top-right, on-photo cream — mirrors .brand-stack from css.tmpl */
+  .brand-stack-mark{position:absolute;right:0.6in;top:0.55in;display:flex;flex-direction:column;align-items:flex-end;line-height:.9}
+  .bm-name{display:flex;flex-direction:column;align-items:flex-end;line-height:.9}
+  .bm-word{font-family:'Cormorant Garamond','Fraunces',Georgia,serif;font-weight:600;font-size:38pt;line-height:.9;letter-spacing:.004em;color:#fffdfa;text-shadow:0 1px 10px rgba(0,0,0,.28)}
+  .bm-tag{font-family:Helvetica,Arial,sans-serif;font-weight:400;font-size:9pt;line-height:1.2;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,253,250,.85);margin-top:4pt}
+
+  /* compact lockup, single row, for the closing page */
+  .brand-compact-mark{position:absolute;left:0.6in;bottom:0.55in;display:flex;align-items:center;gap:10pt}
+  .bc-name{display:flex;flex-direction:column;align-items:flex-end;line-height:.9}
+  .bc-word{font-family:'Cormorant Garamond','Fraunces',Georgia,serif;font-weight:600;font-size:14pt;line-height:.9;color:#282819}
+  .bc-tag{font-family:Helvetica,Arial,sans-serif;font-weight:400;font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:#282819;opacity:.85;padding-left:10pt;border-left:1px solid #282819}
+
+  .cover-text{position:absolute;left:0.6in;right:0.6in;bottom:1.5in;color:#fffdfa}
+  .cover-text .p-eyebrow.on-photo{color:rgba(255,253,250,.85)}
+  .cover-text h1{font-size:40pt;color:#fffdfa;line-height:1.04;margin:.1em 0 .3em}
+  .p-facts{font-size:12.5pt;color:#f3ead9;font-family:Helvetica,Arial,sans-serif;letter-spacing:.01em;margin-bottom:.4in}
+  .cover-led{display:flex;align-items:center;gap:.2in;padding-top:.3in;border-top:1px solid rgba(255,253,250,.35)}
   .led-portraits{display:flex}
-  .led-p{width:0.9in;height:0.9in;border-radius:50%%;overflow:hidden;border:1.5px solid #e6d9c2;margin-right:-0.18in;box-shadow:0 0 0 3px #282819}
+  .led-p{width:0.8in;height:0.8in;border-radius:50%%;overflow:hidden;border:1.5px solid #e6d9c2;margin-right:-0.16in;box-shadow:0 0 0 3px #282819}
   .led-p:last-child{margin-right:0}
   .led-p img{width:100%%;height:100%%;object-fit:cover;display:block}
-  .led-names{font-family:Helvetica,Arial,sans-serif;font-size:11pt;color:#fffdfa;margin:0;line-height:1.4}
+  .led-names{font-family:Helvetica,Arial,sans-serif;font-size:10.5pt;color:#fffdfa;margin:0;line-height:1.4}
   .led-role{display:block;text-transform:uppercase;letter-spacing:.14em;font-size:8pt;color:#e6d9c2;margin-top:.15em}
-  .cover-strip{background:#fff9f3;color:#282819;margin:.4in -0.6in 0;padding:.32in 0.6in;font-family:Helvetica,Arial,sans-serif;font-size:9.5pt;letter-spacing:.02em}
+  .led-with{display:block;font-style:italic;color:#f3ead9}
+  .cover-strip{position:absolute;left:0;right:0;bottom:0;background:#fff9f3;color:#282819;padding:.3in 0.6in;font-family:Helvetica,Arial,sans-serif;font-size:9.5pt;letter-spacing:.02em}
   .cover-contact{margin:0}
 
-  /* ---- back cover ---- */
-  .back-cover .cover-mark{color:#fffdfa}
-  .back-scrim{background:linear-gradient(180deg,rgba(20,20,10,.5) 0%%,rgba(20,20,10,.25) 40%%,rgba(20,20,10,.55) 100%%)}
-  .back-text{position:absolute;left:0.6in;right:0.6in;top:50%%;transform:translateY(-50%%)}
-  .back-line{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:30pt;color:#fff9f3;margin:0;line-height:1.2}
-  .back-url{position:absolute;left:0.6in;bottom:0.55in;color:#f3ead9;font-family:Helvetica,Arial,sans-serif;font-size:9.5pt;letter-spacing:.05em;margin:0}
-
-  /* ---- journey / at-a-glance ---- */
+  /* ---- journey / at-a-glance (page 2) ---- */
   .p-cols{display:flex;gap:0.55in}
   .p-cols > div{flex:1}
   .journey-glance{border-left:1px solid #ebe1d1;padding-left:0.55in;max-width:2.6in}
@@ -852,46 +826,40 @@ def print_page(g, slug):
   /* ---- day 1 feature (bottom of page 2) ---- */
   .p-day1{break-inside:avoid;page-break-inside:avoid;margin-top:.35in;padding-top:.25in;border-top:1px solid #ebe1d1}
   .p-day1 h3{font-size:18pt;margin-bottom:.2em}
-  .p-day1-img{width:100%%;height:2.15in;overflow:hidden;margin:.25em 0 .35em}
+  .p-day1-img{width:100%%;height:2.4in;overflow:hidden;margin:.25em 0 .35em;border-radius:2px}
   .p-day1-img img{width:100%%;height:100%%;object-fit:cover;display:block}
   .p-day1 p{margin:0 0 .35em}
 
-  /* ---- day by day ---- */
-  .p-runhead{font-family:Helvetica,Arial,sans-serif;font-size:8.5pt;text-transform:uppercase;letter-spacing:.14em;color:#8a8270;border-bottom:1px solid #ebe1d1;padding-bottom:10px;margin-bottom:.3in}
+  /* ---- day by day grid (page 3) ---- */
+  .p-runhead{display:flex;justify-content:space-between;font-family:Helvetica,Arial,sans-serif;font-size:8.5pt;text-transform:uppercase;letter-spacing:.14em;color:#8a8270;border-bottom:1px solid #ebe1d1;padding-bottom:10px;margin-bottom:.3in}
   .sheet.day-page{padding-top:0.55in;padding-bottom:0.55in}
-  .p-day{break-inside:avoid;page-break-inside:avoid;margin-bottom:.3in}
-  .p-day:last-child{margin-bottom:0}
+  .day-grid{display:grid;grid-template-columns:1fr 1fr;gap:.3in .5in}
+  .p-day{break-inside:avoid;page-break-inside:avoid}
   .p-day-body{width:100%%}
-  .p-day-img{width:100%%;height:2.7in;overflow:hidden;margin-bottom:.2em}
+  .p-day-img{width:100%%;height:var(--gh,1.7in);overflow:hidden;margin-bottom:.15em;border-radius:2px}
   .p-day-img img{width:100%%;height:100%%;object-fit:cover;display:block}
-  .p-day-noimg{width:100%%;min-height:1.5in;border:1px solid #cddbc5;background:#f4f1e6;display:flex;align-items:center;justify-content:center;margin-bottom:.2em;padding:0.3in}
-  .p-day-noimg span{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:18pt;color:#7d9065;text-align:center}
-  .p-day-img.solo{height:5.7in}
-  .p-day-noimg.solo{min-height:5.7in}
-  .p-day-copy h3,.p-day-body h3{font-size:20pt;margin-bottom:.2em}
-  .p-day-body p{margin:0 0 .3em}
+  .p-day-body h3{font-size:16pt;margin-bottom:.15em}
+  .p-day-body p{margin:0 0 .25em;font-size:11pt}
   .p-day-meta{font-family:Helvetica,Arial,sans-serif;font-size:9.5pt;color:#8a8270;margin-top:.1em;margin-bottom:0}
-  .p-pageno{position:absolute;right:0.75in;bottom:0.55in;font-size:9pt;color:#8a8270;font-family:Helvetica,Arial,sans-serif;margin:0}
+  .p-pageno{position:absolute;right:0.6in;bottom:0.55in;font-size:9pt;color:#8a8270;font-family:Helvetica,Arial,sans-serif;margin:0}
 
-  /* ---- hosts ---- */
-  .hosts-cols{display:flex;gap:0.55in;margin-top:.15em}
-  .host-col{flex:1}
-  .host-portrait{width:2.4in;height:2.4in;overflow:hidden;margin-bottom:.25em}
+  /* ---- closing page: hosts / included / contact ---- */
+  .closing-page{padding-bottom:1.3in}
+  .hosts-cols{display:flex;gap:0.5in;margin:.15em 0 .4in}
+  .host-col{flex:1;display:flex;gap:.25in;align-items:flex-start}
+  .host-portrait{flex:0 0 auto;width:1.5in;height:1.5in;overflow:hidden;border-radius:2px}
   .host-portrait img{width:100%%;height:100%%;object-fit:cover}
-  .host-col h3{font-size:15pt;margin-bottom:.05em}
-  .host-role{font-family:Helvetica,Arial,sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:9pt;color:#7d9065;margin-bottom:.4em}
-  .host-col p{font-size:10pt;line-height:1.38;margin:0 0 .4em}
-  .hosts-pergola{margin-top:.25in}
-  .hosts-pergola img{width:100%%;height:1.5in;object-fit:cover;display:block}
-  .hosts-caption{font-family:Helvetica,Arial,sans-serif;font-size:9pt;color:#8a8270;margin-top:.3em}
+  .host-copy{flex:1}
+  .host-col h3{font-size:13pt;margin-bottom:.05em}
+  .host-role{font-family:Helvetica,Arial,sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:8.5pt;color:#7d9065;margin-bottom:.3em}
+  .host-col p{font-size:9.5pt;line-height:1.38;margin:0 0 .3em}
+  .included-cols{margin-bottom:.3in}
 
-  /* ---- included / contact ---- */
   ul{margin:.2em 0;padding-left:1.2em}
-  li{margin:.35em 0}
-  .p-price{font-style:italic;color:#555a45;margin-top:.5in}
-  .p-contact{margin-top:.5in;padding-top:.35in;border-top:1px solid #ebe1d1}
-  .p-contact p{margin:.3em 0;font-size:12.5pt}
-  .p-footer{position:absolute;left:0.75in;right:0.75in;bottom:0.55in;font-size:9pt;color:#8a8270;font-family:Helvetica,Arial,sans-serif;margin:0}
+  li{margin:.3em 0;font-size:10.5pt}
+  .p-price{font-style:italic;color:#555a45;margin-top:.15in;font-size:10.5pt}
+  .p-contact{margin-top:.3in;padding-top:.3in;border-top:1px solid #ebe1d1}
+  .p-contact p{margin:.3em 0;font-size:12pt}
 </style>
 </head><body>
 %(body)s

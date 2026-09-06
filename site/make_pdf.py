@@ -22,6 +22,23 @@ import os, sys, subprocess, json
 
 D = os.path.dirname(os.path.abspath(__file__))
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+MAX_PAGES = 4
+
+
+def _check_page_count(pdf_path, slug):
+    """Fail loudly if a rendered brochure spills past the 4-page maximum."""
+    try:
+        import fitz
+    except ImportError:
+        print('warning: PyMuPDF (fitz) not installed, skipping page-count check for %s' % slug)
+        return True
+    doc = fitz.open(pdf_path)
+    n = doc.page_count
+    doc.close()
+    if n > MAX_PAGES:
+        print('FAIL %s: %s has %d pages, max is %d' % (slug, pdf_path, n, MAX_PAGES))
+        return False
+    return True
 
 
 def published_slugs():
@@ -61,7 +78,9 @@ def render(slug):
         print(r.stdout)
         print(r.stderr)
         return False
-    return os.path.isfile(out)
+    if not os.path.isfile(out):
+        return False
+    return _check_page_count(out, slug)
 
 
 def main():
