@@ -783,10 +783,10 @@ def print_page(g, slug):
   .cover-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,20,10,.42) 0%%,rgba(20,20,10,0) 30%%,rgba(20,20,10,0) 55%%,rgba(20,20,10,.86) 100%%)}
 
   /* stacked lockup, top-right, on-photo cream — mirrors .brand-stack from css.tmpl */
-  .brand-stack-mark{position:absolute;right:0.6in;top:0.55in;display:flex;flex-direction:column;align-items:flex-end;line-height:.9}
+  .brand-stack-mark{position:absolute;left:0.6in;top:0.55in;display:flex;flex-direction:column;align-items:flex-end;line-height:.9}
   .bm-name{display:flex;flex-direction:column;align-items:flex-end;line-height:.9}
-  .bm-word{font-family:'Cormorant Garamond','Fraunces',Georgia,serif;font-weight:600;font-size:38pt;line-height:.9;letter-spacing:.004em;color:#fffdfa;text-shadow:0 1px 10px rgba(0,0,0,.28)}
-  .bm-tag{font-family:Helvetica,Arial,sans-serif;font-weight:400;font-size:9pt;line-height:1.2;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,253,250,.85);margin-top:4pt}
+  .bm-word{font-family:'Cormorant Garamond','Fraunces',Georgia,serif;font-weight:600;font-size:52pt;line-height:.9;letter-spacing:.004em;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.28)}
+  .bm-tag{font-family:'Century Gothic','Questrial','Futura','Trebuchet MS','Hanken Grotesk',sans-serif;font-weight:400;font-size:6.1pt;line-height:1;letter-spacing:.1em;text-transform:uppercase;color:#fff;margin-top:5.2pt;text-shadow:0 1px 10px rgba(0,0,0,.28)}
 
   /* compact lockup, single row, for the closing page */
   .brand-compact-mark{position:absolute;left:0.6in;bottom:0.55in;display:flex;align-items:center;gap:10pt}
