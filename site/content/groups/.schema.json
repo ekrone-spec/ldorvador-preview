@@ -30,5 +30,6 @@
   "contact_email": "connect@ldorvadortravel.com",
   "contact_phone": "",
   "pdf": "",
-  "published": false
+  "published": false,
+  "listed": false
 }

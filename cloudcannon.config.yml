@@ -1486,3 +1486,7 @@ file_config:
         type: checkbox
         label: "Published"
         comment: "Untick to hide the page from the website"
+      listed:
+        type: checkbox
+        label: "Show in the public menu / Group Journeys list"
+        comment: "Ticking this adds a \"Group Journeys\" link to the site menu and lists this trip publicly at /groups/ — also makes this trip’s own page indexable by search engines"

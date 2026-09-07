@@ -173,9 +173,23 @@ def main():
             slug = data.get('slug') or fn[:-5]
             slugs.append(slug)
 
+    listed_slugs = []
+    if os.path.isdir(groups_dir):
+        for fn in sorted(os.listdir(groups_dir)):
+            if fn.startswith('.') or not fn.endswith('.json'):
+                continue
+            try:
+                data = json.load(open(os.path.join(groups_dir, fn), encoding='utf-8'))
+            except Exception:
+                continue
+            if data.get('published') is False or not data.get('listed'):
+                continue
+            listed_slugs.append(data.get('slug') or fn[:-5])
+
     live_groups_strict = os.environ.get('LDV_LIVE_GROUPS') == '1'
     for slug in slugs:
         path = 'groups/%s/index.html' % slug
+        listed = slug in listed_slugs
         html = get(path)
         if html is None:
             if live:
@@ -190,8 +204,14 @@ def main():
 
         check(html.count('<h1') == 1,
               '%s: expected exactly one <h1>, found %d' % (path, html.count('<h1')))
-        check('name="robots" content="noindex,nofollow"' in html,
-              '%s: missing noindex,nofollow robots meta' % path)
+        # unlisted trips stay private; a `listed` trip becomes indexable and
+        # must NOT carry a noindex meta
+        if listed:
+            check('name="robots" content="noindex' not in html,
+                  '%s: listed trip must not be noindex' % path)
+        else:
+            check('name="robots" content="noindex,nofollow"' in html,
+                  '%s: missing noindex,nofollow robots meta' % path)
         check('id="interestform"' in html, '%s: missing form#interestform' % path)
         for field in GROUP_FIELDS:
             check('name="%s"' % field in html,
@@ -208,10 +228,51 @@ def main():
         check('__C_' not in no_comments, '%s: unresolved content token left in output' % path)
         check('id="yr"' in html, '%s: missing id="yr" (a script hook)' % path)
 
-    # the main sitemap must never list group pages (they are noindex/private)
+    # --- /groups/ "Group Journeys" index: English-only, always built,
+    # indexable and in the sitemap regardless of how many trips are listed ---
+    gi_path = 'groups/index.html'
+    gi_html = get(gi_path)
+    if gi_html is None:
+        if live and not live_groups_strict:
+            print('  WARN  %s: not deployed on %s (set LDV_LIVE_GROUPS=1 to make this a failure)' % (gi_path, label))
+        else:
+            check(False, '%s: could not be fetched' % gi_path)
+    else:
+        check(gi_html.count('<h1') == 1,
+              '%s: expected exactly one <h1>, found %d' % (gi_path, gi_html.count('<h1')))
+        check('rel="canonical"' in gi_html, '%s: no canonical link' % gi_path)
+        check('name="robots" content="noindex' not in gi_html,
+              '%s: the group index must be indexable' % gi_path)
+        check('assets/app.css' in gi_html, '%s: stylesheet not linked' % gi_path)
+        check('assets/app.js' in gi_html, '%s: script not linked' % gi_path)
+        if listed_slugs:
+            check('group-index-grid' in gi_html, '%s: expected a card grid of listed trips' % gi_path)
+            for slug in listed_slugs:
+                check('href="%s/"' % slug in gi_html, '%s: missing card link to %s' % (gi_path, slug))
+        else:
+            check('New group journeys will be announced here.' in gi_html,
+                  '%s: missing empty-state message' % gi_path)
+        # menu link: present site-wide only when at least one trip is listed
+        home_html = get('index.html')
+        if home_html:
+            count = home_html.count('href="/groups/"')
+            if listed_slugs:
+                check(count >= 1, 'index.html: "Group Journeys" menu link missing though a trip is listed')
+            else:
+                check(count == 0, 'index.html: "Group Journeys" menu link present though no trip is listed')
+
+    # the main sitemap lists /groups/ (always) and any listed trip pages,
+    # but never an unlisted one (those stay noindex/private)
     sm = get('sitemap.xml')
     if sm:
-        check('/groups/' not in sm, 'sitemap.xml: must not contain group pages')
+        check('<loc>%s/groups/</loc>' % (LIVE if live else 'https://www.ldorvadortravel.com') in sm
+              or '/groups/</loc>' in sm,
+              'sitemap.xml: missing the /groups/ index')
+        for slug in slugs:
+            if slug in listed_slugs:
+                continue
+            check('/groups/%s/</loc>' % slug not in sm,
+                  'sitemap.xml: unlisted group page %s must not be in the sitemap' % slug)
 
     print('%s: %d check(s) failed' % (label, len(failures)))
     for f in failures:

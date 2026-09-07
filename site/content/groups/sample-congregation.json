@@ -1,22 +1,22 @@
 {
   "slug": "sample-congregation",
   "title": "Sample Congregation Heritage Journey",
-  "subtitle": "A SAMPLE group itinerary through Jewish Curaçao — for demonstration only",
+  "subtitle": "A SAMPLE group itinerary through Jewish Cura\u00e7ao \u2014 for demonstration only",
   "congregation": "Sample Congregation",
   "leader": "Rabbi Sample",
   "leader_image": "",
   "dates": "March 2027 (exact dates to be confirmed)",
   "duration": "7 days / 6 nights",
-  "group_size": "20–35 travelers",
-  "start_finish": "SAMPLE: Willemstad → Willemstad",
+  "group_size": "20\u201335 travelers",
+  "start_finish": "SAMPLE: Willemstad \u2192 Willemstad",
   "pace": "SAMPLE: Relaxed, one guided outing per day",
   "accommodation": "SAMPLE: Beachfront hotel, double occupancy",
   "price_note": "Final per-person pricing depends on group size and will be confirmed with your congregation.",
   "hero_image": "assets/img/lg-willemstad.jpg",
-  "intro": "This is a SAMPLE page built to show Sample Congregation and Rabbi Sample what a private group journey to Curaçao could look like.\n\nEvery detail below — dates, itinerary, pricing note — is a placeholder for demonstration and will be tailored to your congregation before anything is finalized.",
+  "intro": "This is a SAMPLE page built to show Sample Congregation and Rabbi Sample what a private group journey to Cura\u00e7ao could look like.\n\nEvery detail below \u2014 dates, itinerary, pricing note \u2014 is a placeholder for demonstration and will be tailored to your congregation before anything is finalized.",
   "highlights": "SAMPLE: The sand-floor Snoa synagogue\nSAMPLE: Beth Haim, one of the Americas' oldest Jewish cemeteries\nSAMPLE: A private Shabbat dinner over St. Anna Bay\nSAMPLE: Time with local community members and historians",
-  "included": "Private guided touring each day\nAll accommodations (double occupancy)\nDaily breakfast and welcome Shabbat dinner\nAirport transfers in Curaçao\nEntrance fees to all sites listed in the itinerary",
-  "not_included": "International airfare to Curaçao\nLunches and dinners not otherwise noted\nTravel insurance\nGratuities for guides and drivers",
+  "included": "Private guided touring each day\nAll accommodations (double occupancy)\nDaily breakfast and welcome Shabbat dinner\nAirport transfers in Cura\u00e7ao\nEntrance fees to all sites listed in the itinerary",
+  "not_included": "International airfare to Cura\u00e7ao\nLunches and dinners not otherwise noted\nTravel insurance\nGratuities for guides and drivers",
   "vignettes": [
     {
       "title": "SAMPLE: A city that kept its story",
@@ -42,7 +42,7 @@
     {
       "day": "Day 2",
       "title": "The Snoa & Old City",
-      "text": "Visit the historic sand-floor synagogue Mikvé Israel-Emanuel and walk the UNESCO old town of Willemstad.",
+      "text": "Visit the historic sand-floor synagogue Mikv\u00e9 Israel-Emanuel and walk the UNESCO old town of Willemstad.",
       "image": "assets/img/lg-snoa.jpg",
       "date": "SAMPLE: Mon, March 15",
       "meals": "B, L",
@@ -60,7 +60,7 @@
     {
       "day": "Day 4",
       "title": "Community & Culture",
-      "text": "Meet local community members and academics for a people-to-people exchange on Curaçao's Jewish history.",
+      "text": "Meet local community members and academics for a people-to-people exchange on Cura\u00e7ao's Jewish history.",
       "image": "assets/img/lg-community.jpg",
       "date": "SAMPLE: Wed, March 17",
       "meals": "B, D",
@@ -69,7 +69,7 @@
     {
       "day": "Day 5",
       "title": "Coast & Free Time",
-      "text": "A day at leisure to explore Curaçao's coastline, beaches, and markets before Shabbat.",
+      "text": "A day at leisure to explore Cura\u00e7ao's coastline, beaches, and markets before Shabbat.",
       "image": "assets/img/lg-coast.jpg",
       "date": "SAMPLE: Thu, March 18",
       "meals": "B",
@@ -88,5 +88,6 @@
   "contact_email": "connect@ldorvadortravel.com",
   "contact_phone": "+1 (000) 000-0000",
   "pdf": "assets/pdf/sample-congregation.pdf",
-  "published": false
+  "published": false,
+  "listed": false
 }

@@ -35,8 +35,9 @@ PAGES = ['index.html', 'history.html', 'story.html', 'itinerary.html', 'privacy.
 
 def group_pages():
     """Group landing pages: groups/<slug>/index.html for every published,
-    non-dot content/groups/<slug>.json. English only — not part of LOCALES."""
-    out = []
+    non-dot content/groups/<slug>.json, plus the /groups/ index itself.
+    English only — not part of LOCALES."""
+    out = ['groups/index.html']
     gdir = os.path.join(D, 'content', 'groups')
     if not os.path.isdir(gdir):
         return out
@@ -54,7 +55,28 @@ def group_pages():
     return out
 
 
+def listed_group_slugs():
+    """Trip slugs whose `listed` flag makes them public (indexable, in the
+    sitemap, linked from /groups/)."""
+    out = []
+    gdir = os.path.join(D, 'content', 'groups')
+    if not os.path.isdir(gdir):
+        return out
+    for fn in sorted(os.listdir(gdir)):
+        if fn.startswith('.') or not fn.endswith('.json'):
+            continue
+        try:
+            data = json.load(open(os.path.join(gdir, fn), encoding='utf-8'))
+        except Exception:
+            continue
+        if data.get('published') is False or not data.get('listed'):
+            continue
+        out.append(data.get('slug') or fn[:-5])
+    return out
+
+
 GROUP_PAGES = group_pages()
+LISTED_SLUGS = listed_group_slugs()
 
 failures = []
 def check(cond, msg):
@@ -199,6 +221,7 @@ def audit_layer():
     for path, p in pages.items():
         base = os.path.dirname(path)
         is_group = path in GROUP_PAGES
+        is_group_trip = is_group and path != 'groups/index.html'
 
         # every asset reference resolves to a real file
         for ref in sorted(p.assets):
@@ -213,9 +236,16 @@ def audit_layer():
         for href in p.links:
             if href.startswith(('http', 'mailto:', 'tel:')):
                 continue
+            # Worker-rendered route (not a static file): see worker.js's
+            # /groups/<slug>/trip-details.pdf handler.
+            if re.match(r'^/groups/[\w-]+/trip-details\.pdf$', href):
+                continue
             target, _, frag = href.partition('#')
             if target:
-                f = os.path.normpath(os.path.join(D, base, target))
+                # root-relative (e.g. the "Group Journeys" menu link, "/groups/")
+                # resolves against the site root, not the OS filesystem root
+                f = (os.path.normpath(os.path.join(D, target.lstrip('/'))) if target.startswith('/')
+                     else os.path.normpath(os.path.join(D, base, target)))
                 check(os.path.exists(f), '%s: dead link %s' % (path, href))
             if frag:
                 tp = os.path.normpath(os.path.join(base, target)) if target else path
@@ -248,22 +278,29 @@ def audit_layer():
             check(ok, '%s: inquiry form is missing required fields' % path)
 
         # the group registration form carries everything the interest
-        # endpoint needs
-        if is_group:
+        # endpoint needs (the /groups/ index itself has no such form)
+        if is_group_trip:
             need = {'full_name', 'email', 'phone', 'travelers', 'room',
                     'comments', 'group', 'group_title', 'botcheck'}
             ok = any(need <= form for form in p.forms)
             check(ok, '%s: group interest form is missing required fields' % path)
 
-    # sitemap <-> built pages
+    # sitemap <-> built pages. /groups/ is always indexable and in the
+    # sitemap; a trip page joins it only when its `listed` flag opts in —
+    # every other group trip page stays private and out of the sitemap.
     sm = os.path.join(D, 'sitemap.xml')
     check(os.path.exists(sm), 'sitemap.xml missing')
     if os.path.exists(sm):
         locs = re.findall(r'<loc>([^<]+)</loc>', open(sm).read())
-        check(len(locs) == len(LOCALES) * len(PAGES),
-              'sitemap has %d urls, expected %d' % (len(locs), len(LOCALES) * len(PAGES)))
-        check(not any('/groups/' in loc for loc in locs),
-              'sitemap.xml: must not contain group pages')
+        expected = len(LOCALES) * len(PAGES) + 1 + len(LISTED_SLUGS)
+        check(len(locs) == expected,
+              'sitemap has %d urls, expected %d' % (len(locs), expected))
+        for loc in locs:
+            if '/groups/' not in loc:
+                continue
+            bare = loc.rstrip('/')
+            ok = bare.endswith('/groups') or any(bare.endswith('/groups/%s' % s) for s in LISTED_SLUGS)
+            check(ok, 'sitemap.xml: unexpected/unlisted group url %s' % loc)
 
     # every css url() resolves
     css = open(os.path.join(D, 'assets/app.css'), encoding='utf-8').read()

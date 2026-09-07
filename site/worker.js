@@ -5,6 +5,8 @@
  * worker runs first for /assets/vid/* only, fetches the asset, and slices the
  * requested byte range itself. Everything else is served as plain assets.
  */
+import puppeteer from '@cloudflare/puppeteer';
+
 const IP_SALT = 'ldv-interest-salt-9f3a1c';
 const RATE_LIMIT_MAX = 5;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
@@ -130,13 +132,11 @@ function sanitizeFilename(name) {
 
 async function fetchGroupPdfBase64(env, request, groupSlug) {
   try {
-    const pdfUrl = new URL('/assets/pdf/' + groupSlug + '.pdf', request.url);
-    const resp = await env.ASSETS.fetch(new Request(pdfUrl));
-    if (!resp.ok) {
-      console.warn(`No trip-details PDF for group "${groupSlug}" (status ${resp.status})`);
+    const { buf } = await getGroupPdfBuffer(env, request, groupSlug);
+    if (!buf) {
+      console.warn(`No trip-details PDF for group "${groupSlug}"`);
       return null;
     }
-    const buf = await resp.arrayBuffer();
     if (buf.byteLength > MAX_PDF_BYTES) {
       console.warn(`Trip-details PDF for group "${groupSlug}" is ${buf.byteLength} bytes, exceeds ${MAX_PDF_BYTES} cap; skipping attachment`);
       return null;
@@ -146,6 +146,102 @@ async function fetchGroupPdfBase64(env, request, groupSlug) {
     console.warn(`Failed to fetch trip-details PDF for group "${groupSlug}"`, err);
     return null;
   }
+}
+
+/* ---- On-demand trip-details PDF: /groups/<slug>/trip-details.pdf ----
+ *
+ * Cache key is `${slug}:${etag}` in KV (PDF_CACHE), where `etag` is the
+ * ETag (or a content hash fallback) of the group's print.html asset — so
+ * editing a trip in the CMS invalidates the cached PDF automatically the
+ * next time it's requested, with no explicit purge step.
+ *
+ * Rendering uses the Browser Rendering binding (free plan: 10 browser-
+ * minutes/day, 3 concurrent, 60s timeout), so it must stay rare: every hit
+ * after the first for a given print.html version is served straight out of
+ * KV. If a render fails (including the daily/concurrency limit being hit),
+ * we fall back to serving *any* previously-cached PDF for the same slug
+ * (a stale-but-real brochure) rather than a hard error.
+ */
+async function findGroupPrintEtag(env, request, slug) {
+  const printResp = await env.ASSETS.fetch(new Request(new URL(`/groups/${slug}/print.html`, request.url)));
+  if (!printResp.ok) {
+    if (printResp.body) printResp.body.cancel().catch(() => {});
+    return null;
+  }
+  let etag = printResp.headers.get('etag');
+  if (etag) {
+    if (printResp.body) printResp.body.cancel().catch(() => {});
+    return etag.replace(/^W\//, '').replace(/"/g, '');
+  }
+  // No ETag header (unlikely for static assets, but be defensive): hash a
+  // cheap fingerprint of the response instead of the whole body.
+  const buf = await printResp.arrayBuffer();
+  return sha256Hex(`${buf.byteLength}:${printResp.headers.get('last-modified') || ''}`);
+}
+
+async function renderGroupPdfBuffer(env, request, slug) {
+  const origin = new URL(request.url).origin;
+  const browser = await puppeteer.launch(env.BROWSER);
+  try {
+    const page = await browser.newPage();
+    await page.goto(`${origin}/groups/${slug}/print.html`, { waitUntil: 'networkidle0', timeout: 45000 });
+    return await page.pdf({ format: 'Letter', printBackground: true, preferCSSPageSize: true });
+  } finally {
+    await browser.close();
+  }
+}
+
+async function findAnyStaleGroupPdf(env, slug) {
+  const list = await env.PDF_CACHE.list({ prefix: `${slug}:` });
+  for (const k of list.keys) {
+    const buf = await env.PDF_CACHE.get(k.name, 'arrayBuffer');
+    if (buf) return buf;
+  }
+  return null;
+}
+
+/**
+ * Returns { buf, notFound }. `buf` is an ArrayBuffer of the PDF, or null.
+ * `notFound` is true only when the group itself doesn't exist (no
+ * print.html) — a render failure with no stale fallback returns
+ * { buf: null, notFound: false } instead, so callers can tell "no such
+ * trip" apart from "temporarily unavailable".
+ */
+async function getGroupPdfBuffer(env, request, slug) {
+  const etag = await findGroupPrintEtag(env, request, slug);
+  if (!etag) return { buf: null, notFound: true };
+
+  const cacheKey = `${slug}:${etag}`;
+  const cached = await env.PDF_CACHE.get(cacheKey, 'arrayBuffer');
+  if (cached) return { buf: cached, notFound: false };
+
+  try {
+    const rendered = await renderGroupPdfBuffer(env, request, slug);
+    await env.PDF_CACHE.put(cacheKey, rendered);
+    return { buf: rendered, notFound: false };
+  } catch (err) {
+    console.error(`PDF render failed for group "${slug}"`, err);
+    const stale = await findAnyStaleGroupPdf(env, slug);
+    return { buf: stale, notFound: false };
+  }
+}
+
+async function handleGroupPdfRoute(request, env, slug) {
+  const { buf, notFound } = await getGroupPdfBuffer(env, request, slug);
+  if (notFound) return new Response('Not found', { status: 404 });
+  if (!buf) {
+    return new Response('Trip details PDF is temporarily unavailable; please try again shortly.', {
+      status: 503,
+      headers: { 'Cache-Control': 'no-store', 'Retry-After': '300' },
+    });
+  }
+  const headers = new Headers({
+    'Content-Type': 'application/pdf',
+    'Content-Disposition': `inline; filename="${slug}-trip-details.pdf"`,
+    'Cache-Control': 'public, max-age=3600',
+  });
+  if (request.method === 'HEAD') return new Response(null, { status: 200, headers });
+  return new Response(buf, { status: 200, headers });
 }
 
 /* ---- Branded email shell (inline-styled, table-based; no external images) ---- */
@@ -636,6 +732,10 @@ export default {
     const url = new URL(request.url);
     if (url.pathname.startsWith('/api/')) {
       return handleApi(request, env, url);
+    }
+    const pdfMatch = /^\/groups\/([A-Za-z0-9_-]+)\/trip-details\.pdf$/.exec(url.pathname);
+    if (pdfMatch && (request.method === 'GET' || request.method === 'HEAD')) {
+      return handleGroupPdfRoute(request, env, pdfMatch[1]);
     }
     if (url.hostname === 'ldorvadortravel.com' ||
         url.hostname === 'ldorvadortravel.org' ||

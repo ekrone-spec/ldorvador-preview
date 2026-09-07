@@ -17,3 +17,4 @@ home_selfcontained.html
 __pycache__/
 .dev.vars
 .wrangler/
+node_modules/

@@ -22,9 +22,14 @@ robots.txt + sitemap.xml, live form key).
 ## Accounts (all created)
 
 1. **Cloudflare** (done) — Workers project `ldorvador-preview`, git-connected.
-   Root directory `site`, build command `python3 build.py`, deploy
+   Root directory `site`, build command `npm ci && python3 build.py`, deploy
    `npx wrangler deploy`. At cutover add build variables
    `SITE=https://www.ldorvadortravel.com` and `PROD=1`.
+   **Dashboard change required (2026-09):** the build command must be
+   `npm ci && python3 build.py` — wrangler bundles `worker.js` from
+   `node_modules`, so `@cloudflare/puppeteer` (see "On-demand PDF" below)
+   has to be installed before `wrangler deploy` runs. Update this in
+   Workers & Pages -> ldorvador-preview -> Settings -> Build configuration.
 2. **Web3Forms** (done) — key baked into build.py; recipient includes
    connect@ (verify with a live test at cutover).
 3. **D1 database** `ldorvador-interest` (id `5da26daa-db41-405d-8740-3d15509be27a`,
@@ -171,6 +176,17 @@ dashboard -> Access -> Applications -> "LDV interest export" -> edit the
 policy's email list. To change who gets the internal notification email,
 edit the `NOTIFY_TO` value under `vars` in `wrangler.jsonc` (comma-separated
 addresses) and redeploy.
+
+**On-demand PDF.** `GET /groups/<slug>/trip-details.pdf` (worker.js) renders
+the trip brochure on request via Browser Rendering (`@cloudflare/puppeteer`,
+binding `BROWSER`) — no `make_pdf.py` run or commit needed for a CMS-created
+trip. Result is cached in KV (`PDF_CACHE`) under `<slug>:<etag>`, where
+`<etag>` is print.html's own ETag, so editing a trip invalidates the cache
+automatically. Free plan: 10 browser-minutes/day, 3 concurrent, 60s timeout —
+if a render fails or the daily limit is hit, the worker serves any older
+cached PDF for that slug instead of erroring. A group's `pdf` field (in its
+`content/groups/<slug>.json`) still overrides this with a hand-made file path
+when set; `make_pdf.py` remains as a documented local fallback for that case.
 
 **Secrets** (names only — never values here):
 

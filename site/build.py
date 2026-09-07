@@ -261,6 +261,32 @@ def jsonld(code, desc):
     }
     return '<script type="application/ld+json">%s</script>' % json.dumps(data)
 
+# ---- "Group Journeys" menu link: shown site-wide only when at least one
+# trip opts in via `listed`. LDV_PLACEBO forces this false so the golden
+# structural manifest never depends on live CMS content. ----
+def _groups_any_listed():
+    gdir = os.path.join(D, 'content', 'groups')
+    if not os.path.isdir(gdir) or os.environ.get('LDV_PLACEBO'):
+        return False
+    for fn in sorted(os.listdir(gdir)):
+        if fn.startswith('.') or not fn.endswith('.json'):
+            continue
+        try:
+            g = json.load(open(os.path.join(gdir, fn), encoding='utf-8'))
+        except Exception:
+            continue
+        if g.get('published') is False:
+            continue
+        if g.get('listed'):
+            return True
+    return False
+
+GROUPS_ANY_LISTED = _groups_any_listed()
+GROUPSNAV_HTML = '<a href="/groups/">Group Journeys</a>' if GROUPS_ANY_LISTED else ''
+GROUPSNAV_FOOT_HTML = '<a href="/groups/">Group Journeys</a>' if GROUPS_ANY_LISTED else ''
+header = header.replace('__GROUPSNAV__', GROUPSNAV_HTML)
+footer = footer.replace('__GROUPSNAV_FOOT__', GROUPSNAV_FOOT_HTML)
+
 HEAD = ('<!doctype html>\n<html lang="%s"%s><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
         + ('' if PROD else '<meta name="robots" content="noindex, nofollow">') +
@@ -289,7 +315,9 @@ for code in LOCALES:
         body = R(BODY[page])
         body = (body.replace('__HEADER__', header)
                     .replace('__FOOTER__', footer)
-                    .replace('__DISCOVER__', discover))
+                    .replace('__DISCOVER__', discover)
+                    .replace('__GROUPSNAV__', GROUPSNAV_HTML)
+                    .replace('__GROUPSNAV_FOOT__', GROUPSNAV_FOOT_HTML))
         body = fill_content(body)
         body = body.replace('__WEB3FORMS_KEY__',
                             os.environ.get('WEB3FORMS_KEY', 'b650cfb7-2868-422a-8d34-553c7674e073'))
@@ -329,6 +357,7 @@ def build_groups():
         return 0
     tmpl = re.sub(r'^\s*<!--.*?-->\s*', '', R('group.body.html'), count=1, flags=re.S)
     n = 0
+    listed_trips = []  # for the /groups/ index page + sitemap
     for fn in sorted(os.listdir(gdir)):
         if fn.startswith('.') or not fn.endswith('.json'):
             continue
@@ -336,6 +365,11 @@ def build_groups():
         if g.get('published') is False:
             continue
         slug = g.get('slug') or fn[:-5]
+        # LDV_PLACEBO forces every trip unlisted, so the golden structural
+        # manifest never depends on live CMS content (see GROUPS_ANY_LISTED).
+        listed = False if os.environ.get('LDV_PLACEBO') else bool(g.get('listed'))
+        if listed:
+            listed_trips.append(dict(g, slug=slug))
 
         def gv(key):
             v = g.get(key)
@@ -436,18 +470,20 @@ def build_groups():
             return ('<section class="group-notes"><h3>Program Notes</h3><ul>%s</ul></section>'
                     % lis)
 
-        def pdf_link():
+        def pdf_href():
+            # An explicit `pdf` path in content JSON wins (hand-made file);
+            # otherwise fall back to the Worker's on-demand, cached PDF route.
             pdf = g.get('pdf')
-            if not pdf:
-                return ''
-            return '<a class="btn btn-line" href="%s" download>Download trip details (PDF)</a>' % gimg(pdf)
+            if pdf:
+                return gimg(pdf)
+            return '/groups/%s/trip-details.pdf' % slug
+
+        def pdf_link():
+            return '<a class="btn btn-line" href="%s" download>Download trip details (PDF)</a>' % pdf_href()
 
         def pdf_link_hero():
-            pdf = g.get('pdf')
-            if not pdf:
-                return ''
             return ('<a class="btn btn-line on-photo grouphero-pdf" href="%s" download>'
-                    'Download trip details (PDF)</a>' % gimg(pdf))
+                    'Download trip details (PDF)</a>' % pdf_href())
 
         body = (tmpl.replace('__HEADER__', header)
                     .replace('__FOOTER__', footer))
@@ -498,9 +534,12 @@ def build_groups():
         title = '%s | L’Dor Vador Travel' % (g.get('title') or slug)
         canonical = '%s/groups/%s/' % (SITE, slug)
         desc = g.get('subtitle') or g.get('title') or "L'Dor Vador Travel group journey"
+        # unlisted trips stay private (noindex, out of the sitemap); a trip
+        # the client opts into listing publicly becomes indexable too
+        robots_meta = '' if (listed and PROD) else '<meta name="robots" content="noindex,nofollow">'
         head = ('<!doctype html>\n<html lang="en"><head><meta charset="utf-8">'
                 '<meta name="viewport" content="width=device-width, initial-scale=1">'
-                '<meta name="robots" content="noindex,nofollow">'
+                + robots_meta +
                 '<meta name="description" content="%s">'
                 '<link rel="canonical" href="%s">'
                 '<title>%s</title>'
@@ -511,7 +550,60 @@ def build_groups():
         W('groups/%s/index.html' % slug, entesc(head + body + tail))
         W('groups/%s/print.html' % slug, entesc(print_page(g, slug)))
         n += 1
+    build_groups_index(listed_trips)
     return n
+
+
+# ---- /groups/ index: "Group Journeys" — English-only, indexable, in the
+# sitemap. Always built (even with nothing listed) so the URL is stable. ----
+def build_groups_index(listed_trips):
+    def card(t):
+        slug = t['slug']
+        hero = t.get('hero_image')
+        img_html = ('<div class="gi-photo"><img src="../%s" alt="" loading="lazy"></div>' % hero) if hero else ''
+        facts = ' · '.join(x for x in [t.get('dates'), t.get('duration')] if x)
+        return (
+            '<a class="gi-card" href="%s/">' % _cesc(slug)
+            + img_html +
+            '<div class="gi-body">'
+            + ('<p class="gi-eyebrow">%s</p>' % _cesc(t.get('congregation')) if t.get('congregation') else '')
+            + '<h3>%s</h3>' % _cesc(t.get('title') or slug)
+            + ('<p class="gi-facts">%s</p>' % _cesc(facts) if facts else '')
+            + ('<p class="gi-sub">%s</p>' % _cesc(t.get('subtitle')) if t.get('subtitle') else '')
+            + '<span class="gi-link">View the journey</span>'
+            '</div></a>'
+        )
+
+    if listed_trips:
+        grid = '<div class="group-index-grid">%s</div>' % ''.join(card(t) for t in listed_trips)
+    else:
+        grid = '<p class="group-index-empty">New group journeys will be announced here.</p>'
+
+    body = R('groups.body.html').replace('__HEADER__', header).replace('__FOOTER__', footer)
+    body = fill_content(body)
+    body = body.replace('__LANGNAV__', '').replace('__GROUPS_GRID__', grid)
+    # header/footer links are root-relative ("index.html", "story.html#x");
+    # this page sits one level down at /groups/, so rewrite them.
+    body = re.sub(r'href="(?!https?:|mailto:|#|\.\./)([a-z][\w.-]*\.html)',
+                  r'href="../\1', body)
+    body = _drop_empties(body)
+    for k, v in imgmap.items():
+        body = body.replace(k, '../' + v)
+
+    title = 'Group Journeys | L’Dor Vador Travel'
+    desc = 'Bespoke Jewish heritage journeys for congregations and private groups, curated by L’Dor Vador Travel.'
+    canonical = '%s/groups/' % SITE
+    robots_meta = '' if PROD else '<meta name="robots" content="noindex, nofollow">'
+    head = ('<!doctype html>\n<html lang="en"><head><meta charset="utf-8">'
+            '<meta name="viewport" content="width=device-width, initial-scale=1">'
+            + robots_meta +
+            '<meta name="description" content="%s">'
+            '<link rel="canonical" href="%s">'
+            '<title>%s</title>'
+            '<link rel="stylesheet" href="../assets/app.css?v=' + VER + '">'
+            '</head><body>\n') % (_cesc(desc), canonical, _cesc(title))
+    tail = '\n<script src="../assets/app.js?v=' + VER + '" defer></script></body></html>'
+    W('groups/index.html', entesc(head + body + tail))
 
 # ---- printable trip-details page: content/groups/<slug>.json -> /groups/<slug>/print.html ----
 # Self-contained (inline CSS), noindex, not in the sitemap or golden manifest.
@@ -941,7 +1033,8 @@ def datauri(path):
     return 'data:%s;base64,%s' % (mt, base64.b64encode(open(os.path.join(D, path), 'rb').read()).decode())
 
 body = fill_content(R('home.body.html').replace('__HEADER__', header).replace('__FOOTER__', footer)
-        .replace('__DISCOVER__', discover)).replace('__LANGNAV__', langnav('en', 'index.html', TRANS['en']))
+        .replace('__DISCOVER__', discover).replace('__GROUPSNAV__', GROUPSNAV_HTML)
+        .replace('__GROUPSNAV_FOOT__', GROUPSNAV_FOOT_HTML)).replace('__LANGNAV__', langnav('en', 'index.html', TRANS['en']))
 css_self = css_raw
 for tok, rel in imgmap.items():
     css_self = css_self.replace(tok, datauri(rel))
@@ -963,6 +1056,23 @@ W('_headers', '''/*
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
   Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; media-src 'self'; connect-src 'self' https://api.web3forms.com https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'
 ''')
+def _listed_slugs():
+    gdir = os.path.join(D, 'content', 'groups')
+    out = []
+    if not os.path.isdir(gdir) or os.environ.get('LDV_PLACEBO'):
+        return out
+    for fn in sorted(os.listdir(gdir)):
+        if fn.startswith('.') or not fn.endswith('.json'):
+            continue
+        try:
+            g = json.load(open(os.path.join(gdir, fn), encoding='utf-8'))
+        except Exception:
+            continue
+        if g.get('published') is False or not g.get('listed'):
+            continue
+        out.append(g.get('slug') or fn[:-5])
+    return out
+
 if PROD:
     W('robots.txt', 'User-agent: *\nAllow: /\n\nSitemap: %s/sitemap.xml\n' % SITE)
     urls = []
@@ -971,6 +1081,11 @@ if PROD:
                        % (HTMLLANG[c], page_url(c, page)) for c in LOCALES)
         for c in LOCALES:
             urls.append(' <url>\n  <loc>%s</loc>\n%s </url>' % (page_url(c, page), alts))
+    # /groups/ is always indexable and in the sitemap; individual trip pages
+    # join it only when their `listed` flag opts them in (see build_groups)
+    urls.append(' <url>\n  <loc>%s/groups/</loc>\n </url>' % SITE)
+    for slug in _listed_slugs():
+        urls.append(' <url>\n  <loc>%s/groups/%s/</loc>\n </url>' % (SITE, slug))
     W('sitemap.xml',
       '<?xml version="1.0" encoding="UTF-8"?>\n'
       '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '

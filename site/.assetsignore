@@ -12,3 +12,6 @@ worker.js
 content/
 migrations/
 .dev.vars
+node_modules/
+package.json
+package-lock.json

@@ -4,6 +4,7 @@
   // that static assets lack (Safari requires it for seekable video).
   "name": "ldorvador-preview",
   "compatibility_date": "2026-08-01",
+  "compatibility_flags": ["nodejs_compat"],
   "main": "worker.js",
   "assets": {
     "directory": ".",
@@ -16,6 +17,18 @@
       "binding": "DB",
       "database_name": "ldorvador-interest",
       "database_id": "5da26daa-db41-405d-8740-3d15509be27a"
+    }
+  ],
+  // Renders /groups/<slug>/trip-details.pdf on demand from print.html.
+  // Free plan: 10 browser-minutes/day, 3 concurrent, 60s timeout — the
+  // worker caches aggressively in PDF_CACHE, keyed by print.html's ETag.
+  "browser": {
+    "binding": "BROWSER"
+  },
+  "kv_namespaces": [
+    {
+      "binding": "PDF_CACHE",
+      "id": "4d7655bd229b46de895a35756bd52148"
     }
   ],
   "vars": {

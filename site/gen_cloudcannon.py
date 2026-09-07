@@ -48,6 +48,7 @@ GROUPTRIP_FIELD_LABEL = {
     'contact_phone': 'Contact phone (shown on the PDF)',
     'pdf': 'Trip details PDF (path, optional)',
     'published': 'Published',
+    'listed': 'Show in the public menu / Group Journeys list',
 }
 GROUPTRIP_TEXTAREA = {'intro', 'highlights', 'included', 'not_included', 'notes', 'form_intro', 'notify_note'}
 GROUPTRIP_COMMENT = {
@@ -57,6 +58,7 @@ GROUPTRIP_COMMENT = {
     'notes': 'One item per line, e.g. "Flights: International airfare is not included."',
     'pdf': 'Leave blank to hide the PDF download button',
     'published': 'Untick to hide the page from the website',
+    'listed': 'Ticking this adds a "Group Journeys" link to the site menu and lists this trip publicly at /groups/ — also makes this trip’s own page indexable by search engines',
 }
 GROUP_LABEL = {
     'home': 'General', 'top': 'Hero', 'doors': 'Three doorways',
@@ -247,7 +249,7 @@ for field, label in GROUPTRIP_FIELD_LABEL.items():
         fc.append('        type: array')
         fc.append('        options:')
         fc.append('          subtype: image')
-    elif field == 'published':
+    elif field in ('published', 'listed'):
         fc.append('        type: checkbox')
     elif field in GROUPTRIP_TEXTAREA:
         fc.append('        type: textarea')
