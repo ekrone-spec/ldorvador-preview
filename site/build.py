@@ -7,7 +7,7 @@ from locales/<code>.json. Each locale gets its own folder of real HTML pages,
 its own <html lang>/dir, hreflang tags, and a language switcher wired to the
 matching page in every other locale.
 """
-import os, re, json, base64, mimetypes
+import os, re, json, base64, mimetypes, logging
 import i18n
 
 D = os.path.dirname(os.path.abspath(__file__))
@@ -50,6 +50,8 @@ fonts = R('fonts_embedded.css') + R('fonts_extra.css')
 # ---- image token map ----
 imgmap = {}
 for fn in os.listdir(os.path.join(D, 'assets', 'img')):
+    if not os.path.isfile(os.path.join(D, 'assets', 'img', fn)):
+        continue  # skip subdirs, e.g. assets/img/print/ (print-page derivatives)
     imgmap['__IMG_%s__' % os.path.splitext(fn)[0]] = 'assets/img/%s' % fn
 
 # deterministic build stamp: changing css/js changes the URL, so no browser
@@ -651,6 +653,54 @@ def _cap_words(text, limit=110):
     return head.rstrip('.,;: ') + '.'
 
 
+_PRINT_DPI = 150  # px-per-inch used to size print derivatives to their CSS boxes
+
+def print_image(src, w, h, top=False):
+    """Center-crop (or, for portraits, top-weighted crop) assets/<src> to an
+    exact w x h JPEG at assets/img/print/<basename>-<w>x<h>.jpg, so the print
+    stylesheet can reference it with no CSS cropping (object-fit/overflow) and
+    Chrome's PDF renderer embeds the JPEG bytes verbatim instead of rasterizing
+    a full-resolution PNG for every cropped box. Cached: skipped if the
+    derivative already exists and is newer than the source. Never fails the
+    build: missing Pillow or a missing/broken source just logs a warning and
+    falls back to the original path."""
+    if not src:
+        return src
+    src_path = os.path.join(D, src)
+    if not os.path.isfile(src_path):
+        return src
+    base = os.path.splitext(os.path.basename(src))[0]
+    out_rel = 'assets/img/print/%s-%dx%d.jpg' % (base, w, h)
+    out_path = os.path.join(D, out_rel)
+    try:
+        if os.path.isfile(out_path) and os.path.getmtime(out_path) >= os.path.getmtime(src_path):
+            return out_rel
+        from PIL import Image, ImageOps
+    except ImportError:
+        logging.warning('print_image: Pillow not installed, using uncropped source for %s', src)
+        return src
+    try:
+        os.makedirs(os.path.dirname(out_path), exist_ok=True)
+        im = ImageOps.exif_transpose(Image.open(src_path)).convert('RGB')
+        sw, sh = im.size
+        target_ratio = w / float(h)
+        src_ratio = sw / float(sh)
+        if src_ratio > target_ratio:
+            new_w = int(round(sh * target_ratio))
+            x0 = (sw - new_w) // 2
+            box = (x0, 0, x0 + new_w, sh)
+        else:
+            new_h = int(round(sw / target_ratio))
+            y0 = int(round((sh - new_h) * 0.2)) if top else (sh - new_h) // 2
+            box = (0, y0, sw, y0 + new_h)
+        im.crop(box).resize((w, h), Image.LANCZOS).save(
+            out_path, 'JPEG', quality=74, progressive=True, optimize=True)
+    except Exception as e:
+        logging.warning('print_image failed for %s: %s', src, e)
+        return src
+    return out_rel
+
+
 def print_page(g, slug):
     def pv(key):
         return _cesc(g.get(key) or '')
@@ -681,7 +731,7 @@ def print_page(g, slug):
     group_size = pv('group_size')
     leader = pv('leader')
     leader_image = g.get('leader_image')
-    hero = pimg(g.get('hero_image'))
+    hero = pimg(print_image(g.get('hero_image'), 1275, 1650))
     # the PDF's page-2 layout has to leave room for the day-1 feature below,
     # so only the first two intro paragraphs are set here even when the page
     # itself (which scrolls) carries all of them
@@ -714,6 +764,9 @@ def print_page(g, slug):
         grid_photo_h = '1.1in'
     else:
         grid_photo_h = '0.9in'
+    # day-grid column box: content width 7.3in, minus .5in gap, split 2 ways
+    DAY_COL_W_PX = int(round(3.4 * _PRINT_DPI))
+    day_photo_h_px = int(round(float(grid_photo_h[:-2]) * _PRINT_DPI))
 
     def day_meta(d):
         overnight = _cesc(d.get('overnight'))
@@ -743,7 +796,8 @@ def print_page(g, slug):
         meta = day_meta(d)
         meta_html = ('<p class="p-day-meta">%s</p>' % meta) if meta else ''
         show_img = img and idx < 8  # drop photos for the 7th+ grid day
-        media_html = '<div class="p-day-img"><img src="%s" alt=""></div>' % pimg(img) if show_img else ''
+        media_html = ('<div class="p-day-img"><img src="%s" alt=""></div>'
+                       % pimg(print_image(img, DAY_COL_W_PX, day_photo_h_px))) if show_img else ''
         return ('<div class="p-day"><div class="p-day-body">%s'
                 '<p class="p-eyebrow-sm">%s</p><h3>%s</h3>%s%s</div></div>'
                 % (media_html, eyebrow, dtitle, paras, meta_html))
@@ -756,7 +810,9 @@ def print_page(g, slug):
         # so it uses the compact summary (like the day grid) rather than the
         # day's full text, which runs on the itinerary grid page instead
         paras = '<p>%s</p>' % _cesc(_day_summary_text(d))
-        img = pimg(d.get('image') or g.get('hero_image'))
+        # full content width (7.3in) x the .p-day1-img box height (1.25in)
+        img = pimg(print_image(d.get('image') or g.get('hero_image'),
+                                int(round(7.3 * _PRINT_DPI)), int(round(1.25 * _PRINT_DPI))))
         eyebrow = '%s%s' % (day, ' &middot; %s' % date if date else '')
         meta = day_meta(d)
         meta_html = ('<p class="p-day-meta">%s</p>' % meta) if meta else ''
@@ -774,9 +830,10 @@ def print_page(g, slug):
         text = _cap_words(one_para, 60)
         # if capping at 60 leaves a very short sentence, that's fine; if the
         # whole bio is under 45 words the source copy is used as-is
+        cropped = print_image(img, 195, 195, top=True)  # 1.3in host-portrait box @150dpi
         return ('<div class="host-col"><div class="host-portrait"><img src="../../%s" alt=""></div>'
                 '<div class="host-copy"><h3>%s</h3><p class="host-role">%s</p><p>%s</p></div></div>'
-                % (img, _cesc(h['name']), _cesc(h['role']), _cesc(text)))
+                % (cropped, _cesc(h['name']), _cesc(h['role']), _cesc(text)))
     hosts_html = host_col(hannah, 'assets/img/hannah.jpg') + host_col(cornelis, 'assets/img/cornelis.jpg')
 
     included = bullets('included')
@@ -806,9 +863,9 @@ def print_page(g, slug):
 
     # ---- led-by row on the cover ----
     led_portraits = ('<div class="led-portraits">'
-                     '<span class="led-p"><img src="../../assets/img/hannah.jpg" alt=""></span>'
-                     '<span class="led-p"><img src="../../assets/img/cornelis.jpg" alt=""></span>'
-                     + ('<span class="led-p"><img src="%s" alt=""></span>' % pimg(leader_image) if leader and leader_image else '')
+                     '<span class="led-p"><img src="../../%s" alt=""></span>' % print_image('assets/img/hannah.jpg', 120, 120, top=True) +
+                     '<span class="led-p"><img src="../../%s" alt=""></span>' % print_image('assets/img/cornelis.jpg', 120, 120, top=True) +
+                     ('<span class="led-p"><img src="%s" alt=""></span>' % pimg(print_image(leader_image, 120, 120, top=True)) if leader and leader_image else '')
                      + '</div>')
     led_names = ('<p class="led-names">Hannah Berkeley Cohen &amp; Cornelis Greiwe'
                  '<br><span class="led-role">Co-founders</span>'
@@ -912,8 +969,10 @@ def print_page(g, slug):
 <meta name="robots" content="noindex,nofollow">
 <title>%(title)s | Trip Details</title>
 <link rel="stylesheet" href="../../assets/app.css?v=%(ver)s">
+<style>%(print_fonts)s</style>
 <style>
   @page { size: Letter; margin: 0; }
+  body::before,body::after{display:none!important;content:none!important} /* the site's grain overlay rasterises per page in PDF */
   *{box-sizing:border-box}
   body{margin:0;background:#fff9f3;color:#282819;font-family:var(--body);font-size:12.5pt;line-height:1.6}
   h1,h2,h3{font-family:var(--display);font-weight:600;color:#282819;margin:0 0 .3em}
@@ -926,13 +985,14 @@ def print_page(g, slug):
 
   /* ---- cover: full-bleed photo, no padding ---- */
   .sheet.cover{background:#282819}
-  .sheet.cover > img{position:absolute;inset:0;width:100%%;height:100%%;object-fit:cover}
+  .sheet.cover > img{position:absolute;inset:0;width:100%%;height:100%%}
   .sheet.cover .led-p img{position:static;inset:auto}
   .cover-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,20,10,.42) 0%%,rgba(20,20,10,0) 30%%,rgba(20,20,10,0) 55%%,rgba(20,20,10,.86) 100%%)}
 
   /* stacked lockup, top-right, on-photo cream — mirrors .brand-stack from css.tmpl */
   /* Lockups use the SITE's own .brand rules from app.css; print only positions them
      and pins the on-photo / on-light colours the site applies by context. */
+  .p-brand-stack,.p-brand-compact{--tagline:var(--body)}
   .p-brand-stack{position:absolute;left:0.6in;top:0.55in;--logo:85px}
   .p-brand-stack .brand-word{color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.28)}
   .p-brand-stack .brand-tx{color:#fff;opacity:1;text-shadow:0 1px 10px rgba(0,0,0,.28)}
@@ -954,7 +1014,7 @@ def print_page(g, slug):
   .led-portraits{display:flex}
   .led-p{width:0.8in;height:0.8in;border-radius:50%%;overflow:hidden;border:1.5px solid #e6d9c2;margin-right:-0.16in;box-shadow:0 0 0 3px #282819}
   .led-p:last-child{margin-right:0}
-  .led-p img{width:100%%;height:100%%;object-fit:cover;display:block}
+  .led-p img{width:100%%;height:100%%;display:block}
   .led-names{font-family:var(--body);font-size:10.5pt;color:#fffdfa;margin:0;line-height:1.4}
   .led-role{display:block;text-transform:uppercase;letter-spacing:.14em;font-size:8pt;color:#e6d9c2;margin-top:.15em}
   .led-with{display:block;font-style:italic;color:#f3ead9}
@@ -980,7 +1040,7 @@ def print_page(g, slug):
   .p-day1{break-inside:avoid;page-break-inside:avoid;margin-top:.15in;padding-top:.15in;border-top:1px solid #ebe1d1}
   .p-day1 h3{font-size:15pt;margin-bottom:.1em}
   .p-day1-img{width:100%%;height:1.25in;overflow:hidden;margin:.15em 0 .2em;border-radius:2px}
-  .p-day1-img img{width:100%%;height:100%%;object-fit:cover;display:block}
+  .p-day1-img img{width:100%%;height:100%%;display:block}
   .p-day1 p{margin:0 0 .25em;font-size:10pt;line-height:1.4}
 
   /* ---- day by day grid (page 3) ---- */
@@ -990,7 +1050,7 @@ def print_page(g, slug):
   .p-day{break-inside:avoid;page-break-inside:avoid}
   .p-day-body{width:100%%}
   .p-day-img{width:100%%;height:var(--gh,1.7in);overflow:hidden;margin-bottom:.15em;border-radius:2px}
-  .p-day-img img{width:100%%;height:100%%;object-fit:cover;display:block}
+  .p-day-img img{width:100%%;height:100%%;display:block}
   .p-day-body h3{font-size:14.5pt;margin-bottom:.1em}
   .p-day-body p{margin:0 0 .2em;font-size:10pt;line-height:1.38}
   .p-day-meta{font-family:var(--body);font-size:9pt;color:#8a8270;margin-top:.05em;margin-bottom:0}
@@ -1001,7 +1061,7 @@ def print_page(g, slug):
   .hosts-cols{display:flex;gap:0.5in;margin:.1em 0 .3in}
   .host-col{flex:1;display:flex;gap:.25in;align-items:flex-start}
   .host-portrait{flex:0 0 auto;width:1.3in;height:1.3in;overflow:hidden;border-radius:2px}
-  .host-portrait img{width:100%%;height:100%%;object-fit:cover}
+  .host-portrait img{width:100%%;height:100%%}
   .host-copy{flex:1}
   .host-col h3{font-size:12.5pt;margin-bottom:.05em}
   .host-role{font-family:var(--body);text-transform:uppercase;letter-spacing:.1em;font-size:8pt;color:#7d9065;margin-bottom:.2em}
@@ -1021,7 +1081,7 @@ def print_page(g, slug):
 </head><body>
 %(body)s
 </body></html>""" % dict(
-        title=title, ver=VER, body=body_html,
+        title=title, ver=VER, body=body_html, print_fonts=R('fonts_print.css'),
     )
     return html
 

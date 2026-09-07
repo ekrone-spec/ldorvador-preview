@@ -22,13 +22,16 @@ robots.txt + sitemap.xml, live form key).
 ## Accounts (all created)
 
 1. **Cloudflare** (done) — Workers project `ldorvador-preview`, git-connected.
-   Root directory `site`, build command `npm ci && python3 build.py`, deploy
-   `npx wrangler deploy`. At cutover add build variables
+   Root directory `site`, build command `npm ci && pip3 install pillow && python3 build.py`,
+   deploy `npx wrangler deploy`. At cutover add build variables
    `SITE=https://www.ldorvadortravel.com` and `PROD=1`.
    **Dashboard change required (2026-09):** the build command must be
-   `npm ci && python3 build.py` — wrangler bundles `worker.js` from
-   `node_modules`, so `@cloudflare/puppeteer` (see "On-demand PDF" below)
-   has to be installed before `wrangler deploy` runs. Update this in
+   `npm ci && pip3 install pillow && python3 build.py` — wrangler bundles
+   `worker.js` from `node_modules`, so `@cloudflare/puppeteer` (see
+   "On-demand PDF" below) has to be installed before `wrangler deploy` runs;
+   Pillow lets `build.py` pre-crop the print-page images to exact-size JPEGs
+   (`assets/img/print/`) so the on-demand PDF below doesn't rasterize
+   full-resolution PNGs for every cropped photo. Update this in
    Workers & Pages -> ldorvador-preview -> Settings -> Build configuration.
 2. **Web3Forms** (done) — key baked into build.py; recipient includes
    connect@ (verify with a live test at cutover).
@@ -187,6 +190,12 @@ if a render fails or the daily limit is hit, the worker serves any older
 cached PDF for that slug instead of erroring. A group's `pdf` field (in its
 `content/groups/<slug>.json`) still overrides this with a hand-made file path
 when set; `make_pdf.py` remains as a documented local fallback for that case.
+Because Browser Rendering has no post-process step to dedupe or shrink the
+PDF it returns, `print.html`'s images must already be small: `build.py`
+pre-crops every print photo to the exact pixel size of its CSS box (see
+`print_image()`) and writes JPEGs to `assets/img/print/`, and `print.html`
+references those with no `object-fit`/clipping, so Chrome embeds the JPEG
+bytes as-is instead of rasterizing a full-resolution PNG per cropped photo.
 
 **Secrets** (names only — never values here):
 

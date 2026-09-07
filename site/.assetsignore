@@ -4,6 +4,7 @@
 *.frag.html
 _strings.json
 fonts_extra.css
+fonts_print.css
 wrangler.jsonc
 DEPLOY.md
 locales/
