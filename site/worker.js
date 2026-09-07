@@ -212,7 +212,7 @@ async function getGroupPdfBuffer(env, request, slug) {
   const etag = await findGroupPrintEtag(env, request, slug);
   if (!etag) return { buf: null, notFound: true };
 
-  const cacheKey = `${slug}:${etag}`;
+  const cacheKey = `${slug}:${PDF_RENDER_VERSION}-${etag}`;
   const cached = await env.PDF_CACHE.get(cacheKey, 'arrayBuffer');
   if (cached) return { buf: cached, notFound: false };
 
@@ -779,4 +779,6 @@ export default {
     headers.set('Accept-Ranges', 'bytes');
     return new Response(buf.slice(start, end + 1), { status: 206, headers });
   },
-};
+};const PDF_RENDER_VERSION = 'r2'; // bump when render settings change (invalidates cached PDFs)
+
+
