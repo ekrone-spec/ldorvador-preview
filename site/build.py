@@ -414,6 +414,28 @@ def build_groups():
                     '<p class="eyebrow">In Pictures</p></div>'
                     '<div class="gallery-grid">%s</div></section>' % tiles)
 
+        def facts_line():
+            bits = [gv(k) for k in ('dates', 'duration', 'group_size') if g.get(k)]
+            return ' · '.join(bits)
+
+        def facts_list():
+            rows = [('Dates', 'dates'), ('Duration', 'duration'), ('Group size', 'group_size'),
+                    ('Start / finish', 'start_finish'), ('Pace', 'pace'),
+                    ('Accommodation', 'accommodation')]
+            return ''.join('<li><span>%s</span><b>%s</b></li>' % (label, gv(key))
+                            for label, key in rows if g.get(key))
+
+        def notes_block():
+            raw = g.get('notes')
+            if not raw:
+                return ''
+            items = [ln.strip() for ln in str(raw).split('\n') if ln.strip()]
+            if not items:
+                return ''
+            lis = ''.join('<li>%s</li>' % _cesc(it) for it in items)
+            return ('<section class="group-notes"><h3>Program Notes</h3><ul>%s</ul></section>'
+                    % lis)
+
         def pdf_link():
             pdf = g.get('pdf')
             if not pdf:
@@ -455,6 +477,9 @@ def build_groups():
             '__G_NOTIFY_NOTE__': gv('notify_note'),
             '__G_INCLUDED_LIST__':     bullets('included'),
             '__G_NOT_INCLUDED_LIST__': bullets('not_included'),
+            '__G_NOTES_BLOCK__':       notes_block(),
+            '__G_FACTS_LINE__':        facts_line(),
+            '__G_FACTS_LIST__':        facts_list(),
             '__G_HIGHLIGHTS_LIST__':   bullets('highlights'),
             '__G_ITIN_GLANCE__':       itin_glance(),
             '__G_ITINERARY_ROWS__':    itinerary_rows(),
@@ -565,8 +590,11 @@ def print_page(g, slug):
     leader = pv('leader')
     leader_image = g.get('leader_image')
     hero = pimg(g.get('hero_image'))
-    intro = ''.join('<p>%s</p>' % _cesc(ln) for ln in
-                     str(g.get('intro') or '').split('\n') if ln.strip())
+    # the PDF's page-2 layout has to leave room for the day-1 feature below,
+    # so only the first two intro paragraphs are set here even when the page
+    # itself (which scrolls) carries all of them
+    intro_paras = [ln for ln in str(g.get('intro') or '').split('\n') if ln.strip()]
+    intro = ''.join('<p>%s</p>' % _cesc(ln) for ln in intro_paras[:2])
     page_url = '%s/groups/%s/' % (SITE, slug)
     contact_email = pv('contact_email') or 'connect@ldorvadortravel.com'
     contact_phone = pv('contact_phone')
@@ -584,11 +612,16 @@ def print_page(g, slug):
     itinerary = g.get('itinerary') or []
     rest_days = itinerary[1:]  # day 1 is the page-2 feature; the grid starts at day 2
     n_rest = len(rest_days)
-    # photo sizing per plan: <=6 remaining days -> 1.7in; <=8 -> 1.3in; beyond 8, no photo
-    if n_rest <= 6:
+    # photo sizing keyed off how many grid *rows* the 2-column layout needs
+    # (not the raw day count), since an odd count leaves a half-empty row
+    # that costs just as much vertical space as a full one
+    grid_rows = (n_rest + 1) // 2
+    if grid_rows <= 2:
         grid_photo_h = '1.7in'
+    elif grid_rows <= 3:
+        grid_photo_h = '1.1in'
     else:
-        grid_photo_h = '1.3in'
+        grid_photo_h = '0.9in'
 
     def day_meta(d):
         overnight = _cesc(d.get('overnight'))
@@ -600,12 +633,19 @@ def print_page(g, slug):
             bits.append('(%s)' % meals)
         return ' &middot; '.join(bits)
 
+    def _day_summary_text(d):
+        summary = d.get('summary')
+        if summary:
+            return summary
+        text = str(d.get('text') or '').replace('\n', ' ')
+        sentences = re.findall(r'[^.!?]*[.!?]', text)
+        return ''.join(sentences[:2]).strip() or text.strip()
+
     def day_cell(d, idx):
         day = _cesc(d.get('day'))
         date = _cesc(d.get('date'))
         dtitle = _cesc(d.get('title'))
-        paras = ''.join('<p>%s</p>' % _cesc(ln) for ln in
-                         str(d.get('text') or '').split('\n') if ln.strip())
+        paras = '<p>%s</p>' % _cesc(_day_summary_text(d))
         img = d.get('image')
         eyebrow = '%s%s' % (day, ' &middot; %s' % date if date else '')
         meta = day_meta(d)
@@ -620,8 +660,10 @@ def print_page(g, slug):
         day = _cesc(d.get('day'))
         date = _cesc(d.get('date'))
         dtitle = _cesc(d.get('title'))
-        paras = ''.join('<p>%s</p>' % _cesc(ln) for ln in
-                         str(d.get('text') or '').split('\n') if ln.strip())
+        # the page-2 feature has to share the sheet with the overview column,
+        # so it uses the compact summary (like the day grid) rather than the
+        # day's full text, which runs on the itinerary grid page instead
+        paras = '<p>%s</p>' % _cesc(_day_summary_text(d))
         img = pimg(d.get('image') or g.get('hero_image'))
         eyebrow = '%s%s' % (day, ' &middot; %s' % date if date else '')
         meta = day_meta(d)
@@ -647,6 +689,21 @@ def print_page(g, slug):
 
     included = bullets('included')
     not_included = bullets('not_included')
+
+    def notes_items(limit=None):
+        raw = g.get('notes')
+        if not raw:
+            return []
+        items = [ln.strip() for ln in str(raw).split('\n') if ln.strip()]
+        return items[:limit] if limit else items
+
+    def notes_html(limit=None):
+        items = notes_items(limit)
+        if not items:
+            return ''
+        lis = ''.join('<li>%s</li>' % _cesc(it) for it in items)
+        return ('<div class="p-notes"><p class="p-eyebrow">Program Notes</p>'
+                '<ul class="p-notes-list">%s</ul></div>' % lis)
 
     contact_rows = ''
     if contact_email:
@@ -683,14 +740,15 @@ def print_page(g, slug):
   <div class="cover-text">
     <p class="p-eyebrow on-photo">%(congregation)s</p>
     <h1>%(title)s</h1>
-    <p class="p-facts">%(dates)s &middot; %(duration)s &middot; %(group_size)s</p>
+    <p class="p-facts">%(facts)s</p>
     %(led_row)s
   </div>
   <div class="cover-strip">%(cover_contact)s</div>
 </div>""" % dict(
         hero_img=('<img src="%s" alt="">' % hero) if hero else '',
-        congregation=congregation, title=title, dates=dates, duration=duration,
-        group_size=group_size, led_row=led_row, stack_mark=stack_mark,
+        congregation=congregation, title=title,
+        facts=' &middot; '.join(b for b in [dates, duration, group_size] if b),
+        led_row=led_row, stack_mark=stack_mark,
         cover_contact=cover_contact,
     )))
 
@@ -732,6 +790,7 @@ def print_page(g, slug):
     <div><p class="p-eyebrow">Not Included</p>%(not_included)s</div>
   </div>
   %(price_section)s
+  %(notes)s
   <div class="p-contact">
     <p class="p-eyebrow">Questions or to Register Your Interest</p>
     %(contact_rows)s
@@ -741,6 +800,7 @@ def print_page(g, slug):
         hosts=hosts_html,
         included=included, not_included=not_included,
         price_section=('<p class="p-price">%s</p>' % price_note) if price_note else '',
+        notes=notes_html(int(os.environ.get('LDV_PDF_NOTES_LIMIT', '3')) or None),
         contact_rows=contact_rows,
         compact_mark=compact_mark,
     )))
@@ -818,17 +878,18 @@ def print_page(g, slug):
   .glance-item:first-child{padding-top:0}
   .gl-label{display:block;text-transform:uppercase;letter-spacing:.1em;font-size:9pt;font-family:var(--body);color:#8a8270;margin-bottom:3px}
   .gl-value{display:block;font-size:12pt}
-  .p-highlights{list-style:none;margin:0;padding:0;column-count:1}
-  .p-highlights li{position:relative;padding-left:1.05em;margin:.45em 0}
+  .journey-copy p{font-size:11pt;line-height:1.42;margin:0 0 .4em}
+  .p-highlights{list-style:none;margin:0;padding:0;column-count:1;font-size:10pt}
+  .p-highlights li{position:relative;padding-left:1.05em;margin:.24em 0;line-height:1.32}
   .p-highlights li::before{content:'';position:absolute;left:0;top:.55em;width:5px;height:5px;background:#7d9065;border-radius:50%%}
   ul.p-highlights{padding-left:0}
 
   /* ---- day 1 feature (bottom of page 2) ---- */
-  .p-day1{break-inside:avoid;page-break-inside:avoid;margin-top:.35in;padding-top:.25in;border-top:1px solid #ebe1d1}
-  .p-day1 h3{font-size:18pt;margin-bottom:.2em}
-  .p-day1-img{width:100%%;height:2.4in;overflow:hidden;margin:.25em 0 .35em;border-radius:2px}
+  .p-day1{break-inside:avoid;page-break-inside:avoid;margin-top:.15in;padding-top:.15in;border-top:1px solid #ebe1d1}
+  .p-day1 h3{font-size:15pt;margin-bottom:.1em}
+  .p-day1-img{width:100%%;height:1.25in;overflow:hidden;margin:.15em 0 .2em;border-radius:2px}
   .p-day1-img img{width:100%%;height:100%%;object-fit:cover;display:block}
-  .p-day1 p{margin:0 0 .35em}
+  .p-day1 p{margin:0 0 .25em;font-size:10pt;line-height:1.4}
 
   /* ---- day by day grid (page 3) ---- */
   .p-runhead{display:flex;justify-content:space-between;font-family:var(--body);font-size:8.5pt;text-transform:uppercase;letter-spacing:.14em;color:#8a8270;border-bottom:1px solid #ebe1d1;padding-bottom:10px;margin-bottom:.3in}
@@ -838,28 +899,32 @@ def print_page(g, slug):
   .p-day-body{width:100%%}
   .p-day-img{width:100%%;height:var(--gh,1.7in);overflow:hidden;margin-bottom:.15em;border-radius:2px}
   .p-day-img img{width:100%%;height:100%%;object-fit:cover;display:block}
-  .p-day-body h3{font-size:16pt;margin-bottom:.15em}
-  .p-day-body p{margin:0 0 .25em;font-size:11pt}
-  .p-day-meta{font-family:var(--body);font-size:9.5pt;color:#8a8270;margin-top:.1em;margin-bottom:0}
+  .p-day-body h3{font-size:14.5pt;margin-bottom:.1em}
+  .p-day-body p{margin:0 0 .2em;font-size:10pt;line-height:1.38}
+  .p-day-meta{font-family:var(--body);font-size:9pt;color:#8a8270;margin-top:.05em;margin-bottom:0}
   .p-pageno{position:absolute;right:0.6in;bottom:0.55in;font-size:9pt;color:#8a8270;font-family:var(--body);margin:0}
 
   /* ---- closing page: hosts / included / contact ---- */
   .closing-page{padding-bottom:1.3in}
-  .hosts-cols{display:flex;gap:0.5in;margin:.15em 0 .4in}
+  .hosts-cols{display:flex;gap:0.5in;margin:.1em 0 .3in}
   .host-col{flex:1;display:flex;gap:.25in;align-items:flex-start}
-  .host-portrait{flex:0 0 auto;width:1.5in;height:1.5in;overflow:hidden;border-radius:2px}
+  .host-portrait{flex:0 0 auto;width:1.3in;height:1.3in;overflow:hidden;border-radius:2px}
   .host-portrait img{width:100%%;height:100%%;object-fit:cover}
   .host-copy{flex:1}
-  .host-col h3{font-size:13pt;margin-bottom:.05em}
-  .host-role{font-family:var(--body);text-transform:uppercase;letter-spacing:.1em;font-size:8.5pt;color:#7d9065;margin-bottom:.3em}
-  .host-col p{font-size:9.5pt;line-height:1.38;margin:0 0 .3em}
-  .included-cols{margin-bottom:.3in}
+  .host-col h3{font-size:12.5pt;margin-bottom:.05em}
+  .host-role{font-family:var(--body);text-transform:uppercase;letter-spacing:.1em;font-size:8pt;color:#7d9065;margin-bottom:.2em}
+  .host-col p{font-size:9pt;line-height:1.32;margin:0 0 .25em}
+  .included-cols{margin-bottom:.2in}
 
-  ul{margin:.2em 0;padding-left:1.2em}
-  li{margin:.3em 0;font-size:10.5pt}
-  .p-price{font-style:italic;color:#555a45;margin-top:.15in;font-size:10.5pt}
-  .p-contact{margin-top:.3in;padding-top:.3in;border-top:1px solid #ebe1d1}
-  .p-contact p{margin:.3em 0;font-size:12pt}
+  ul{margin:.15em 0;padding-left:1.2em}
+  li{margin:.2em 0;font-size:10pt}
+  .p-price{font-style:italic;color:#555a45;margin-top:.1in;font-size:10pt}
+  .p-notes{margin-top:.15in}
+  .p-notes-list{list-style:none;margin:0;padding:0;column-count:2;column-gap:0.4in;-webkit-column-count:2}
+  .p-notes-list li{font-size:9pt;line-height:1.28;margin:0 0 .25em;break-inside:avoid}
+  .p-notes-list li b{color:#282819}
+  .p-contact{margin-top:.2in;padding-top:.2in;border-top:1px solid #ebe1d1}
+  .p-contact p{margin:.2em 0;font-size:11pt}
 </style>
 </head><body>
 %(body)s

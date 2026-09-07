@@ -7,6 +7,7 @@
     __G_INCLUDED_LIST__      <ul> built from the "included" field (one <li> per line)
     __G_NOT_INCLUDED_LIST__  <ul> built from the "not_included" field
     __G_HIGHLIGHTS_LIST__    <ul> built from the "highlights" field
+    __G_NOTES_BLOCK__        "Program notes" block built from the "notes" field (optional)
     __G_ITIN_GLANCE__        "Day N — title" links built from "itinerary"
     __G_ITINERARY_ROWS__     plain div.group-day per day (id="day-N"), built
       from "itinerary" (day/title/image/text): a staggered flow, not an
@@ -39,7 +40,7 @@ __HEADER__
     <div class="grouphero-lede">
       <p class="eyebrow">__G_CONGREGATION__</p>
       <h1>__G_TITLE__</h1>
-      <p class="grouphero-facts">__G_DATES__ · __G_DURATION__ · __G_GROUP_SIZE__</p>
+      <p class="grouphero-facts">__G_FACTS_LINE__</p>
       <p class="group-price-note">__G_PRICE_NOTE__</p>
       <div class="grouphero-ctas">
         <a class="btn btn-solid grouphero-cta" href="#register">Register Your Interest</a>
@@ -61,12 +62,7 @@ __HEADER__
       <div class="group-card">
         <h3>Details</h3>
         <ul class="group-facts">
-          <li><span>Dates</span><b>__G_DATES__</b></li>
-          <li><span>Duration</span><b>__G_DURATION__</b></li>
-          <li><span>Group size</span><b>__G_GROUP_SIZE__</b></li>
-          <li><span>Start / finish</span><b>__G_START_FINISH__</b></li>
-          <li><span>Pace</span><b>__G_PACE__</b></li>
-          <li><span>Accommodation</span><b>__G_ACCOMMODATION__</b></li>
+          __G_FACTS_LIST__
         </ul>
       </div>
       <div class="group-card">
@@ -85,7 +81,7 @@ __HEADER__
   <section id="itinerary" class="group-itinerary-section">
     <div class="sec-head" data-origin="left">
       <p class="eyebrow">Day by Day</p>
-      <h2>Sample Itinerary</h2>
+      <h2>Itinerary</h2>
     </div>
     <div class="group-itinerary">
       __G_ITINERARY_ROWS__
@@ -104,6 +100,8 @@ __HEADER__
       __G_NOT_INCLUDED_LIST__
     </div>
   </section>
+
+  __G_NOTES_BLOCK__
 
   <section class="contact group-register" id="register">
     <div class="sec-head" data-origin="left">

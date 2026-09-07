@@ -38,6 +38,7 @@ GROUPTRIP_FIELD_LABEL = {
     'highlights': 'Highlights',
     'included': 'What is included',
     'not_included': 'What is not included',
+    'notes': 'Program notes',
     'vignettes': 'Editorial vignettes',
     'itinerary': 'Itinerary',
     'gallery': 'Photo gallery',
@@ -48,11 +49,12 @@ GROUPTRIP_FIELD_LABEL = {
     'pdf': 'Trip details PDF (path, optional)',
     'published': 'Published',
 }
-GROUPTRIP_TEXTAREA = {'intro', 'highlights', 'included', 'not_included', 'form_intro', 'notify_note'}
+GROUPTRIP_TEXTAREA = {'intro', 'highlights', 'included', 'not_included', 'notes', 'form_intro', 'notify_note'}
 GROUPTRIP_COMMENT = {
     'highlights': 'One item per line',
     'included': 'One item per line',
     'not_included': 'One item per line',
+    'notes': 'One item per line, e.g. "Flights: International airfare is not included."',
     'pdf': 'Leave blank to hide the PDF download button',
     'published': 'Untick to hide the page from the website',
 }
@@ -142,6 +144,7 @@ _structures:
           day: ''
           title: ''
           text: ''
+          summary: ''
           image: ''
           date: ''
           meals: ''
@@ -156,6 +159,9 @@ _structures:
           text:
             type: textarea
             label: 'Day description'
+          summary:
+            type: textarea
+            label: 'Short summary (used in the PDF)'
           image:
             type: image
             label: 'Day photo (optional)'

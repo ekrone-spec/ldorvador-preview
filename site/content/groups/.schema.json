@@ -17,11 +17,12 @@
   "highlights": "",
   "included": "",
   "not_included": "",
+  "notes": "",
   "vignettes": [
     {"title": "", "text": "", "image": ""}
   ],
   "itinerary": [
-    {"day": "", "title": "", "text": "", "image": "", "date": "", "meals": "", "overnight": ""}
+    {"day": "", "title": "", "text": "", "summary": "", "image": "", "date": "", "meals": "", "overnight": ""}
   ],
   "gallery": [""],
   "form_intro": "",

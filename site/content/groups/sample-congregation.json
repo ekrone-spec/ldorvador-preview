@@ -30,11 +30,51 @@
     }
   ],
   "itinerary": [
-    {"day": "Day 1", "title": "Arrival & Welcome", "text": "Arrive in Willemstad, settle in, and gather for a welcome dinner overlooking St. Anna Bay.", "image": "assets/img/lg-willemstad.jpg", "date": "SAMPLE: Sun, March 14", "meals": "D", "overnight": "SAMPLE: Willemstad"},
-    {"day": "Day 2", "title": "The Snoa & Old City", "text": "Visit the historic sand-floor synagogue Mikvé Israel-Emanuel and walk the UNESCO old town of Willemstad.", "image": "assets/img/lg-snoa.jpg", "date": "SAMPLE: Mon, March 15", "meals": "B, L", "overnight": "SAMPLE: Willemstad"},
-    {"day": "Day 3", "title": "Beth Haim Cemetery", "text": "Tour one of the oldest Jewish cemeteries in the Americas and learn the stories behind its inscriptions.", "image": "assets/img/lg-bethhaim.jpg", "date": "SAMPLE: Tue, March 16", "meals": "B", "overnight": "SAMPLE: Willemstad"},
-    {"day": "Day 4", "title": "Community & Culture", "text": "Meet local community members and academics for a people-to-people exchange on Curaçao's Jewish history.", "image": "assets/img/lg-community.jpg", "date": "SAMPLE: Wed, March 17", "meals": "B, D", "overnight": "SAMPLE: Willemstad"},
-    {"day": "Day 5", "title": "Coast & Free Time", "text": "A day at leisure to explore Curaçao's coastline, beaches, and markets before Shabbat.", "image": "assets/img/lg-coast.jpg", "date": "SAMPLE: Thu, March 18", "meals": "B", "overnight": "SAMPLE: Willemstad"}
+    {
+      "day": "Day 1",
+      "title": "Arrival & Welcome",
+      "text": "Arrive in Willemstad, settle in, and gather for a welcome dinner overlooking St. Anna Bay.",
+      "image": "assets/img/lg-willemstad.jpg",
+      "date": "SAMPLE: Sun, March 14",
+      "meals": "D",
+      "overnight": "SAMPLE: Willemstad"
+    },
+    {
+      "day": "Day 2",
+      "title": "The Snoa & Old City",
+      "text": "Visit the historic sand-floor synagogue Mikvé Israel-Emanuel and walk the UNESCO old town of Willemstad.",
+      "image": "assets/img/lg-snoa.jpg",
+      "date": "SAMPLE: Mon, March 15",
+      "meals": "B, L",
+      "overnight": "SAMPLE: Willemstad"
+    },
+    {
+      "day": "Day 3",
+      "title": "Beth Haim Cemetery",
+      "text": "Tour one of the oldest Jewish cemeteries in the Americas and learn the stories behind its inscriptions.",
+      "image": "assets/img/lg-bethhaim.jpg",
+      "date": "SAMPLE: Tue, March 16",
+      "meals": "B",
+      "overnight": "SAMPLE: Willemstad"
+    },
+    {
+      "day": "Day 4",
+      "title": "Community & Culture",
+      "text": "Meet local community members and academics for a people-to-people exchange on Curaçao's Jewish history.",
+      "image": "assets/img/lg-community.jpg",
+      "date": "SAMPLE: Wed, March 17",
+      "meals": "B, D",
+      "overnight": "SAMPLE: Willemstad"
+    },
+    {
+      "day": "Day 5",
+      "title": "Coast & Free Time",
+      "text": "A day at leisure to explore Curaçao's coastline, beaches, and markets before Shabbat.",
+      "image": "assets/img/lg-coast.jpg",
+      "date": "SAMPLE: Thu, March 18",
+      "meals": "B",
+      "overnight": "SAMPLE: Willemstad"
+    }
   ],
   "gallery": [
     "assets/img/lg-willemstad.jpg",
@@ -48,5 +88,5 @@
   "contact_email": "connect@ldorvadortravel.com",
   "contact_phone": "+1 (000) 000-0000",
   "pdf": "assets/pdf/sample-congregation.pdf",
-  "published": true
+  "published": false
 }

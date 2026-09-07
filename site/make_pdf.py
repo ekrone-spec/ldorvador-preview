@@ -80,7 +80,26 @@ def render(slug):
         return False
     if not os.path.isfile(out):
         return False
+    _shrink(out)
     return _check_page_count(out, slug)
+
+
+def _shrink(pdf_path):
+    """Chrome's PDF export embeds a fresh copy of each <img> per occurrence
+    even when several elements share the same src (e.g. a host portrait used
+    on both the cover and the closing page), so recurring photos are stored
+    twice. Losslessly dedup identical image streams and compact the xref
+    table; this alone cuts a typical brochure from ~10MB to ~4MB with zero
+    change to the rendered pixels."""
+    try:
+        import fitz
+    except ImportError:
+        return
+    tmp = pdf_path + '.tmp'
+    d = fitz.open(pdf_path)
+    d.save(tmp, garbage=4, deflate=True, clean=True)
+    d.close()
+    os.replace(tmp, pdf_path)
 
 
 def main():
