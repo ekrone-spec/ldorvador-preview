@@ -228,4 +228,4 @@ npx wrangler d1 execute ldorvador-interest --remote --json --command \
   "SELECT created_at, group_slug, full_name, email FROM interest ORDER BY created_at DESC LIMIT 20"
 ```
 
-<!-- build settings last updated 2026-09-05: build command "npm ci && pip3 install pillow && python3 build.py", root directory "site" -->
+<!-- build settings last updated 2026-09-05: build command "cd site 2>/dev/null || true; npm ci && pip3 install pillow && python3 build.py" (root-agnostic), root directory "site" -->
