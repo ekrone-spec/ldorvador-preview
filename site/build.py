@@ -655,7 +655,7 @@ def _cap_words(text, limit=110):
 
 _PRINT_DPI = 150  # px-per-inch used to size print derivatives to their CSS boxes
 
-def print_image(src, w, h, top=False):
+def print_image(src, w, h, top=False, focus=None):
     """Center-crop (or, for portraits, top-weighted crop) assets/<src> to an
     exact w x h JPEG at assets/img/print/<basename>-<w>x<h>.jpg, so the print
     stylesheet can reference it with no CSS cropping (object-fit/overflow) and
@@ -670,7 +670,8 @@ def print_image(src, w, h, top=False):
     if not os.path.isfile(src_path):
         return src
     base = os.path.splitext(os.path.basename(src))[0]
-    out_rel = 'assets/img/print/%s-%dx%d.jpg' % (base, w, h)
+    tag = ('-' + str(focus).lower()) if focus else ''
+    out_rel = 'assets/img/print/%s-%dx%d%s.jpg' % (base, w, h, tag)
     out_path = os.path.join(D, out_rel)
     try:
         if os.path.isfile(out_path) and os.path.getmtime(out_path) >= os.path.getmtime(src_path):
@@ -691,7 +692,8 @@ def print_image(src, w, h, top=False):
             box = (x0, 0, x0 + new_w, sh)
         else:
             new_h = int(round(sw / target_ratio))
-            y0 = int(round((sh - new_h) * 0.2)) if top else (sh - new_h) // 2
+            frac = {'top': 0.0, 'center': 0.5, 'bottom': 1.0}.get(str(focus or '').lower(), 0.2 if top else 0.5)
+            y0 = int(round((sh - new_h) * frac))
             box = (0, y0, sw, y0 + new_h)
         im.crop(box).resize((w, h), Image.LANCZOS).save(
             out_path, 'JPEG', quality=74, progressive=True, optimize=True)
@@ -797,7 +799,7 @@ def print_page(g, slug):
         meta_html = ('<p class="p-day-meta">%s</p>' % meta) if meta else ''
         show_img = img and idx < 8  # drop photos for the 7th+ grid day
         media_html = ('<div class="p-day-img"><img src="%s" alt=""></div>'
-                       % pimg(print_image(img, DAY_COL_W_PX, day_photo_h_px))) if show_img else ''
+                       % pimg(print_image(img, DAY_COL_W_PX, day_photo_h_px, focus=d.get('image_focus')))) if show_img else ''
         return ('<div class="p-day"><div class="p-day-body">%s'
                 '<p class="p-eyebrow-sm">%s</p><h3>%s</h3>%s%s</div></div>'
                 % (media_html, eyebrow, dtitle, paras, meta_html))
@@ -812,7 +814,8 @@ def print_page(g, slug):
         paras = '<p>%s</p>' % _cesc(_day_summary_text(d))
         # full content width (7.3in) x the .p-day1-img box height (1.25in)
         img = pimg(print_image(d.get('image') or g.get('hero_image'),
-                                int(round(7.3 * _PRINT_DPI)), int(round(1.25 * _PRINT_DPI))))
+                                int(round(7.3 * _PRINT_DPI)), int(round(1.25 * _PRINT_DPI)),
+                                focus=d.get('image_focus')))
         eyebrow = '%s%s' % (day, ' &middot; %s' % date if date else '')
         meta = day_meta(d)
         meta_html = ('<p class="p-day-meta">%s</p>' % meta) if meta else ''

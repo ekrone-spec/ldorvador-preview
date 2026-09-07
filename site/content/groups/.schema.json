@@ -19,12 +19,28 @@
   "not_included": "",
   "notes": "",
   "vignettes": [
-    {"title": "", "text": "", "image": ""}
+    {
+      "title": "",
+      "text": "",
+      "image": ""
+    }
   ],
   "itinerary": [
-    {"day": "", "title": "", "text": "", "summary": "", "image": "", "date": "", "meals": "", "overnight": ""}
+    {
+      "day": "",
+      "title": "",
+      "text": "",
+      "summary": "",
+      "image": "",
+      "date": "",
+      "meals": "",
+      "overnight": "",
+      "image_focus": ""
+    }
   ],
-  "gallery": [""],
+  "gallery": [
+    ""
+  ],
   "form_intro": "",
   "notify_note": "",
   "contact_email": "connect@ldorvadortravel.com",

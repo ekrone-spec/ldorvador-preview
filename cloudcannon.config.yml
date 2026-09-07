@@ -43,6 +43,7 @@ _structures:
           text: ''
           summary: ''
           image: ''
+          image_focus: ''
           date: ''
           meals: ''
           overnight: ''
@@ -62,6 +63,13 @@ _structures:
           image:
             type: image
             label: 'Day photo (optional)'
+          image_focus:
+            type: select
+            label: 'Photo crop focus in the PDF'
+            comment: 'Which part of the photo to keep when the PDF crops it'
+            options:
+              values: ['center', 'top', 'bottom']
+              allow_empty: true
           date:
             type: text
             label: 'Date (optional, e.g. Sun, March 14)'
