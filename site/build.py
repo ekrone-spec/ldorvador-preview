@@ -818,9 +818,12 @@ def print_page(g, slug):
             bits.append('(%s)' % meals)
         return ' &middot; '.join(bits)
 
-    # ---- day-by-day: full copy, one continuous flow (no fixed sheets) ----
+    # ---- day-by-day: full copy, day 1 as a feature (full-width photo),
+    # days 2+ as two-column cards (photo sized to the narrower card) ----
     DAY_IMG_W_PX = int(round(7.3 * _PRINT_DPI))
     DAY_IMG_H_PX = int(round(2.4 * _PRINT_DPI))
+    CARD_IMG_W_PX = int(round(3.35 * _PRINT_DPI))
+    CARD_IMG_H_PX = int(round(2.23 * _PRINT_DPI))  # 3:2
 
     def day_groups_html(d):
         """Render a day's `text` as heading+bullets groups, each wrapped so
@@ -850,7 +853,7 @@ def print_page(g, slug):
         flush()
         return ''.join(out)
 
-    def day_header(d):
+    def day_header(d, card=False):
         """The non-splittable top of a day: eyebrow, title, subtitle, photo."""
         day = _cesc(d.get('day'))
         date = _cesc(d.get('date'))
@@ -861,24 +864,54 @@ def print_page(g, slug):
         img = d.get('image')
         img_html = ''
         if img:
-            img_src = pimg(print_image(img, DAY_IMG_W_PX, DAY_IMG_H_PX, focus=d.get('image_focus')))
+            w, h = (CARD_IMG_W_PX, CARD_IMG_H_PX) if card else (DAY_IMG_W_PX, DAY_IMG_H_PX)
+            img_src = pimg(print_image(img, w, h, focus=d.get('image_focus')))
             img_html = '<div class="p-day-photo"><img src="%s" alt=""></div>' % img_src
         html = ('<div class="p-day-header"><p class="p-eyebrow-sm p-day-eyebrow">%s</p><h3>%s</h3>%s%s</div>'
                 % (eyebrow, dtitle, subtitle_html, img_html))
         return html
 
-    # ---- one continuous flow: header, then each day's groups, then the
-    # overnight line — natural browser pagination breaks between blocks ----
-    days_html_parts = []
-    for d in itinerary:
-        days_html_parts.append('<div class="day">')
-        days_html_parts.append(day_header(d))
-        days_html_parts.append(day_groups_html(d))
+    # ---- day 1: the page-2 feature block, full copy (not a summary) ----
+    def day_block(d, css_class='day'):
+        card = 'day-card' in css_class and 'day-card-solo' not in css_class
+        parts = ['<div class="%s">' % css_class, day_header(d, card=card), day_groups_html(d)]
         meta = day_meta(d)
         if meta:
-            days_html_parts.append('<p class="p-day-meta">%s</p>' % meta)
-        days_html_parts.append('</div>')
-    days_html = ''.join(days_html_parts)
+            parts.append('<p class="p-day-meta">%s</p>' % meta)
+        parts.append('</div>')
+        return ''.join(parts)
+
+    day1_html = day_block(itinerary[0], 'day day1-feature') if itinerary else ''
+
+    # ---- days 2+: a two-column card grid (the 2210a8a look), built with
+    # floats rather than CSS grid/flex — Chrome's print engine fragments a
+    # float across pages cleanly, whereas a grid/flex item breaking mid-row
+    # tends to overlap or clip. Cards are paired into rows and cleared after
+    # each row so a very long card (e.g. a day with much more copy than its
+    # neighbour) never throws off the alignment of subsequent rows. A day
+    # whose copy runs far longer than the rest (Day 4 here) is given its own
+    # full-width row instead of being paired — pairing it would strand its
+    # partner's column empty for however many pages the long day keeps
+    # running, which reads as a half-blank page. ----
+    rest_days = itinerary[1:]
+    lens = [len(str(d.get('text') or '')) for d in rest_days]
+    avg_len = (sum(lens) / len(lens)) if lens else 0
+    day_rows = []
+    i = 0
+    while i < len(rest_days):
+        d = rest_days[i]
+        if avg_len and len(str(d.get('text') or '')) > 1.8 * avg_len:
+            day_rows.append('<div class="day-row day-row-solo">%s</div>'
+                             % day_block(d, 'day day-card day-card-solo'))
+            i += 1
+            continue
+        pair = rest_days[i:i + 2]
+        cards = ''.join(
+            day_block(d, 'day day-card day-card-left' if j == 0 else 'day day-card day-card-right')
+            for j, d in enumerate(pair))
+        day_rows.append('<div class="day-row">%s</div>' % cards)
+        i += 2
+    days_html = day1_html + ''.join(day_rows)
 
     # ---- hosts (full bios, own page) ----
     hannah, cornelis = _story_bios()
@@ -978,8 +1011,8 @@ def print_page(g, slug):
 
   <div class="day-flow-page">%(days_html)s</div>
 
-  <p class="p-eyebrow">Your Hosts</p>
-  <div class="hosts-full-list">%(hannah)s%(cornelis)s</div>
+  <section class="p-hosts"><p class="p-eyebrow">Your Hosts</p>
+  <div class="hosts-full-list">%(hannah)s%(cornelis)s</div></section>
 
   <div class="p-cols included-cols">
     <div><p class="p-eyebrow">What&rsquo;s Included</p>%(included)s</div>
@@ -1076,13 +1109,14 @@ def print_page(g, slug):
   /* ---- journey / at-a-glance (page 2) ---- */
   .p-cols{display:flex;gap:0.55in}
   .p-cols > div{flex:1}
-  /* the journey block stacks (rather than sits side-by-side) in print: a
-     flex row with an intro column much taller than its glance column
-     forces the browser to continue BOTH columns from the same break point
-     on the next page, which overlaps the shorter column into the running
-     header — a plain block stack paginates cleanly instead */
-  .p-cols.journey{display:block}
-  .journey-glance{border-left:none;border-top:1px solid #ebe1d1;padding-left:0;padding-top:0.35in;margin-top:0.35in;max-width:none}
+  /* the 2210a8a overview look: intro/highlights beside at-a-glance, as a
+     CSS grid rather than flex — a grid row simply doesn't fragment (its
+     items are locked to one row height), so as long as the two columns'
+     content fits within a page this reproduces the original side-by-side
+     layout cleanly; only the day-1 feature below is left to paginate
+     naturally onto the next page */
+  .p-cols.journey{display:grid;grid-template-columns:1fr 2.6in;gap:0 0.55in;align-items:start}
+  .journey-glance{border-left:1px solid #ebe1d1;padding-left:0.55in;padding-top:0;margin-top:0;max-width:none}
   .glance-list{display:flex;flex-direction:column}
   .glance-item{padding:10px 0;border-bottom:1px solid #ebe1d1;break-inside:avoid;page-break-inside:avoid}
   .glance-item:first-child{padding-top:0}
@@ -1097,10 +1131,11 @@ def print_page(g, slug):
   .p-itin-glance li{padding:5px 0;border-bottom:1px solid #ebe1d1;line-height:1.3;break-inside:avoid;page-break-inside:avoid}
   .p-itin-glance li:first-child{padding-top:0}
 
-  /* ---- day by day, full copy: a continuous run of .day blocks, each a
-     header (eyebrow/title/subtitle/photo, never split) followed by
-     heading+bullets groups (each never split); the browser breaks pages
-     wherever they naturally fall ---- */
+  /* ---- day by day, full copy: each .day is a header (eyebrow/title/
+     subtitle/photo, never split) followed by heading+bullets groups (each
+     never split); the browser breaks pages wherever they naturally fall.
+     Day 1 runs full-width as the page-2 feature; days 2+ are two-up cards
+     built with floats (see day-row/day-card below) ---- */
   .day{break-before:auto}
   .p-day-header{break-inside:avoid;page-break-inside:avoid}
   .day-flow-page h3{font-size:16.5pt;margin-bottom:.08em}
@@ -1115,13 +1150,38 @@ def print_page(g, slug):
   .day-flow-page li::before{content:'';position:absolute;left:0;top:.55em;width:4px;height:4px;background:#7d9065;border-radius:50%%}
   .p-day-meta{font-family:var(--body);font-size:9pt;color:#8a8270;margin-top:.15em;margin-bottom:.5em}
   .day + .day{margin-top:.2em}
+  .day1-feature{margin-top:.25in;padding-top:.2in;border-top:1px solid #ebe1d1}
+  .day1-feature .p-day-photo{height:2.2in}
+
+  /* ---- days 2+: two-up card grid (the 2210a8a look), built with floats so
+     a card can fragment across a page break without overlapping its
+     neighbour — a CSS grid/flex row, by contrast, is one fragmentation
+     unit and either clips or overlaps once a cell outgrows the page ---- */
+  .day-row:not(.day-row-solo){column-count:2;column-gap:.3in;column-fill:auto}
+  .day-card{font-size:10pt}
+  .day-card-left,.day-card-right{float:none;width:auto}
+  .day-card + .day-card{margin-top:.25in}
+  .day-card .p-day-photo{height:2.23in}
+  .day-row-solo{margin-top:.15in;padding-top:.15in;border-top:1px solid #ebe1d1}
+  .day-card-solo{width:100%%;float:none}
+  .day-card-solo .p-day-photo{height:2.4in}
+  .day-card-solo h3{font-size:16.5pt}
+  .day-card h3{font-size:13.5pt}
+  .p-hosts{break-before:page;page-break-before:always;margin-top:0;padding-top:0}
+  .p-hosts .p-eyebrow{margin-top:0}
+  .p-hosts .p-eyebrow{break-after:avoid}
 
   /* ---- hosts: full bios, each never split (but the two hosts can) ---- */
-  .hosts-full-list{display:flex;flex-direction:column;gap:0.4in;margin-bottom:.3in}
-  .host-full{display:flex;gap:.35in;align-items:flex-start;break-inside:avoid;page-break-inside:avoid}
+  .hosts-full-list{display:block;margin-bottom:.3in}
+  .hosts-full-list > * + *{margin-top:.4in}
+  .host-full{display:block;break-inside:auto}
+  .host-full-portrait{float:left;margin:0 .35in .15in 0}
+  .host-full::after{content:'';display:table;clear:both}
   .host-full-portrait{flex:0 0 auto;width:1.7in;height:1.7in;overflow:hidden;border-radius:2px}
   .host-full-portrait img{width:100%%;height:100%%;display:block}
-  .host-full-copy{flex:1}
+  .host-full-copy{display:block;orphans:3;widows:3}
+  .host-full-copy p:last-child{break-before:avoid}
+  .host-full-copy h3,.host-full-copy .p-eyebrow{break-after:avoid}
   .host-full-copy h3{font-size:15pt;margin-bottom:.05em}
   .host-full-copy p{font-size:10pt;line-height:1.42;margin:0 0 .35em}
   .host-role{font-family:var(--body);text-transform:uppercase;letter-spacing:.1em;font-size:8pt;color:#7d9065;margin-bottom:.25em}
@@ -1132,7 +1192,8 @@ def print_page(g, slug):
   ul{margin:.15em 0;padding-left:1.2em}
   li{margin:.2em 0;font-size:10pt}
   .p-price{font-style:italic;color:#555a45;margin-top:.1in;font-size:10pt}
-  .p-notes{margin-top:.15in}
+  .p-notes{margin-top:.15in;break-inside:avoid;page-break-inside:avoid}
+  .p-notes .p-eyebrow{break-after:avoid}
   .p-notes-list{list-style:none;margin:0;padding:0;column-count:2;column-gap:0.4in;-webkit-column-count:2}
   .p-notes-list li{font-size:9pt;line-height:1.28;margin:0 0 .25em;break-inside:avoid}
   .p-notes-list li b{color:#282819}
