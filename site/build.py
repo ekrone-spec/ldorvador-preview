@@ -1164,8 +1164,8 @@ def print_page(g, slug):
   .day1-feature .p-day-photo,.day-card .p-day-photo,.day-card-solo .p-day-photo{height:2.2in}
   .day-flow-page h3,.day1-feature h3,.day-card h3,.day-card-solo h3{font-size:16.5pt;font-family:var(--display);font-weight:600;color:#282819;margin:0 0 .08em}
   .day1-feature .p-eyebrow-sm,.day-card .p-eyebrow-sm{font-size:9pt;letter-spacing:.18em;color:#7d9065;margin:0 0 .3em}
-  .p-hosts{break-before:page;page-break-before:always;break-after:avoid;margin:0;padding:0;font-size:10.5pt;height:9.4in;overflow:visible}
-  .hosts-full-list{column-count:2;column-gap:.3in;column-fill:balance}
+  .p-hosts{break-before:page;page-break-before:always;break-after:avoid;margin:0;padding:0;font-size:10.5pt;height:9.5in;overflow:visible}
+  .hosts-full-list{column-count:2;column-gap:.3in;column-fill:auto;height:9.3in}
   .host-full{break-inside:auto}
   .p-hosts p{font-size:10.5pt;line-height:1.4;color:#555a45;margin:.2em 0}
   .p-hosts .host-full-portrait{width:.9in;height:.9in;margin:0 .18in .08in 0}
