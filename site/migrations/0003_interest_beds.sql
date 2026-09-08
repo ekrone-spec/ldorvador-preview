@@ -1,0 +1,1 @@
+ALTER TABLE interest ADD COLUMN beds TEXT;

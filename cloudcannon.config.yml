@@ -40,6 +40,7 @@ _structures:
       - value:
           day: ''
           title: ''
+          subtitle: ''
           text: ''
           summary: ''
           image: ''
@@ -54,9 +55,13 @@ _structures:
           title:
             type: text
             label: 'Day title'
+          subtitle:
+            type: text
+            label: 'Day subtitle (optional, e.g. "Touring: 9:00 AM–3:00 PM")'
           text:
             type: textarea
             label: 'Day description'
+            comment: 'One item per line. A line with NO leading "- " becomes a bold sub-heading (e.g. "Mongui Maduro Historic House"); lines starting with "- " become bullet points under the heading above them. Leave a blank line between groups. Do not put "Overnight …" here — use the Overnight location / Meals fields below.'
           summary:
             type: textarea
             label: 'Short summary (used in the PDF)'

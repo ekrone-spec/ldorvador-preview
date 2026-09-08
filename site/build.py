@@ -353,6 +353,35 @@ for code in LOCALES:
 # ---- group trip landing pages: content/groups/<slug>.json -> /groups/<slug>/ ----
 # English-only, noindex, not in nav, not in sitemap. See group.body.html for
 # the __G_FIELD__ token convention.
+def render_day_text(text):
+    """Render an itinerary/vignette `text` field into HTML using the shared
+    heading/bullet convention: a line that does NOT start with "- " is a bold
+    sub-heading (<h4>); one or more following lines starting with "- " become
+    a <ul><li> group beneath it; a blank line just separates groups. Used by
+    both the web group page and the print PDF so the itinerary always renders
+    identically in both places."""
+    lines = str(text or '').split('\n')
+    out = []
+    bullets = []
+
+    def flush():
+        if bullets:
+            out.append('<ul>%s</ul>' % ''.join('<li>%s</li>' % _cesc(b) for b in bullets))
+            bullets.clear()
+
+    for raw in lines:
+        s = raw.strip()
+        if not s:
+            continue
+        if s.startswith('- '):
+            bullets.append(s[2:].strip())
+        else:
+            flush()
+            out.append('<h4>%s</h4>' % _cesc(s))
+    flush()
+    return ''.join(out)
+
+
 def build_groups():
     gdir = os.path.join(D, 'content', 'groups')
     if not os.path.isdir(gdir):
@@ -397,15 +426,25 @@ def build_groups():
             for i, d in enumerate(days):
                 day = _cesc(d.get('day'))
                 title = _cesc(d.get('title'))
-                paras = ''.join('<p>%s</p>' % _cesc(ln) for ln in
-                                 str(d.get('text') or '').split('\n') if ln.strip())
+                subtitle = _cesc(d.get('subtitle'))
+                subtitle_html = ('<p class="gday-sub">%s</p>' % subtitle) if subtitle else ''
+                body_html = render_day_text(d.get('text'))
                 img = d.get('image')
                 img_html = ('<img src="%s" alt="" loading="lazy">' % gimg(img)) if img else ''
+                overnight = _cesc(d.get('overnight'))
+                meals = _cesc(d.get('meals'))
+                if overnight:
+                    on_line = 'Overnight: %s' % overnight + (' &middot; (%s)' % meals if meals else '')
+                elif meals:
+                    on_line = 'End of Program &middot; (%s)' % meals
+                else:
+                    on_line = ''
+                on_html = ('<p class="gday-overnight">%s</p>' % on_line) if on_line else ''
                 out.append(
                     '<div class="group-day" id="day-%d"><div class="gday-head"><span class="gday-n">%s</span>'
-                    '<span class="gday-t">%s</span></div>'
-                    '<div class="gday-body">%s%s</div></div>'
-                    % (i + 1, day, title, img_html, paras))
+                    '<span class="gday-t">%s</span>%s</div>'
+                    '<div class="gday-body">%s%s%s</div></div>'
+                    % (i + 1, day, title, subtitle_html, img_html, body_html, on_html))
             return ''.join(out)
 
         def itin_glance():
@@ -625,16 +664,22 @@ def _story_bios():
         except Exception:
             bio = {}
         hannah_p1 = ' '.join(x for x in [bio.get('p_2'), bio.get('a_1'), bio.get('p_3')] if x)
+        # p_7 continues p_6 inline (starts with a comma), so it is appended
+        # with no separating space; p_5 -> p_6 gets a normal word space
+        hannah_p3 = ' '.join(x for x in [bio.get('p_5'), bio.get('p_6')] if x) + (bio.get('p_7') or '')
+        hannah_full = [p for p in [hannah_p1, bio.get('p_4'), hannah_p3, bio.get('p_8')] if p]
         hannah = {
             'name': bio.get('h2_1') or 'Hannah Berkeley Cohen',
             'role': bio.get('p_1') or 'Co-founder',
-            'paras': [p for p in [hannah_p1, bio.get('p_4')] if p][:2],
+            'paras': hannah_full[:2],
+            'full_paras': hannah_full,
         }
         cornelis_paras = [p.strip() for p in str(bio.get('p_10') or '').split('\n\n') if p.strip()]
         cornelis = {
             'name': bio.get('h2_2') or 'Cornelis Greiwe',
             'role': bio.get('p_9') or 'Co-founder',
             'paras': cornelis_paras[:2],
+            'full_paras': cornelis_paras,
         }
         _story_bios_cache = (hannah, cornelis)
     return _story_bios_cache
@@ -734,11 +779,9 @@ def print_page(g, slug):
     leader = pv('leader')
     leader_image = g.get('leader_image')
     hero = pimg(print_image(g.get('hero_image'), 1275, 1650))
-    # the PDF's page-2 layout has to leave room for the day-1 feature below,
-    # so only the first two intro paragraphs are set here even when the page
-    # itself (which scrolls) carries all of them
+    # full copy: every intro paragraph runs on page 2, not just the first two
     intro_paras = [ln for ln in str(g.get('intro') or '').split('\n') if ln.strip()]
-    intro = ''.join('<p>%s</p>' % _cesc(ln) for ln in intro_paras[:2])
+    intro = ''.join('<p>%s</p>' % _cesc(ln) for ln in intro_paras)
     page_url = '%s/groups/%s/' % (SITE, slug)
     contact_email = pv('contact_email') or 'connect@ldorvadortravel.com'
     contact_phone = pv('contact_phone')
@@ -752,105 +795,112 @@ def print_page(g, slug):
             ('Accommodation', pv('accommodation')),
         ] if val)
 
-    # ---- day-by-day ----
     itinerary = g.get('itinerary') or []
-    rest_days = itinerary[1:]  # day 1 is the page-2 feature; the grid starts at day 2
-    n_rest = len(rest_days)
-    # photo sizing keyed off how many grid *rows* the 2-column layout needs
-    # (not the raw day count), since an odd count leaves a half-empty row
-    # that costs just as much vertical space as a full one
-    grid_rows = (n_rest + 1) // 2
-    if grid_rows <= 2:
-        grid_photo_h = '1.7in'
-    elif grid_rows <= 3:
-        grid_photo_h = '1.1in'
-    else:
-        grid_photo_h = '0.9in'
-    # day-grid column box: content width 7.3in, minus .5in gap, split 2 ways
-    DAY_COL_W_PX = int(round(3.4 * _PRINT_DPI))
-    day_photo_h_px = int(round(float(grid_photo_h[:-2]) * _PRINT_DPI))
+
+    def itin_glance_items():
+        out = []
+        for i, d in enumerate(itinerary):
+            day = _cesc(d.get('day')) or ('Day %d' % (i + 1))
+            dtitle = _cesc(d.get('title'))
+            out.append('<li><b>%s</b> &mdash; %s</li>' % (day, dtitle))
+        return ''.join(out)
 
     def day_meta(d):
         overnight = _cesc(d.get('overnight'))
         meals = _cesc(d.get('meals'))
         bits = []
         if overnight:
-            bits.append('Overnight in %s' % overnight)
-        if meals:
+            bits.append('Overnight: %s' % overnight)
+            if meals:
+                bits.append('(%s)' % meals)
+        elif meals:
+            bits.append('End of Program')
             bits.append('(%s)' % meals)
         return ' &middot; '.join(bits)
 
-    def _day_summary_text(d):
-        summary = d.get('summary')
-        if summary:
-            return summary
-        text = str(d.get('text') or '').replace('\n', ' ')
-        sentences = re.findall(r'[^.!?]*[.!?]', text)
-        return ''.join(sentences[:2]).strip() or text.strip()
+    # ---- day-by-day: full copy, one continuous flow (no fixed sheets) ----
+    DAY_IMG_W_PX = int(round(7.3 * _PRINT_DPI))
+    DAY_IMG_H_PX = int(round(2.4 * _PRINT_DPI))
 
-    def day_cell(d, idx):
+    def day_groups_html(d):
+        """Render a day's `text` as heading+bullets groups, each wrapped so
+        it never breaks across a printed page (see render_day_text's
+        heading/`- bullet` convention)."""
+        lines = str(d.get('text') or '').split('\n')
+        out = []
+        heading, cur_bullets = None, []
+
+        def flush():
+            if heading is None:
+                return
+            html = '<h4>%s</h4>' % _cesc(heading)
+            if cur_bullets:
+                html += '<ul>%s</ul>' % ''.join('<li>%s</li>' % _cesc(b) for b in cur_bullets)
+            out.append('<div class="p-day-group">%s</div>' % html)
+
+        for raw in lines:
+            s = raw.strip()
+            if not s:
+                continue
+            if s.startswith('- '):
+                cur_bullets.append(s[2:].strip())
+            else:
+                flush()
+                heading, cur_bullets = s, []
+        flush()
+        return ''.join(out)
+
+    def day_header(d):
+        """The non-splittable top of a day: eyebrow, title, subtitle, photo."""
         day = _cesc(d.get('day'))
         date = _cesc(d.get('date'))
         dtitle = _cesc(d.get('title'))
-        paras = '<p>%s</p>' % _cesc(_day_summary_text(d))
+        subtitle = _cesc(d.get('subtitle'))
+        subtitle_html = ('<p class="p-day-sub">%s</p>' % subtitle) if subtitle else ''
+        eyebrow = '%s%s' % (day, ' &middot; %s' % date if date else '')
         img = d.get('image')
-        eyebrow = '%s%s' % (day, ' &middot; %s' % date if date else '')
+        img_html = ''
+        if img:
+            img_src = pimg(print_image(img, DAY_IMG_W_PX, DAY_IMG_H_PX, focus=d.get('image_focus')))
+            img_html = '<div class="p-day-photo"><img src="%s" alt=""></div>' % img_src
+        html = ('<div class="p-day-header"><p class="p-eyebrow-sm p-day-eyebrow">%s</p><h3>%s</h3>%s%s</div>'
+                % (eyebrow, dtitle, subtitle_html, img_html))
+        return html
+
+    # ---- one continuous flow: header, then each day's groups, then the
+    # overnight line — natural browser pagination breaks between blocks ----
+    days_html_parts = []
+    for d in itinerary:
+        days_html_parts.append('<div class="day">')
+        days_html_parts.append(day_header(d))
+        days_html_parts.append(day_groups_html(d))
         meta = day_meta(d)
-        meta_html = ('<p class="p-day-meta">%s</p>' % meta) if meta else ''
-        show_img = img and idx < 8  # drop photos for the 7th+ grid day
-        media_html = ('<div class="p-day-img"><img src="%s" alt=""></div>'
-                       % pimg(print_image(img, DAY_COL_W_PX, day_photo_h_px, focus=d.get('image_focus')))) if show_img else ''
-        return ('<div class="p-day"><div class="p-day-body">%s'
-                '<p class="p-eyebrow-sm">%s</p><h3>%s</h3>%s%s</div></div>'
-                % (media_html, eyebrow, dtitle, paras, meta_html))
+        if meta:
+            days_html_parts.append('<p class="p-day-meta">%s</p>' % meta)
+        days_html_parts.append('</div>')
+    days_html = ''.join(days_html_parts)
 
-    def day1_feature(d):
-        day = _cesc(d.get('day'))
-        date = _cesc(d.get('date'))
-        dtitle = _cesc(d.get('title'))
-        # the page-2 feature has to share the sheet with the overview column,
-        # so it uses the compact summary (like the day grid) rather than the
-        # day's full text, which runs on the itinerary grid page instead
-        paras = '<p>%s</p>' % _cesc(_day_summary_text(d))
-        # full content width (7.3in) x the .p-day1-img box height (1.25in)
-        img = pimg(print_image(d.get('image') or g.get('hero_image'),
-                                int(round(7.3 * _PRINT_DPI)), int(round(1.25 * _PRINT_DPI)),
-                                focus=d.get('image_focus')))
-        eyebrow = '%s%s' % (day, ' &middot; %s' % date if date else '')
-        meta = day_meta(d)
-        meta_html = ('<p class="p-day-meta">%s</p>' % meta) if meta else ''
-        return ('<div class="p-day1"><p class="p-eyebrow-sm">%s</p><h3>%s</h3>'
-                '<div class="p-day1-img"><img src="%s" alt=""></div>%s%s</div>'
-                % (eyebrow, dtitle, img, paras, meta_html))
-
-    day1_block_html = day1_feature(itinerary[0]) if itinerary else ''
-    day_grid_html = ''.join(day_cell(d, i) for i, d in enumerate(rest_days))
-
-    # ---- hosts (compact block on the closing page) ----
+    # ---- hosts (full bios, own page) ----
     hannah, cornelis = _story_bios()
-    def host_col(h, img):
-        one_para = ' '.join(h['paras'])
-        text = _cap_words(one_para, 60)
-        # if capping at 60 leaves a very short sentence, that's fine; if the
-        # whole bio is under 45 words the source copy is used as-is
-        cropped = print_image(img, 195, 195, top=True)  # 1.3in host-portrait box @150dpi
-        return ('<div class="host-col"><div class="host-portrait"><img src="../../%s" alt=""></div>'
-                '<div class="host-copy"><h3>%s</h3><p class="host-role">%s</p><p>%s</p></div></div>'
-                % (cropped, _cesc(h['name']), _cesc(h['role']), _cesc(text)))
-    hosts_html = host_col(hannah, 'assets/img/hannah.jpg') + host_col(cornelis, 'assets/img/cornelis.jpg')
+
+    def host_block(h, img):
+        paras = ''.join('<p>%s</p>' % _cesc(p) for p in h['full_paras'])
+        cropped = print_image(img, 260, 260, top=True)
+        return ('<div class="host-full"><div class="host-full-portrait"><img src="../../%s" alt=""></div>'
+                '<div class="host-full-copy"><h3>%s</h3><p class="host-role">%s</p>%s</div></div>'
+                % (cropped, _cesc(h['name']), _cesc(h['role']), paras))
+
+    hannah_html = host_block(hannah, 'assets/img/hannah.jpg')
+    cornelis_html = host_block(cornelis, 'assets/img/cornelis.jpg')
 
     included = bullets('included')
     not_included = bullets('not_included')
 
-    def notes_items(limit=None):
+    def notes_html():
         raw = g.get('notes')
         if not raw:
-            return []
+            return ''
         items = [ln.strip() for ln in str(raw).split('\n') if ln.strip()]
-        return items[:limit] if limit else items
-
-    def notes_html(limit=None):
-        items = notes_items(limit)
         if not items:
             return ''
         lis = ''.join('<li>%s</li>' % _cesc(it) for it in items)
@@ -882,9 +932,14 @@ def print_page(g, slug):
     stack_mark = '<div class="brand p-brand-stack"><span class="brand-stack"><span class="brand-word">L&rsquo;Dor</span><span class="brand-word">Vador</span></span><span class="brand-tx">Heritage Travel</span></div>'
     compact_mark = '<header class="logo-min header-solid p-brand-compact"><div class="brand"><span class="brand-stack"><span class="brand-word">L&rsquo;Dor</span><span class="brand-word">Vador</span></span><span class="brand-tx">Heritage Travel</span></div></header>'
 
-    # ---- assemble the 4 sheets, then number pages 2-4 ----
-    sheets = []
-    sheets.append(('cover', """
+    # ---- assemble: a fixed full-bleed cover, then one continuous flow ----
+    # Note: a `position:fixed` running header was tried but dropped — headless
+    # Chrome's page.pdf() does not repeat fixed elements on every printed
+    # page (a documented Chromium paged-media limitation); it renders the
+    # element once, at whatever page its single-flow position happens to
+    # land on. Not worth a post-processing step for a brochure, same call
+    # as dropping page numbers below.
+    cover_html = """
 <div class="sheet cover">
   %(hero_img)s
   <div class="cover-scrim"></div>
@@ -902,10 +957,10 @@ def print_page(g, slug):
         facts=' &middot; '.join(b for b in [dates, duration, group_size] if b),
         led_row=led_row, stack_mark=stack_mark,
         cover_contact=cover_contact,
-    )))
+    )
 
-    sheets.append(('body', """
-<div class="sheet page">
+    body_html = cover_html + """
+<div class="flow">
   <div class="p-cols journey">
     <div class="journey-copy">
       <p class="p-eyebrow">Overview</p>
@@ -916,27 +971,16 @@ def print_page(g, slug):
     <div class="journey-glance">
       <p class="p-eyebrow">At a Glance</p>
       <div class="glance-list">%(glance_items)s</div>
+      <p class="p-eyebrow" style="margin-top:1.4em">Itinerary at a Glance</p>
+      <ul class="p-itin-glance">%(itin_glance)s</ul>
     </div>
   </div>
-  %(day1)s
-</div>""" % dict(
-        intro=intro,
-        highlights=('<p class="p-eyebrow" style="margin-top:1.6em">Highlights</p><ul class="p-highlights">%s</ul>'
-                     % bullet_items('highlights')) if g.get('highlights') else '',
-        glance_items=glance_items,
-        day1=day1_block_html,
-    )))
 
-    sheets.append(('day', """
-<div class="sheet page day-page">
-  <div class="p-runhead"><span>%(title)s</span><span>Day by day</span></div>
-  <div class="day-grid" style="--gh:%(gh)s">%(days)s</div>
-</div>""" % dict(title=title, days=day_grid_html, gh=grid_photo_h)))
+  <div class="day-flow-page">%(days_html)s</div>
 
-    sheets.append(('last', """
-<div class="sheet page closing-page">
   <p class="p-eyebrow">Your Hosts</p>
-  <div class="hosts-cols">%(hosts)s</div>
+  <div class="hosts-full-list">%(hannah)s%(cornelis)s</div>
+
   <div class="p-cols included-cols">
     <div><p class="p-eyebrow">What&rsquo;s Included</p>%(included)s</div>
     <div><p class="p-eyebrow">Not Included</p>%(not_included)s</div>
@@ -949,22 +993,19 @@ def print_page(g, slug):
   </div>
   %(compact_mark)s
 </div>""" % dict(
-        hosts=hosts_html,
+        intro=intro,
+        highlights=('<p class="p-eyebrow" style="margin-top:1.6em">Highlights</p><ul class="p-highlights">%s</ul>'
+                     % bullet_items('highlights')) if g.get('highlights') else '',
+        glance_items=glance_items,
+        itin_glance=itin_glance_items(),
+        days_html=days_html,
+        hannah=hannah_html, cornelis=cornelis_html,
         included=included, not_included=not_included,
         price_section=('<p class="p-price">%s</p>' % price_note) if price_note else '',
-        notes=notes_html(int(os.environ.get('LDV_PDF_NOTES_LIMIT', '3')) or None),
+        notes=notes_html(),
         contact_rows=contact_rows,
         compact_mark=compact_mark,
-    )))
-
-    # number pages 2-4; the cover carries no number
-    numbered = [sheets[0][1]]
-    for n, (kind, markup) in enumerate(sheets[1:], start=2):
-        m = markup.rstrip()
-        if m.endswith('</div>'):
-            m = m[:-len('</div>')] + ('<p class="p-pageno">%d</p></div>' % n)
-        numbered.append(m)
-    body_html = ''.join(numbered)
+    )
 
     html = """<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
@@ -974,15 +1015,20 @@ def print_page(g, slug):
 <link rel="stylesheet" href="../../assets/app.css?v=%(ver)s">
 <style>%(print_fonts)s</style>
 <style>
-  @page { size: Letter; margin: 0; }
+  @page { size: Letter; margin: 0.7in 0.7in 0.8in; }
+  @page cover { margin: 0; }
   body::before,body::after{display:none!important;content:none!important} /* the site's grain overlay rasterises per page in PDF */
   *{box-sizing:border-box}
-  body{margin:0;background:#fff9f3;color:#282819;font-family:var(--body);font-size:12.5pt;line-height:1.6}
+  body{margin:0;background:#fff9f3;color:#282819;font-family:var(--body);font-size:12.5pt;line-height:1.6;orphans:3;widows:3}
   h1,h2,h3{font-family:var(--display);font-weight:600;color:#282819;margin:0 0 .3em}
+  h2,h3,h4{break-after:avoid;page-break-after:avoid}
   p{margin:0 0 .7em}
-  .sheet{position:relative;page-break-after:always;width:8.5in;height:11in;overflow:hidden}
-  .sheet:last-child{page-break-after:auto}
-  .sheet.page{padding:0.75in 0.6in}
+  .sheet{position:relative;width:8.5in;height:11in;overflow:hidden}
+  .sheet.cover{page:cover;break-after:page;page-break-after:always}
+
+  /* ---- continuous flow: everything after the cover, natural pagination ---- */
+  .flow{position:relative}
+
   .p-eyebrow{text-transform:uppercase;letter-spacing:.22em;font-size:9.5pt;font-weight:700;color:#7d9065;font-family:var(--body);margin:0 0 .6em}
   .p-eyebrow-sm{text-transform:uppercase;letter-spacing:.18em;font-size:9pt;font-weight:700;color:#8fa49b;font-family:var(--body);margin:0 0 .3em}
 
@@ -999,12 +1045,15 @@ def print_page(g, slug):
   .p-brand-stack{position:absolute;left:0.6in;top:0.55in;--logo:85px}
   .p-brand-stack .brand-word{color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.28)}
   .p-brand-stack .brand-tx{color:#fff;opacity:1;text-shadow:0 1px 10px rgba(0,0,0,.28)}
-  .p-brand-compact{position:absolute;left:0.6in;bottom:0.55in}
+  /* in the continuous flow this sits after the contact block in normal
+     document order (not pinned to a fixed sheet bottom, which in a flow
+     of unknown total height would land it over unrelated content) */
+  .p-brand-compact{margin-top:0.5in}
   .p-brand-compact .brand-word{color:var(--green-d);text-shadow:none}
   .p-brand-compact .brand-tx{color:var(--green-d)}
   /* neutralise site-wide layout rules that must not leak into print */
   .sheet section,.sheet footer{all:revert}
-  .p-brand-compact{background:none;box-shadow:none;height:auto;width:auto;padding:0;margin:0;position:absolute;left:0.6in;bottom:0.55in;inset:auto auto 0.55in 0.6in}
+  .p-brand-compact{background:none;box-shadow:none;height:auto;width:auto;padding:0}
   .p-brand-compact::before,.p-brand-compact::after{content:none}
   .p-brand-compact,.p-brand-compact .brand{border:0!important}
   .sheet a{color:inherit;text-decoration:none}
@@ -1027,9 +1076,15 @@ def print_page(g, slug):
   /* ---- journey / at-a-glance (page 2) ---- */
   .p-cols{display:flex;gap:0.55in}
   .p-cols > div{flex:1}
-  .journey-glance{border-left:1px solid #ebe1d1;padding-left:0.55in;max-width:2.6in}
+  /* the journey block stacks (rather than sits side-by-side) in print: a
+     flex row with an intro column much taller than its glance column
+     forces the browser to continue BOTH columns from the same break point
+     on the next page, which overlaps the shorter column into the running
+     header — a plain block stack paginates cleanly instead */
+  .p-cols.journey{display:block}
+  .journey-glance{border-left:none;border-top:1px solid #ebe1d1;padding-left:0;padding-top:0.35in;margin-top:0.35in;max-width:none}
   .glance-list{display:flex;flex-direction:column}
-  .glance-item{padding:10px 0;border-bottom:1px solid #ebe1d1}
+  .glance-item{padding:10px 0;border-bottom:1px solid #ebe1d1;break-inside:avoid;page-break-inside:avoid}
   .glance-item:first-child{padding-top:0}
   .gl-label{display:block;text-transform:uppercase;letter-spacing:.1em;font-size:9pt;font-family:var(--body);color:#8a8270;margin-bottom:3px}
   .gl-value{display:block;font-size:12pt}
@@ -1038,38 +1093,41 @@ def print_page(g, slug):
   .p-highlights li{position:relative;padding-left:1.05em;margin:.24em 0;line-height:1.32}
   .p-highlights li::before{content:'';position:absolute;left:0;top:.55em;width:5px;height:5px;background:#7d9065;border-radius:50%%}
   ul.p-highlights{padding-left:0}
+  .p-itin-glance{list-style:none;margin:0;padding:0;font-size:9.5pt}
+  .p-itin-glance li{padding:5px 0;border-bottom:1px solid #ebe1d1;line-height:1.3;break-inside:avoid;page-break-inside:avoid}
+  .p-itin-glance li:first-child{padding-top:0}
 
-  /* ---- day 1 feature (bottom of page 2) ---- */
-  .p-day1{break-inside:avoid;page-break-inside:avoid;margin-top:.15in;padding-top:.15in;border-top:1px solid #ebe1d1}
-  .p-day1 h3{font-size:15pt;margin-bottom:.1em}
-  .p-day1-img{width:100%%;height:1.25in;overflow:hidden;margin:.15em 0 .2em;border-radius:2px}
-  .p-day1-img img{width:100%%;height:100%%;display:block}
-  .p-day1 p{margin:0 0 .25em;font-size:10pt;line-height:1.4}
+  /* ---- day by day, full copy: a continuous run of .day blocks, each a
+     header (eyebrow/title/subtitle/photo, never split) followed by
+     heading+bullets groups (each never split); the browser breaks pages
+     wherever they naturally fall ---- */
+  .day{break-before:auto}
+  .p-day-header{break-inside:avoid;page-break-inside:avoid}
+  .day-flow-page h3{font-size:16.5pt;margin-bottom:.08em}
+  .p-day-sub{font-family:var(--body);font-style:italic;font-size:9.5pt;color:#8a8270;margin:0 0 .3em}
+  .p-day-photo{width:100%%;height:2.4in;overflow:hidden;margin:.1em 0 .2em;border-radius:2px;break-inside:avoid;page-break-inside:avoid}
+  .p-day-photo img{width:100%%;height:100%%;display:block}
+  .p-day-group{break-inside:avoid;page-break-inside:avoid}
+  .day-flow-page h4{font-size:11pt;font-family:var(--display);font-weight:600;color:#282819;margin:.5em 0 .12em}
+  .day-flow-page h4:first-of-type{margin-top:.05em}
+  .day-flow-page ul{list-style:none;margin:0 0 .1em;padding:0}
+  .day-flow-page li{position:relative;padding-left:1em;margin:.12em 0;font-size:10pt;line-height:1.38}
+  .day-flow-page li::before{content:'';position:absolute;left:0;top:.55em;width:4px;height:4px;background:#7d9065;border-radius:50%%}
+  .p-day-meta{font-family:var(--body);font-size:9pt;color:#8a8270;margin-top:.15em;margin-bottom:.5em}
+  .day + .day{margin-top:.2em}
 
-  /* ---- day by day grid (page 3) ---- */
-  .p-runhead{display:flex;justify-content:space-between;font-family:var(--body);font-size:8.5pt;text-transform:uppercase;letter-spacing:.14em;color:#8a8270;border-bottom:1px solid #ebe1d1;padding-bottom:10px;margin-bottom:.3in}
-  .sheet.day-page{padding-top:0.55in;padding-bottom:0.55in}
-  .day-grid{display:grid;grid-template-columns:1fr 1fr;gap:.3in .5in}
-  .p-day{break-inside:avoid;page-break-inside:avoid}
-  .p-day-body{width:100%%}
-  .p-day-img{width:100%%;height:var(--gh,1.7in);overflow:hidden;margin-bottom:.15em;border-radius:2px}
-  .p-day-img img{width:100%%;height:100%%;display:block}
-  .p-day-body h3{font-size:14.5pt;margin-bottom:.1em}
-  .p-day-body p{margin:0 0 .2em;font-size:10pt;line-height:1.38}
-  .p-day-meta{font-family:var(--body);font-size:9pt;color:#8a8270;margin-top:.05em;margin-bottom:0}
-  .p-pageno{position:absolute;right:0.6in;bottom:0.55in;font-size:9pt;color:#8a8270;font-family:var(--body);margin:0}
+  /* ---- hosts: full bios, each never split (but the two hosts can) ---- */
+  .hosts-full-list{display:flex;flex-direction:column;gap:0.4in;margin-bottom:.3in}
+  .host-full{display:flex;gap:.35in;align-items:flex-start;break-inside:avoid;page-break-inside:avoid}
+  .host-full-portrait{flex:0 0 auto;width:1.7in;height:1.7in;overflow:hidden;border-radius:2px}
+  .host-full-portrait img{width:100%%;height:100%%;display:block}
+  .host-full-copy{flex:1}
+  .host-full-copy h3{font-size:15pt;margin-bottom:.05em}
+  .host-full-copy p{font-size:10pt;line-height:1.42;margin:0 0 .35em}
+  .host-role{font-family:var(--body);text-transform:uppercase;letter-spacing:.1em;font-size:8pt;color:#7d9065;margin-bottom:.25em}
 
-  /* ---- closing page: hosts / included / contact ---- */
-  .closing-page{padding-bottom:1.3in}
-  .hosts-cols{display:flex;gap:0.5in;margin:.1em 0 .3in}
-  .host-col{flex:1;display:flex;gap:.25in;align-items:flex-start}
-  .host-portrait{flex:0 0 auto;width:1.3in;height:1.3in;overflow:hidden;border-radius:2px}
-  .host-portrait img{width:100%%;height:100%%}
-  .host-copy{flex:1}
-  .host-col h3{font-size:12.5pt;margin-bottom:.05em}
-  .host-role{font-family:var(--body);text-transform:uppercase;letter-spacing:.1em;font-size:8pt;color:#7d9065;margin-bottom:.2em}
-  .host-col p{font-size:9pt;line-height:1.32;margin:0 0 .25em}
-  .included-cols{margin-bottom:.2in}
+  /* ---- closing: included / notes / contact ---- */
+  .included-cols{margin-bottom:.2in;break-inside:avoid;page-break-inside:avoid}
 
   ul{margin:.15em 0;padding-left:1.2em}
   li{margin:.2em 0;font-size:10pt}

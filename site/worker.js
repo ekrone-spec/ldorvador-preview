@@ -335,7 +335,8 @@ function emailButton(href, label) {
 }
 
 async function sendInterestEmails(env, fields, groupCount, request) {
-  const { full_name, email, phone, travelers, room, comments, group_slug, group_title, group_dates, contact_phone } = fields;
+  const { full_name, email, phone, travelers, room, beds, comments, group_slug, group_title, group_dates, contact_phone } = fields;
+  const roomLine = room ? (beds ? `${room}, ${beds}` : room) : '';
   const firstName = (full_name || '').trim().split(/\s+/)[0] || full_name;
   const titleForCopy = group_title || group_slug;
   const dateLine = group_dates ? `, ${escapeHtml(group_dates)}` : '';
@@ -397,7 +398,7 @@ async function sendInterestEmails(env, fields, groupCount, request) {
   const notifyText =
     `Group: ${titleForCopy} (${group_slug})\n` +
     `Name: ${full_name}\nEmail: ${email}\nPhone: ${phone || ''}\n` +
-    `Travelers: ${travelers}\nRoom: ${room || ''}\nComments: ${comments || ''}\n\n` +
+    `Travelers: ${travelers}\nRoom: ${roomLine}\nComments: ${comments || ''}\n\n` +
     `Registrations for this group so far: ${groupCount}\n` +
     `PDF attached to confirmation: ${pdfBase64 ? 'yes' : 'no'}`;
 
@@ -419,7 +420,7 @@ async function sendInterestEmails(env, fields, groupCount, request) {
         ${notifyRow('Email', escapeHtml(email))}
         ${notifyRow('Phone', escapeHtml(phone || ''))}
         ${notifyRow('Travelers', escapeHtml(String(travelers)))}
-        ${notifyRow('Room', escapeHtml(room || ''))}
+        ${notifyRow('Room', escapeHtml(roomLine))}
         ${notifyRow('Comments', escapeHtml(comments || ''))}
       </table>
       <p style="margin:0 0 8px;">Registrations for this group so far: <strong>${groupCount}</strong></p>
@@ -469,6 +470,8 @@ async function handleInterestPost(request, env, url) {
   const comments = clampStr(fields.comments, 4000);
   const roomRaw = clampStr(fields.room, 20);
   const room = roomRaw === 'single' || roomRaw === 'double' ? roomRaw : '';
+  const bedsRaw = clampStr(fields.beds, 20);
+  const beds = bedsRaw === '1 bed' || bedsRaw === '2 beds' ? bedsRaw : '';
 
   if (!full_name || !email || !group_slug) {
     return json({ ok: false, error: 'missing required fields' }, 400);
@@ -478,6 +481,12 @@ async function handleInterestPost(request, env, url) {
   }
   if (roomRaw && room === '') {
     return json({ ok: false, error: 'invalid room' }, 400);
+  }
+  if (bedsRaw && beds === '') {
+    return json({ ok: false, error: 'invalid beds' }, 400);
+  }
+  if (room === 'double' && !beds) {
+    return json({ ok: false, error: 'beds' }, 400);
   }
 
   let travelers = parseInt(fields.travelers, 10);
@@ -543,17 +552,17 @@ async function handleInterestPost(request, env, url) {
 
   const insertResult = await env.DB
     .prepare(
-      `INSERT INTO interest (group_slug, group_title, full_name, email, phone, travelers, room, comments, ip_hash, user_agent, emailed)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`
+      `INSERT INTO interest (group_slug, group_title, full_name, email, phone, travelers, room, beds, comments, ip_hash, user_agent, emailed)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`
     )
-    .bind(group_slug, group_title, full_name, email, phone, travelers, room, comments, ip_hash, user_agent)
+    .bind(group_slug, group_title, full_name, email, phone, travelers, room, beds, comments, ip_hash, user_agent)
     .run();
 
   if (shouldEmail && env.RESEND_API_KEY) {
     try {
       const sent = await sendInterestEmails(
         env,
-        { full_name, email, phone, travelers, room, comments, group_slug, group_title, group_dates, contact_phone },
+        { full_name, email, phone, travelers, room, beds, comments, group_slug, group_title, group_dates, contact_phone },
         groupCountToday + 1,
         request
       );
@@ -684,7 +693,7 @@ async function handleInterestExport(request, env, url, slug, format) {
 
   const { results } = await env.DB
     .prepare(
-      'SELECT created_at, full_name, email, phone, travelers, room, comments FROM interest WHERE group_slug = ? ORDER BY created_at ASC'
+      'SELECT created_at, full_name, email, phone, travelers, room, beds, comments FROM interest WHERE group_slug = ? ORDER BY created_at ASC'
     )
     .bind(slug)
     .all();
@@ -694,7 +703,7 @@ async function handleInterestExport(request, env, url, slug, format) {
     return json(rows, 200, { 'X-Robots-Tag': 'noindex' });
   }
 
-  const cols = ['created_at', 'full_name', 'email', 'phone', 'travelers', 'room', 'comments'];
+  const cols = ['created_at', 'full_name', 'email', 'phone', 'travelers', 'room', 'beds', 'comments'];
   let csv = '﻿' + cols.join(',') + '\r\n';
   for (const row of rows) {
     csv += cols.map((c) => csvField(row[c])).join(',') + '\r\n';

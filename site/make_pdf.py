@@ -22,11 +22,11 @@ import os, sys, subprocess, json
 
 D = os.path.dirname(os.path.abspath(__file__))
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-MAX_PAGES = 4
+MAX_PAGES = 12
 
 
 def _check_page_count(pdf_path, slug):
-    """Fail loudly if a rendered brochure spills past the 4-page maximum."""
+    """Fail loudly if a rendered brochure spills past the page maximum."""
     try:
         import fitz
     except ImportError:
