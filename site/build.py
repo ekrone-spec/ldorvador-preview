@@ -1066,8 +1066,8 @@ def print_page(g, slug):
   /* ---- continuous flow: everything after the cover, natural pagination ---- */
   .flow{padding:0.7in 0.7in 0.8in;-webkit-box-decoration-break:clone;box-decoration-break:clone;background:#fff9f3}
 
-  .p-eyebrow{text-transform:uppercase;letter-spacing:.22em;font-size:9.5pt;font-weight:700;color:#7d9065;font-family:var(--body);margin:0 0 .6em}
-  .p-eyebrow-sm{text-transform:uppercase;letter-spacing:.18em;font-size:9pt;font-weight:700;color:#8fa49b;font-family:var(--body);margin:0 0 .3em}
+  .p-eyebrow{text-transform:uppercase;letter-spacing:.2em;font-size:9pt;font-weight:700;color:#7d9065;font-family:var(--body);margin:0 0 .5em}
+  .p-eyebrow-sm{text-transform:uppercase;letter-spacing:.2em;font-size:9pt;font-weight:700;color:#7d9065;font-family:var(--body);margin:0 0 .3em}
 
   /* ---- cover: full-bleed photo, no padding ---- */
   .sheet.cover{background:#282819}
@@ -1085,7 +1085,8 @@ def print_page(g, slug):
   /* in the continuous flow this sits after the contact block in normal
      document order (not pinned to a fixed sheet bottom, which in a flow
      of unknown total height would land it over unrelated content) */
-  .p-brand-compact{margin-top:0.35in}
+  .p-brand-compact{margin-top:0.12in;position:static!important;inset:auto!important;height:auto!important;min-height:0!important;max-height:none!important;width:auto!important;display:block!important;transform:none!important}
+  .p-brand-compact .brand{position:static;height:auto}
   .p-brand-compact .brand-word{color:var(--green-d);text-shadow:none}
   .p-brand-compact .brand-tx{color:var(--green-d)}
   /* neutralise site-wide layout rules that must not leak into print */
@@ -1105,7 +1106,7 @@ def print_page(g, slug):
   .led-p:last-child{margin-right:0}
   .led-p img{width:100%%;height:100%%;display:block}
   .led-names{font-family:var(--body);font-size:10.5pt;color:#fffdfa;margin:0;line-height:1.4}
-  .led-role{display:block;text-transform:uppercase;letter-spacing:.14em;font-size:8pt;color:#e6d9c2;margin-top:.15em}
+  .led-role{display:block;text-transform:uppercase;letter-spacing:.2em;font-size:9pt;font-weight:700;color:#e6d9c2;margin-top:.15em}
   .led-with{display:block;font-style:italic;color:#f3ead9}
   .cover-strip{position:absolute;left:0;right:0;bottom:0;background:#fff9f3;color:#282819;padding:.3in 0.6in;font-family:var(--body);font-size:9.5pt;letter-spacing:.02em}
   .cover-contact{margin:0}
@@ -1124,14 +1125,14 @@ def print_page(g, slug):
   .glance-list{display:flex;flex-direction:column}
   .glance-item{padding:10px 0;border-bottom:1px solid #ebe1d1;break-inside:avoid;page-break-inside:avoid}
   .glance-item:first-child{padding-top:0}
-  .gl-label{display:block;text-transform:uppercase;letter-spacing:.1em;font-size:9pt;font-family:var(--body);color:#8a8270;margin-bottom:3px}
-  .gl-value{display:block;font-size:12pt}
-  .journey-copy p{font-size:11pt;line-height:1.42;margin:0 0 .4em}
-  .p-highlights{list-style:none;margin:0;padding:0;column-count:1;font-size:10pt}
+  .gl-label{display:block;text-transform:uppercase;letter-spacing:.2em;font-size:9pt;font-weight:700;font-family:var(--body);color:#7d9065;margin-bottom:3px}
+  .gl-value{display:block;font-size:10.5pt;line-height:1.5;color:#282819}
+  .journey-copy p{font-size:10.5pt;line-height:1.5;color:#555a45;margin:0 0 .5em}
+  .p-highlights{list-style:none;margin:0;padding:0;column-count:1;font-size:10.5pt;line-height:1.5;color:#555a45}
   .p-highlights li{position:relative;padding-left:1.05em;margin:.24em 0;line-height:1.32}
   .p-highlights li::before{content:'';position:absolute;left:0;top:.55em;width:5px;height:5px;background:#7d9065;border-radius:50%%}
   ul.p-highlights{padding-left:0}
-  .p-itin-glance{list-style:none;margin:0;padding:0;font-size:9.5pt}
+  .p-itin-glance{list-style:none;margin:0;padding:0;font-size:10.5pt;line-height:1.5;color:#555a45}
   .p-itin-glance li{padding:5px 0;border-bottom:1px solid #ebe1d1;line-height:1.3;break-inside:avoid;page-break-inside:avoid}
   .p-itin-glance li:first-child{padding-top:0}
 
@@ -1143,49 +1144,45 @@ def print_page(g, slug):
   .day{break-before:auto}
   .p-day-header{break-inside:avoid;page-break-inside:avoid}
   .day-flow-page h3{font-size:16.5pt;margin-bottom:.08em}
-  .p-day-sub{font-family:var(--body);font-style:italic;font-size:9.5pt;color:#8a8270;margin:0 0 .3em}
+  .p-day-sub{font-family:var(--body);font-style:italic;font-size:10.5pt;color:#8a8270;margin:0 0 .3em}
   .p-day-photo{width:100%%;height:2.4in;overflow:hidden;margin:.1em 0 .2em;border-radius:2px;break-inside:avoid;page-break-inside:avoid}
   .p-day-photo img{width:100%%;height:100%%;display:block}
   .p-day-group{break-inside:avoid;page-break-inside:avoid}
   .day-flow-page h4{font-size:12pt;font-family:var(--display);font-weight:600;color:#282819;margin:.9em 0 .2em}
   .day-flow-page h4:first-of-type{margin-top:.05em}
   .day-flow-page ul{list-style:none;margin:0 0 .1em;padding:0}
-  .day-flow-page li{position:relative;padding-left:1em;margin:.22em 0;font-size:10.5pt;line-height:1.5}
+  .day-flow-page li{position:relative;padding-left:1em;margin:.22em 0;font-size:10.5pt;line-height:1.5;color:#555a45}
   .day-flow-page li::before{content:'';position:absolute;left:0;top:.55em;width:4px;height:4px;background:#7d9065;border-radius:50%%}
-  .p-day-meta{font-family:var(--body);font-size:9pt;color:#8a8270;margin-top:.15em;margin-bottom:.5em}
-  .day + .day{margin-top:.2em}
-  .day1-feature{margin-top:.25in;padding-top:.2in;border-top:1px solid #ebe1d1}
-  .day1-feature .p-day-photo{height:2.2in}
-
-  /* ---- days 2+: two-up card grid (the 2210a8a look), built with floats so
-     a card can fragment across a page break without overlapping its
-     neighbour — a CSS grid/flex row, by contrast, is one fragmentation
-     unit and either clips or overlaps once a cell outgrows the page ---- */
+  .p-day-meta{font-family:var(--body);font-size:10.5pt;color:#8a8270;margin-top:.3em;margin-bottom:.5em}
+  /* one rule set for EVERY day (feature and cards alike): same eyebrow, title, subtitle,
+     body size, photo height and a fixed gap + hairline between consecutive days */
+  .day1-feature,.day-card,.day-card-solo{font-size:10.5pt;width:100%%;float:none}
+  .day1-feature{margin-top:.3in;padding-top:.3in;border-top:1px solid #ebe1d1}
   .day-row{display:block}
-  .day-card{font-size:10pt}
-  .day-card-left,.day-card-right{float:none;width:auto}
-  .day-card + .day-card{margin-top:.25in}
-  .day-card .p-day-photo{height:2.2in}
-  .day-row-solo{margin-top:.15in;padding-top:.15in;border-top:1px solid #ebe1d1}
-  .day-card-solo{width:100%%;float:none}
-  .day-card-solo .p-day-photo{height:2.4in}
-  .day-card-solo h3{font-size:16.5pt}
-  .day-card h3{font-size:13.5pt}
-  .p-hosts{break-before:page;page-break-before:always;break-after:avoid;margin:0;padding:0;font-size:9.2pt;height:9.4in;overflow:hidden}
-  .host-full{break-inside:avoid;page-break-inside:avoid}
-  .p-hosts p{font-size:9.2pt;line-height:1.42;margin:.3em 0}
-  .p-hosts .host-full-portrait{width:1.2in;height:1.2in}
+  .day-card,.day-row-solo{margin-top:.45in;padding-top:.3in;border-top:1px solid #ebe1d1}
+  .day-row-solo .day-card{margin-top:0;padding-top:0;border-top:0}
+  .day1-feature .p-day-photo,.day-card .p-day-photo,.day-card-solo .p-day-photo{height:2.2in}
+  .day-flow-page h3,.day1-feature h3,.day-card h3,.day-card-solo h3{font-size:16.5pt;font-family:var(--display);font-weight:600;color:#282819;margin:0 0 .08em}
+  .day1-feature .p-eyebrow-sm,.day-card .p-eyebrow-sm{font-size:9pt;letter-spacing:.18em;color:#7d9065;margin:0 0 .3em}
+  .p-hosts{break-before:page;page-break-before:always;break-after:avoid;margin:0;padding:0;font-size:10.5pt;height:9.4in;overflow:visible}
+  .hosts-full-list{column-count:2;column-gap:.3in;column-fill:balance}
+  .host-full{break-inside:auto}
+  .p-hosts p{font-size:10.5pt;line-height:1.4;color:#555a45;margin:.2em 0}
+  .p-hosts .host-full-portrait{width:.9in;height:.9in;margin:0 .18in .08in 0}
   .hosts-full-list{margin-bottom:0}
-  .p-final{break-before:page;page-break-before:always;font-size:9.6pt;margin-top:0}
+  .flow section{padding:0;margin:0}
+  .p-final{break-before:page;page-break-before:always;font-size:10.5pt;margin:0;padding:0}
   .p-final .p-cols,.p-final .p-notes,.p-final .p-closing{break-inside:avoid;page-break-inside:avoid}
   .p-final .included-cols{margin-top:0;padding-top:0}
-  .p-final li,.p-final p{font-size:9.6pt;line-height:1.42}
+  .p-final li,.p-final p{font-size:10.5pt;line-height:1.4;color:#555a45}
+  .p-final .p-eyebrow{margin-bottom:.3em}
+  .p-final li{margin:.12em 0}
   .p-hosts .p-eyebrow{margin-top:0}
   .p-hosts .p-eyebrow{break-after:avoid}
 
   /* ---- hosts: full bios, each never split (but the two hosts can) ---- */
   .hosts-full-list{display:block;margin-bottom:.3in}
-  .hosts-full-list > * + *{margin-top:.4in}
+  .hosts-full-list > * + *{margin-top:.25in}
   .host-full{display:block;break-inside:auto}
   .host-full-portrait{float:left;margin:0 .35in .15in 0}
   .host-full::after{content:'';display:table;clear:both}
@@ -1193,23 +1190,24 @@ def print_page(g, slug):
   .host-full-portrait img{width:100%%;height:100%%;display:block}
   .host-full-copy{display:block;orphans:3;widows:3}
   .host-full-copy h3,.host-full-copy .p-eyebrow{break-after:avoid}
-  .host-full-copy h3{font-size:15pt;margin-bottom:.05em}
-  .host-full-copy p{font-size:10pt;line-height:1.42;margin:0 0 .35em}
-  .host-role{font-family:var(--body);text-transform:uppercase;letter-spacing:.1em;font-size:8pt;color:#7d9065;margin-bottom:.25em}
+  .host-full-copy h3{font-size:16.5pt;margin:0 0 .02em;line-height:1.1}
+  .p-hosts .host-full-copy p{font-size:10.5pt;line-height:1.4;color:#555a45;margin:0 0 .25em}
+  .host-role{font-family:var(--body);text-transform:uppercase;letter-spacing:.2em;font-size:9pt;font-weight:700;color:#7d9065;margin-bottom:.35em}
 
   /* ---- closing: included / notes / contact ---- */
-  .included-cols{margin-bottom:.2in;break-inside:avoid;page-break-inside:avoid}
+  .included-cols{margin-bottom:.1in;break-inside:avoid;page-break-inside:avoid}
 
   ul{margin:.15em 0;padding-left:1.2em}
-  li{margin:.2em 0;font-size:10pt}
-  .p-price{font-style:italic;color:#555a45;margin-top:.1in;font-size:10pt}
-  .p-notes{margin-top:.12in}
+  li{margin:.22em 0;font-size:10.5pt;line-height:1.5;color:#555a45}
+  .p-price{font-style:italic;color:#8a8270;margin:.1in 0 0;font-size:10.5pt}
+  .p-notes{margin-top:.06in}
+  .p-notes-list{column-count:2;column-gap:.3in}
   .p-notes .p-eyebrow{break-after:avoid}
   .p-notes-list{list-style:none;margin:0;padding:0;column-count:2;column-gap:0.4in;-webkit-column-count:2}
-  .p-notes-list li{font-size:9pt;line-height:1.28;margin:0 0 .25em;break-inside:avoid}
+  .p-notes-list li{font-size:10.5pt;line-height:1.4;margin:0 0 .18em;break-inside:avoid}
   .p-notes-list li b{color:#282819}
-  .p-contact{margin-top:.2in;padding-top:.2in;border-top:1px solid #ebe1d1}
-  .p-contact p{margin:.2em 0;font-size:11pt}
+  .p-contact{margin-top:.1in;padding-top:.1in;border-top:1px solid #ebe1d1}
+  .p-contact p{margin:.25em 0;font-size:10.5pt;line-height:1.5;color:#555a45}
 </style>
 </head><body>
 %(body)s
