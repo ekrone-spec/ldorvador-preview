@@ -1020,11 +1020,13 @@ def print_page(g, slug):
   </div>
   %(price_section)s
   %(notes)s
+  <div class="p-closing">
   <div class="p-contact">
     <p class="p-eyebrow">Questions or to Register Your Interest</p>
     %(contact_rows)s
   </div>
   %(compact_mark)s
+  </div>
 </div>""" % dict(
         intro=intro,
         highlights=('<p class="p-eyebrow" style="margin-top:1.6em">Highlights</p><ul class="p-highlights">%s</ul>'
@@ -1048,10 +1050,10 @@ def print_page(g, slug):
 <link rel="stylesheet" href="../../assets/app.css?v=%(ver)s">
 <style>%(print_fonts)s</style>
 <style>
-  @page { size: Letter; margin: 0.7in 0.7in 0.8in; }
-  @page cover { margin: 0; }
+  @page { size: Letter; margin: 0; }
   body::before,body::after{display:none!important;content:none!important} /* the site's grain overlay rasterises per page in PDF */
   *{box-sizing:border-box}
+  html{background:#fff9f3;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   body{margin:0;background:#fff9f3;color:#282819;font-family:var(--body);font-size:12.5pt;line-height:1.6;orphans:3;widows:3}
   h1,h2,h3{font-family:var(--display);font-weight:600;color:#282819;margin:0 0 .3em}
   h2,h3,h4{break-after:avoid;page-break-after:avoid}
@@ -1060,7 +1062,7 @@ def print_page(g, slug):
   .sheet.cover{page:cover;break-after:page;page-break-after:always}
 
   /* ---- continuous flow: everything after the cover, natural pagination ---- */
-  .flow{position:relative}
+  .flow{padding:0.7in 0.7in 0.8in;-webkit-box-decoration-break:clone;box-decoration-break:clone;background:#fff9f3}
 
   .p-eyebrow{text-transform:uppercase;letter-spacing:.22em;font-size:9.5pt;font-weight:700;color:#7d9065;font-family:var(--body);margin:0 0 .6em}
   .p-eyebrow-sm{text-transform:uppercase;letter-spacing:.18em;font-size:9pt;font-weight:700;color:#8fa49b;font-family:var(--body);margin:0 0 .3em}
@@ -1081,7 +1083,8 @@ def print_page(g, slug):
   /* in the continuous flow this sits after the contact block in normal
      document order (not pinned to a fixed sheet bottom, which in a flow
      of unknown total height would land it over unrelated content) */
-  .p-brand-compact{margin-top:0.5in}
+  .p-closing{break-inside:avoid;page-break-inside:avoid}
+  .p-brand-compact{margin-top:0.35in}
   .p-brand-compact .brand-word{color:var(--green-d);text-shadow:none}
   .p-brand-compact .brand-tx{color:var(--green-d)}
   /* neutralise site-wide layout rules that must not leak into print */
@@ -1143,10 +1146,10 @@ def print_page(g, slug):
   .p-day-photo{width:100%%;height:2.4in;overflow:hidden;margin:.1em 0 .2em;border-radius:2px;break-inside:avoid;page-break-inside:avoid}
   .p-day-photo img{width:100%%;height:100%%;display:block}
   .p-day-group{break-inside:avoid;page-break-inside:avoid}
-  .day-flow-page h4{font-size:11pt;font-family:var(--display);font-weight:600;color:#282819;margin:.5em 0 .12em}
+  .day-flow-page h4{font-size:12pt;font-family:var(--display);font-weight:600;color:#282819;margin:.9em 0 .2em}
   .day-flow-page h4:first-of-type{margin-top:.05em}
   .day-flow-page ul{list-style:none;margin:0 0 .1em;padding:0}
-  .day-flow-page li{position:relative;padding-left:1em;margin:.12em 0;font-size:10pt;line-height:1.38}
+  .day-flow-page li{position:relative;padding-left:1em;margin:.22em 0;font-size:10.5pt;line-height:1.5}
   .day-flow-page li::before{content:'';position:absolute;left:0;top:.55em;width:4px;height:4px;background:#7d9065;border-radius:50%%}
   .p-day-meta{font-family:var(--body);font-size:9pt;color:#8a8270;margin-top:.15em;margin-bottom:.5em}
   .day + .day{margin-top:.2em}
@@ -1161,7 +1164,7 @@ def print_page(g, slug):
   .day-card{font-size:10pt}
   .day-card-left,.day-card-right{float:none;width:auto}
   .day-card + .day-card{margin-top:.25in}
-  .day-card .p-day-photo{height:2.23in}
+  .day-card .p-day-photo{height:1.6in}
   .day-row-solo{margin-top:.15in;padding-top:.15in;border-top:1px solid #ebe1d1}
   .day-card-solo{width:100%%;float:none}
   .day-card-solo .p-day-photo{height:2.4in}
