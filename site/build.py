@@ -1014,6 +1014,7 @@ def print_page(g, slug):
   <section class="p-hosts"><p class="p-eyebrow">Your Hosts</p>
   <div class="hosts-full-list">%(hannah)s%(cornelis)s</div></section>
 
+  <section class="p-final">
   <div class="p-cols included-cols">
     <div><p class="p-eyebrow">What&rsquo;s Included</p>%(included)s</div>
     <div><p class="p-eyebrow">Not Included</p>%(not_included)s</div>
@@ -1027,6 +1028,7 @@ def print_page(g, slug):
   </div>
   %(compact_mark)s
   </div>
+  </section>
 </div>""" % dict(
         intro=intro,
         highlights=('<p class="p-eyebrow" style="margin-top:1.6em">Highlights</p><ul class="p-highlights">%s</ul>'
@@ -1083,7 +1085,6 @@ def print_page(g, slug):
   /* in the continuous flow this sits after the contact block in normal
      document order (not pinned to a fixed sheet bottom, which in a flow
      of unknown total height would land it over unrelated content) */
-  .p-closing{break-inside:avoid;page-break-inside:avoid}
   .p-brand-compact{margin-top:0.35in}
   .p-brand-compact .brand-word{color:var(--green-d);text-shadow:none}
   .p-brand-compact .brand-tx{color:var(--green-d)}
@@ -1160,17 +1161,25 @@ def print_page(g, slug):
      a card can fragment across a page break without overlapping its
      neighbour — a CSS grid/flex row, by contrast, is one fragmentation
      unit and either clips or overlaps once a cell outgrows the page ---- */
-  .day-row:not(.day-row-solo){column-count:2;column-gap:.3in;column-fill:auto}
+  .day-row{display:block}
   .day-card{font-size:10pt}
   .day-card-left,.day-card-right{float:none;width:auto}
   .day-card + .day-card{margin-top:.25in}
-  .day-card .p-day-photo{height:1.6in}
+  .day-card .p-day-photo{height:2.2in}
   .day-row-solo{margin-top:.15in;padding-top:.15in;border-top:1px solid #ebe1d1}
   .day-card-solo{width:100%%;float:none}
   .day-card-solo .p-day-photo{height:2.4in}
   .day-card-solo h3{font-size:16.5pt}
   .day-card h3{font-size:13.5pt}
-  .p-hosts{break-before:page;page-break-before:always;margin-top:0;padding-top:0}
+  .p-hosts{break-before:page;page-break-before:always;break-after:avoid;margin:0;padding:0;font-size:9.2pt;height:9.4in;overflow:hidden}
+  .host-full{break-inside:avoid;page-break-inside:avoid}
+  .p-hosts p{font-size:9.2pt;line-height:1.42;margin:.3em 0}
+  .p-hosts .host-full-portrait{width:1.2in;height:1.2in}
+  .hosts-full-list{margin-bottom:0}
+  .p-final{break-before:page;page-break-before:always;font-size:9.6pt;margin-top:0}
+  .p-final .p-cols,.p-final .p-notes,.p-final .p-closing{break-inside:avoid;page-break-inside:avoid}
+  .p-final .included-cols{margin-top:0;padding-top:0}
+  .p-final li,.p-final p{font-size:9.6pt;line-height:1.42}
   .p-hosts .p-eyebrow{margin-top:0}
   .p-hosts .p-eyebrow{break-after:avoid}
 
@@ -1183,7 +1192,6 @@ def print_page(g, slug):
   .host-full-portrait{flex:0 0 auto;width:1.7in;height:1.7in;overflow:hidden;border-radius:2px}
   .host-full-portrait img{width:100%%;height:100%%;display:block}
   .host-full-copy{display:block;orphans:3;widows:3}
-  .host-full-copy p:last-child{break-before:avoid}
   .host-full-copy h3,.host-full-copy .p-eyebrow{break-after:avoid}
   .host-full-copy h3{font-size:15pt;margin-bottom:.05em}
   .host-full-copy p{font-size:10pt;line-height:1.42;margin:0 0 .35em}
@@ -1195,7 +1203,7 @@ def print_page(g, slug):
   ul{margin:.15em 0;padding-left:1.2em}
   li{margin:.2em 0;font-size:10pt}
   .p-price{font-style:italic;color:#555a45;margin-top:.1in;font-size:10pt}
-  .p-notes{margin-top:.15in;break-inside:avoid;page-break-inside:avoid}
+  .p-notes{margin-top:.12in}
   .p-notes .p-eyebrow{break-after:avoid}
   .p-notes-list{list-style:none;margin:0;padding:0;column-count:2;column-gap:0.4in;-webkit-column-count:2}
   .p-notes-list li{font-size:9pt;line-height:1.28;margin:0 0 .25em;break-inside:avoid}
