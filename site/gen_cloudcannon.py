@@ -137,7 +137,7 @@ collections_config:
       path: '[relative_base_path]/{slug}.[ext]'
     schemas:
       default:
-        path: .schema.json
+        path: content/groups/.schema.json
     preview:
       title: '{title}'
       subtitle: '{dates}'
