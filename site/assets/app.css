@@ -1032,7 +1032,8 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
 .partner-logos-label{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--sage);margin:0}
 .partner-logos-row{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
 .partner-logo{height:36px;display:flex;align-items:center}
-.partner-logo img{height:100%;width:auto;display:block;filter:grayscale(1);opacity:.85}
+.partner-logo img{height:36px;width:auto;display:block;filter:grayscale(1);opacity:.85}
+.partner-logo img[src$='.svg']{width:216px}
 .group-closing-photo{max-width:none;margin:0 0 var(--gsec,clamp(64px,8vw,96px));border-radius:2px;overflow:hidden}
 .group-closing-photo img{width:100%;height:clamp(260px,32vw,420px);object-fit:cover;display:block}
 .group-overview{padding:0 0 var(--gsec,clamp(64px,8vw,96px))}

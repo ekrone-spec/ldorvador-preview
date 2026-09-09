@@ -259,35 +259,43 @@ const EMAIL_COLORS = {
   line: '#ebe1d1',
   white: '#fffdfa',
 };
-const EMAIL_SERIF = "'Fraunces', Georgia, 'Times New Roman', serif";
-const EMAIL_SANS = "'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif";
+const EMAIL_SERIF = "'Cormorant Garamond', Georgia, 'Times New Roman', serif";
+const EMAIL_SANS = "'Hanken Grotesk', -apple-system, 'Helvetica Neue', Arial, sans-serif";
+const EMAIL_FONT_LINK = "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Hanken+Grotesk:wght@400;700&display=swap";
+const PROD_ORIGIN = 'https://www.ldorvadortravel.com';
 
-/* Compact lockup on a light ground (header): stacked "L'Dor / Vador" + hairline + tagline, in a row. */
-function emailHeaderLockup() {
-  return `<table role="presentation" cellpadding="0" cellspacing="0"><tr>
-    <td style="font-family:${EMAIL_SERIF};font-weight:600;font-size:26px;line-height:.95;color:${EMAIL_COLORS.ink};" valign="middle">
-      L&rsquo;Dor<br>Vador
-    </td>
-    <td style="padding-left:15px;border-left:1px solid ${EMAIL_COLORS.ink};" valign="middle">
-      <span style="font-family:${EMAIL_SANS};font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:rgba(40,40,25,.85);">Heritage Travel</span>
-    </td>
-  </tr></table>`;
+/* Real site wordmark, shot from the site's own .brand markup (see scratchpad/shoot_lockups.py). */
+function emailAssetOrigin(request) {
+  try {
+    const origin = new URL(request.url).origin;
+    return /^https?:\/\/localhost(:\d+)?$/.test(origin) ? PROD_ORIGIN : origin;
+  } catch {
+    return PROD_ORIGIN;
+  }
 }
 
-/* Stacked lockup on the dark footer ground: cream wordmark, right-aligned, tagline below. */
-function emailFooterLockup() {
-  return `<div style="font-family:${EMAIL_SERIF};font-weight:600;font-size:22px;line-height:.95;color:${EMAIL_COLORS.white};text-align:right;">
-    L&rsquo;Dor<br>Vador
-  </div>
-  <div style="font-family:${EMAIL_SANS};font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:${EMAIL_COLORS.footerBody};margin-top:6px;text-align:right;">Heritage Travel</div>`;
+/* Compact lockup on a light ground (header): the site's real header-solid/logo-min lockup, as an image. */
+function emailHeaderLockup(origin) {
+  return `<img src="${origin}/assets/img/email-lockup-compact.png" width="220" height="59" alt="L'Dor Vador — Heritage Travel" style="display:block;border:0;outline:none;width:220px;height:59px;">`;
 }
 
-function emailShell({ title, preheader, eyebrow, heading, bodyHtml, footerNote }) {
+/* Stacked lockup on the dark footer ground: the site's real stacked footer lockup, as an image. */
+function emailFooterLockup(origin) {
+  return `<img src="${origin}/assets/img/email-lockup-stacked.png" width="140" height="123" alt="L'Dor Vador — Heritage Travel" style="display:block;border:0;outline:none;width:140px;height:123px;margin-left:auto;">`;
+}
+
+function emailShell({ title, preheader, eyebrow, heading, bodyHtml, footerNote, origin }) {
+  const assetOrigin = origin || PROD_ORIGIN;
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
 <title>${title}</title>
+<link href="${EMAIL_FONT_LINK}" rel="stylesheet">
+<style>
+  @import url('${EMAIL_FONT_LINK}');
+  body,table,td,a{ -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+</style>
 </head>
 <body style="margin:0;padding:0;background:${EMAIL_COLORS.cream};">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${preheader}</div>
@@ -295,7 +303,7 @@ function emailShell({ title, preheader, eyebrow, heading, bodyHtml, footerNote }
 <tr><td align="center" style="padding:28px 16px;">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:${EMAIL_COLORS.white};">
   <tr><td align="left" style="background:${EMAIL_COLORS.cream};padding:22px 32px;border-bottom:1px solid ${EMAIL_COLORS.line};">
-    ${emailHeaderLockup()}
+    ${emailHeaderLockup(assetOrigin)}
   </td></tr>
   <tr><td style="padding:36px 32px 8px;">
     <p style="margin:0 0 10px;font-family:${EMAIL_SANS};font-size:12.5px;letter-spacing:.26em;text-transform:uppercase;color:${EMAIL_COLORS.sage};font-weight:700;">${eyebrow}</p>
@@ -308,7 +316,7 @@ function emailShell({ title, preheader, eyebrow, heading, bodyHtml, footerNote }
   <tr><td style="background:${EMAIL_COLORS.footer};padding:32px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
       <td valign="bottom" align="left" style="width:40%;">
-        ${emailFooterLockup()}
+        ${emailFooterLockup(assetOrigin)}
       </td>
       <td valign="bottom" align="right" style="width:60%;font-family:${EMAIL_SANS};font-size:13px;line-height:1.7;color:${EMAIL_COLORS.footerBody};">
         ${footerNote}<br>
@@ -347,6 +355,7 @@ async function sendInterestEmails(env, fields, groupCount, request) {
     ? `Questions? Reply to this email or call ${escapeHtml(contact_phone)}.`
     : 'Questions? Reply to this email.';
 
+  const emailOrigin = emailAssetOrigin(request);
   const pdfBase64 = await fetchGroupPdfBase64(env, request, group_slug);
   const attachmentFilename = sanitizeFilename(titleForCopy);
   const pdfSentenceHtml = pdfBase64
@@ -372,6 +381,7 @@ async function sendInterestEmails(env, fields, groupCount, request) {
       <p style="margin:0;">Warmly,<br>Hannah &amp; Cornelis<br>L&rsquo;Dor Vador Travel</p>
     `,
     footerNote: 'L&rsquo;Dor Vador Travel',
+    origin: emailOrigin,
   });
   const registrantText =
     `Hi ${firstName},\n\n` +
@@ -427,6 +437,7 @@ async function sendInterestEmails(env, fields, groupCount, request) {
       <p style="margin:0;">PDF attached to confirmation: <strong>${pdfBase64 ? 'yes' : 'no'}</strong></p>
     `,
     footerNote: 'L&rsquo;Dor Vador Travel &mdash; internal notification',
+    origin: emailOrigin,
   });
 
   const results = await Promise.allSettled([

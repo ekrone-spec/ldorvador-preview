@@ -466,7 +466,7 @@ def build_groups():
             if not items:
                 return ''
             tiles = ''.join(
-                '<div class="partner-logo"><img src="%s" alt="PLACEHOLDER logo &#8212; %s" loading="lazy"></div>'
+                '<div class="partner-logo"><img src="%s" alt="%s" loading="lazy"></div>'
                 % (gimg(p['image']), _cesc(p.get('name') or 'Partner logo'))
                 for p in items)
             return ('<div class="partner-logos"><p class="partner-logos-label">In partnership with</p>'
@@ -1020,7 +1020,7 @@ def print_page(g, slug):
 
     led_cells = [led_cell(
         '../../%s' % print_image('assets/img/hannah.jpg', 120, 120, top=True),
-        'Hannah Berkeley Cohen', 'Co-founder, L&rsquo;Dor Vador Travel')]
+        'Hannah Berkeley Cohen', 'L&rsquo;Dor Vador Travel')]
     for gd in guides:
         portrait = (pimg(print_image(gd['image'], 120, 120, top=True))
                     if gd.get('image') else '')
@@ -1047,9 +1047,9 @@ def print_page(g, slug):
   <div class="cover-scrim"></div>
   %(stack_mark)s
   <div class="cover-text">
-    <p class="p-eyebrow on-photo">%(congregation)s</p>
     <h1>%(title)s</h1>
     <p class="p-facts">%(facts)s</p>
+    <p class="p-eyebrow on-photo cover-congregation">%(congregation)s</p>
     %(led_row)s
   </div>
   <div class="cover-strip">%(cover_contact)s%(partner_logos)s</div>
@@ -1082,7 +1082,7 @@ def print_page(g, slug):
   <div class="day-flow-page">%(days_html)s%(closing_photo)s</div>
 
   <section class="p-hosts"><p class="p-eyebrow">Your Hosts</p>
-  <div class="hosts-full-list">%(hannah)s%(about_company)s%(guides)s</div></section>
+  <div class="hosts-full-list">%(hannah)s%(guides)s</div></section>
 
   <section class="p-final">
   <div class="p-cols included-cols">
@@ -1091,6 +1091,7 @@ def print_page(g, slug):
   </div>
   %(price_section)s
   %(notes)s
+  %(about_company)s
   <div class="p-closing">
   <div class="p-contact">
     <p class="p-eyebrow">Questions or to Register Your Interest</p>
@@ -1170,6 +1171,7 @@ def print_page(g, slug):
   .cover-text{position:absolute;left:0.6in;right:0.6in;bottom:1.5in;color:#fffdfa}
   .cover-text .p-eyebrow.on-photo{color:rgba(255,253,250,.85)}
   .cover-text h1{font-size:40pt;color:#fffdfa;line-height:1.04;margin:.1em 0 .3em}
+  .cover-congregation{margin:.35em 0 0}
   .p-facts{font-size:12.5pt;color:#f3ead9;font-family:var(--body);letter-spacing:.01em;margin-bottom:.4in}
   .cover-led{display:flex;align-items:center;gap:.25in;padding-top:.3in;border-top:1px solid rgba(255,253,250,.35)}
   .led-cell{display:flex;align-items:center;gap:.14in;width:2.3in}
