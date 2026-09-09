@@ -1028,7 +1028,9 @@ def print_page(g, slug):
     led_row = '<div class="cover-led">%s</div>' % ''.join(led_cells)
 
     cover_contact_bits = [b for b in [contact_email, contact_phone, 'www.ldorvadortravel.com'] if b]
-    cover_contact = '<p class="cover-contact">%s</p>' % ' &middot; '.join(cover_contact_bits)
+    _line2 = ' &middot; '.join(b for b in [contact_phone, 'www.ldorvadortravel.com'] if b)
+    cover_contact = '<p class="cover-contact">%s<br><span style="white-space:nowrap">%s</span></p>' % (
+        contact_email or '', _line2)
 
     # ---- stacked lockup (cover, on-photo, cream) and compact lockup (closing page) ----
     stack_mark = '<div class="brand p-brand-stack"><span class="brand-stack"><span class="brand-word">L&rsquo;Dor</span><span class="brand-word">Vador</span></span><span class="brand-tx">Heritage Travel</span></div>'
@@ -1181,11 +1183,11 @@ def print_page(g, slug):
   .led-role{display:block;text-transform:uppercase;letter-spacing:.2em;font-size:8pt;font-weight:700;color:#e6d9c2;margin-top:.15em}
   .cover-strip{position:absolute;left:0;right:0;bottom:0;background:#fff9f3;color:#282819;padding:.3in 0.6in;font-family:var(--body);font-size:9.5pt;letter-spacing:.02em;display:flex;align-items:center;justify-content:space-between;gap:0.4in}
   .cover-contact{margin:0}
-  .p-partner-logos{display:flex;align-items:center;gap:0.18in;flex:none}
+  .p-partner-logos{display:flex;align-items:center;gap:0.22in;flex:none}
   .p-partner-label{text-transform:uppercase;letter-spacing:.16em;font-size:7.5pt;font-weight:700;color:#7d9065;white-space:nowrap}
-  .p-partner-row{display:flex;align-items:center;gap:0.16in}
-  .p-partner-logo{display:inline-flex;align-items:center;height:0.28in}
-  .p-partner-logo img{height:100%%;width:auto;display:block;filter:grayscale(1)}
+  .p-partner-row{display:flex;flex-direction:column;align-items:flex-start;gap:0.1in}
+  .p-partner-logo{display:block;width:2.1in}
+  .p-partner-logo img{width:100%%;height:auto;display:block;filter:grayscale(1)}
   .p-closing-photo{width:100%%;height:2.4in;overflow:hidden;margin:.35in 0 0;border-radius:2px;break-inside:avoid;page-break-inside:avoid}
   .p-closing-photo img{width:100%%;height:100%%;display:block;object-fit:cover}
 
