@@ -81,7 +81,7 @@
       "image": "assets/img/tbe-landhuis.jpg",
       "meals": "B, L, D",
       "overnight": "Renaissance Wind Creek Curaçao Resort, Willemstad",
-      "image_focus": "top"
+      "image_focus": "center"
     },
     {
       "day": "Day 4",
@@ -106,7 +106,7 @@
       "image": "assets/img/tbe-landhuis-host.jpg",
       "meals": "B, L, D",
       "overnight": "Renaissance Wind Creek Curaçao Resort, Willemstad",
-      "image_focus": "center"
+      "image_focus": "top"
     },
     {
       "day": "Day 6",
@@ -118,7 +118,7 @@
       "image": "",
       "meals": "B",
       "overnight": "",
-      "image_focus": "center"
+      "image_focus": "bottom"
     }
   ],
   "gallery": [
