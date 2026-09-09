@@ -1,0 +1,68 @@
+{
+  "slug": "",
+  "title": "",
+  "subtitle": "",
+  "congregation": "",
+  "guides": [
+    {
+      "name": "",
+      "role": "",
+      "hosts_role": "",
+      "image": "",
+      "bio": ""
+    }
+  ],
+  "about_company": "",
+  "dates": "",
+  "duration": "",
+  "group_size": "",
+  "start_finish": "",
+  "pace": "",
+  "accommodation": "",
+  "price_note": "",
+  "hero_image": "",
+  "partner_logos": [
+    {
+      "name": "",
+      "image": ""
+    }
+  ],
+  "closing_image": "",
+  "intro": "",
+  "highlights": "",
+  "included": "",
+  "not_included": "",
+  "notes": "",
+  "vignettes": [
+    {
+      "title": "",
+      "text": "",
+      "image": ""
+    }
+  ],
+  "itinerary": [
+    {
+      "day": "",
+      "title": "",
+      "subtitle": "",
+      "text": "",
+      "summary": "",
+      "image": "",
+      "date": "",
+      "meals": "",
+      "overnight": "",
+      "image_focus": "",
+      "page_break": false
+    }
+  ],
+  "gallery": [
+    ""
+  ],
+  "form_intro": "",
+  "notify_note": "",
+  "contact_email": "connect@ldorvadortravel.com",
+  "contact_phone": "",
+  "pdf": "",
+  "published": false,
+  "listed": false
+}

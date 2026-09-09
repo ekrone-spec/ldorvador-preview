@@ -329,3 +329,10 @@ for field, label in GROUPTRIP_FIELD_LABEL.items():
 open(os.path.join(D, '..', 'cloudcannon.config.yml'), 'w', encoding='utf-8').write(
     out[0] + '\n' + '\n'.join(fc) + '\n')
 print('cloudcannon.config.yml written: %d file blocks' % len(finputs))
+
+# CloudCannon resolves schema paths ambiguously (repo root vs. source folder),
+# so keep an identical copy at the repo root.
+import shutil
+os.makedirs(os.path.join(D, '..', 'schemas'), exist_ok=True)
+shutil.copyfile(os.path.join(D, 'schemas', 'group-trip.json'),
+                os.path.join(D, '..', 'schemas', 'group-trip.json'))
