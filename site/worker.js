@@ -278,12 +278,12 @@ function emailAssetOrigin(request) {
 
 /* Compact lockup on a light ground (header): the site's real header-solid/logo-min lockup, as an image. */
 function emailHeaderLockup(origin) {
-  return `<img src="${origin}/assets/img/email-lockup-compact.png" width="220" height="59" alt="L'Dor Vador — Heritage Travel" style="display:block;border:0;outline:none;width:220px;height:59px;">`;
+  return `<img src="${origin}/assets/img/email-lockup-compact.png" width="220" height="75" alt="L'Dor Vador — Heritage Travel" style="display:block;border:0;outline:none;width:220px;height:75px;">`;
 }
 
 /* Stacked lockup on the dark footer ground: the site's real stacked footer lockup, as an image. */
 function emailFooterLockup(origin) {
-  return `<img src="${origin}/assets/img/email-lockup-stacked.png" width="140" height="123" alt="L'Dor Vador — Heritage Travel" style="display:block;border:0;outline:none;width:140px;height:123px;margin-left:auto;">`;
+  return `<img src="${origin}/assets/img/email-lockup-stacked.png" width="140" height="122" alt="L'Dor Vador — Heritage Travel" style="display:block;border:0;outline:none;width:140px;height:122px;margin-left:auto;">`;
 }
 
 function emailShell({ title, preheader, eyebrow, heading, bodyHtml, footerNote, origin }) {
