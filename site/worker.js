@@ -742,7 +742,7 @@ async function handleInterestExport(request, env, url, slug, format) {
 }
 
 async function handleApi(request, env, url) {
-  if (url.pathname === '/api/interest') {
+  if (url.pathname === '/api/register' || url.pathname === '/api/interest') {
     if (request.method !== 'POST') return json({ ok: false, error: 'method not allowed' }, 405);
     return handleInterestPost(request, env, url);
   }
