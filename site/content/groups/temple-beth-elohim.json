@@ -93,7 +93,7 @@
       "meals": "B, D",
       "overnight": "Renaissance Wind Creek Curaçao Resort, Willemstad",
       "image_focus": "center",
-      "page_break": true
+      "page_break": false
     },
     {
       "day": "Day 5",
