@@ -1,4 +1,5 @@
 {
+  "_schema": "default",
   "slug": "temple-beth-elohim",
   "title": "Curaçao Jewish Heritage Journey",
   "subtitle": "Join Rabbi Joel Sisenwine and TBE congregant and Curaçao native Susan Alvares Correa as we embark on a remarkable journey to Curaçao, a Caribbean island with an extraordinary Jewish heritage, vibrant culture, and breathtaking beauty.",
@@ -26,7 +27,7 @@
   "start_finish": "Willemstad → Willemstad (individual arrivals and departures)",
   "pace": "Guided touring most days 9:00 AM–3:00 PM, with leisure afternoons",
   "accommodation": "Renaissance Wind Creek Curaçao Resort, Willemstad",
-  "price_note": "Pricing and booking details will be shared once the program is finalized. Registering your interest is not a booking.",
+  "price_note": "Interested in joining us? Register your interest now. Once sufficient interest has been received, pricing and booking details will be shared with you by email. Registering your interest is completely non-binding, and does not a booking.",
   "hero_image": "assets/img/tbe-handelskade.jpg",
   "partner_logos": [
     {
@@ -132,6 +133,7 @@
   "notify_note": "You will be contacted once the program and booking details are finalized.",
   "contact_email": "connect@ldorvadortravel.com",
   "contact_phone": "+1 (614) 382-2697",
+  "pdf": "",
   "published": true,
   "listed": true
 }
