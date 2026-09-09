@@ -25,7 +25,7 @@
   "duration": "6 days / 5 nights",
   "group_size": "",
   "start_finish": "Willemstad → Willemstad (individual arrivals and departures)",
-  "pace": "Guided touring most days 9:00 AM–3:00 PM, with leisure afternoons",
+  "pace": "Guided touring most days 9:00 AM–4:00 PM",
   "accommodation": "Renaissance Wind Creek Curaçao Resort, Willemstad",
   "price_note": "Interested in joining us? Register your interest today. Once sufficient interest has been received, pricing and booking details will be shared with you by email. Registering your interest is completely non-binding, and does not constitute a booking.",
   "hero_image": "assets/img/tbe-handelskade.jpg",
@@ -49,7 +49,7 @@
   "itinerary": [
     {
       "day": "Day 1",
-      "date": "Wednesday, March 3, 2027",
+      "date": "2027-03-03T00:00:00Z",
       "title": "Arrival in the Crossroads of the Caribbean",
       "subtitle": "Arrival Day | Welcome Dinner at 6:15 PM",
       "text": "Individual Arrivals in Curaçao\n- Participants arrive individually and make their way to the Renaissance Wind Creek Curaçao Resort in Willemstad for check-in.\n- Our journey officially begins at the hotel, allowing participants the flexibility to select the flights and travel arrangements that work best for them. Participants are therefore welcome to arrive in Curaçao earlier, extend their stay after the program, or continue onward to another destination.\n- For those who would like assistance, Hannah Berkeley Cohen of L'Dor Vador Travel, who will also be accompanying us throughout the journey, will be available to assist participants individually with flight arrangements and airport transfers.\n- After check-in, take some time to settle in, relax at the resort, and enjoy your first views of the Caribbean.\n\nWelcome Dinner & Orientation\n- This evening, we come together for the first time at Gouverneur Restaurant for our welcome dinner and orientation.\n- Meet your fellow travelers and hosts as we introduce the journey ahead and set the stage for our exploration of Curaçao's remarkable Jewish, Caribbean, and multicultural heritage.",
@@ -63,7 +63,7 @@
       "day": "Day 2",
       "date": "2027-03-04T00:00:00Z",
       "title": "The Sephardic Story of Curaçao",
-      "subtitle": "Touring: 9:00 AM–3:00 PM | Evening Program",
+      "subtitle": "Touring: 9:00 AM–4:00 PM | Group Dinner at Caleo",
       "text": "Breakfast\n- Enjoy the breakfast buffet at our resort.\n\nHistoric Willemstad\n- We begin with a drive through Willemstad, a UNESCO World Heritage city renowned for its distinctive and colorful colonial architecture.\n\nMikvé Israel-Emanuel Synagogue — The Snoa\n- Continue to Mikvé Israel-Emanuel Synagogue, affectionately known as the Snoa.\n- Completed in 1732, it is the oldest continuously operating synagogue in the Americas and connects us to a Sephardic Jewish story whose Spanish and Portuguese roots can be traced to the Iberian Peninsula of the 1400s.\n- Here, we meet Rabbi Martin Hirsch and enjoy a presentation by Ron Gomes Casseres, a Jewish historian in Curaçao.\n\nJewish Museum Curaçao\n- Explore the newly expanded and renovated Jewish Museum at your own pace with an audio tour, or choose to join a highlights tour with museum curator, Phyllis Meit.\n\nLunch at La Vie en Rose\n- Delight in a high-tea-style lunch at La Vie en Rose, in the historic district of Scharloo, known for its elegant colonial mansions, many of which were once owned by prosperous Jewish merchants during the 19th century.\n\nCuraçao's Historic Jewish Cemeteries\n- On our way back to the hotel, we will pass the newer Jewish cemetery established in 1864, as well as historic Beth Haim Blenheim Cemetery.\n- Established in 1659 by Curaçao's first 12 Jewish families, Beth Haim Blenheim is the oldest Jewish cemetery in the Caribbean. Its richly carved tombstones preserve the story of Curaçao's early Sephardic community and its far-reaching Atlantic connections.\n\nEvening in Kura Hulanda\n- Step into a walkable village within the city, Kura Hulanda - a beautifully restored area of the inner city that boasts dimly lit restaurants, live music, inviting public plazas, galleries, as well as our restaurant for the evening, Caleo.\n\nPunda Vibes\n- On Thursday nights, Punda's streets fill with local vendors, live music, open bars, and fireworks! Fireworks take place at 8:15pm, and are visible from many places in Punda or Otrobanda, including just outside our restaurant.",
       "summary": "",
       "image": "assets/img/tbe-snoa.jpg",
