@@ -3,8 +3,16 @@
   "title": "",
   "subtitle": "",
   "congregation": "",
-  "leader": "",
-  "leader_image": "",
+  "guides": [
+    {
+      "name": "",
+      "role": "",
+      "hosts_role": "",
+      "image": "",
+      "bio": ""
+    }
+  ],
+  "about_company": "",
   "dates": "",
   "duration": "",
   "group_size": "",

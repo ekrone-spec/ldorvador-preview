@@ -471,22 +471,6 @@ document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener
 (function(){
   var f = document.getElementById('interestform');
   if (!f) return;
-  var bedsField = f.querySelector('.gbeds');
-  var bedsInputs = bedsField ? bedsField.querySelectorAll('input[name="beds"]') : null;
-  function syncBeds(){
-    if (!bedsField || !bedsInputs) return;
-    var room = f.querySelector('input[name="room"]:checked');
-    var isDouble = !!room && room.value === 'double';
-    bedsField.hidden = !isDouble;
-    for (var i=0;i<bedsInputs.length;i++){
-      bedsInputs[i].required = isDouble;
-      if (!isDouble) bedsInputs[i].checked = false;
-    }
-  }
-  f.addEventListener('change', function(e){
-    if (e.target && e.target.name === 'room') syncBeds();
-  });
-  syncBeds();
   var MSG_OK = 'Thank you — your interest has been registered. We will contact you once the program and booking details are finalized.';
   var MSG_RATE = 'Too many submissions from this connection. Please try again in an hour or email us.';
   var MSG_ERR = 'Something went wrong sending your message. Please email us directly at connect@ldorvadortravel.com.';

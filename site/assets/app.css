@@ -989,6 +989,8 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
 .grouphero-grid{grid-row:2;display:block;width:100%;max-width:100%}
 .grouphero-lede{max-width:70ch;min-width:0}
 .grouphero-lede h1{font-size:clamp(48px,6.5vw,96px);line-height:1.02}
+.grouphero-with{color:#f3e2c8;font-style:italic;font-size:clamp(15px,1.4vw,19px);margin-top:10px;
+  text-shadow:0 1px 3px rgba(0,0,0,.6),0 5px 18px rgba(0,0,0,.4)}
 .grouphero-facts{color:#f3e2c8;font-size:clamp(14px,1.3vw,17px);margin-top:16px;letter-spacing:.02em;
   text-shadow:0 1px 3px rgba(0,0,0,.6),0 5px 18px rgba(0,0,0,.4)}
 /* Elderly-readable price note: bumped weight/size plus a soft scrim behind it
@@ -1168,7 +1170,8 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
 .group-form-card .two{grid-template-columns:1fr 1fr;gap:24px}
 @media(max-width:640px){.group-form-card .two{grid-template-columns:1fr}}
 .group-notify-note{color:var(--ink-soft);font-size:15px;margin-top:16px}
-.room-field .room-options{display:flex;gap:14px;margin-top:8px}
+.room-field .room-options{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px}
+@media(max-width:480px){.room-field .room-options{flex-direction:column}}
 .room-opt{position:relative}
 .room-opt input{position:absolute;opacity:0;width:1px;height:1px}
 .room-opt span{display:flex;align-items:center;justify-content:center;flex:1;min-width:120px;min-height:52px;padding:16px;border:1px solid var(--line);
@@ -1186,8 +1189,6 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
 .grouptray .btn{display:block;text-align:center}
 @media(min-width:721px){.grouptray{display:none}}
 
-.gbeds{border:0;margin:14px 0 0;padding:0}
-.gbeds .room-options{display:flex;gap:14px;margin-top:8px}
 
 /* ---- group index ---- */
 .group-index-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:40px 32px;margin-top:56px}

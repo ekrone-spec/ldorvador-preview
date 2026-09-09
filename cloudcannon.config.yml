@@ -100,6 +100,30 @@ _structures:
           image:
             type: image
             label: 'Vignette photo'
+  guide:
+    values:
+      - value:
+          name: ''
+          role: ''
+          hosts_role: ''
+          image: ''
+          bio: ''
+        _inputs:
+          name:
+            type: text
+            label: 'Name'
+          role:
+            type: text
+            label: 'Role (e.g. Guide, Spiritual Leader and Guide)'
+          hosts_role:
+            type: text
+            label: 'Role shown on the hosts page (optional)'
+          image:
+            type: image
+            label: 'Photo (optional; shown on the PDF cover and hosts page when set)'
+          bio:
+            type: textarea
+            label: 'Bio (optional, shown on the PDF hosts page)'
 
 paths:
   uploads: assets/img
@@ -1415,12 +1439,15 @@ file_config:
       congregation:
         type: text
         label: "Congregation"
-      leader:
-        type: text
-        label: "Trip leader (e.g. Rabbi …)"
-      leader_image:
-        type: image
-        label: "Trip leader portrait (optional, shown on PDF cover)"
+      guides:
+        type: array
+        options:
+          structures: guide
+        label: "Guides / leaders"
+      about_company:
+        type: textarea
+        label: "About L'Dor Vador Travel (PDF hosts page)"
+        comment: "Shown on the PDF hosts page only when filled in"
       dates:
         type: text
         label: "Dates"

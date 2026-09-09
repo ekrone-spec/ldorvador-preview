@@ -469,9 +469,9 @@ async function handleInterestPost(request, env, url) {
   const group_title = clampStr(fields.group_title, 200);
   const comments = clampStr(fields.comments, 4000);
   const roomRaw = clampStr(fields.room, 20);
-  const room = roomRaw === 'single' || roomRaw === 'double' ? roomRaw : '';
-  const bedsRaw = clampStr(fields.beds, 20);
-  const beds = bedsRaw === '1 bed' || bedsRaw === '2 beds' ? bedsRaw : '';
+  const VALID_ROOMS = ['Single (1 bed)', 'Double (1 bed)', 'Double (2 beds)', 'single', 'double'];
+  const room = VALID_ROOMS.includes(roomRaw) ? roomRaw : '';
+  const beds = clampStr(fields.beds, 20); // legacy field, no longer required or validated
 
   if (!full_name || !email || !group_slug) {
     return json({ ok: false, error: 'missing required fields' }, 400);
@@ -481,12 +481,6 @@ async function handleInterestPost(request, env, url) {
   }
   if (roomRaw && room === '') {
     return json({ ok: false, error: 'invalid room' }, 400);
-  }
-  if (bedsRaw && beds === '') {
-    return json({ ok: false, error: 'invalid beds' }, 400);
-  }
-  if (room === 'double' && !beds) {
-    return json({ ok: false, error: 'beds' }, 400);
   }
 
   let travelers = parseInt(fields.travelers, 10);

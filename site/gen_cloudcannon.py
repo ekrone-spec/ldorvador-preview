@@ -24,8 +24,8 @@ GROUPTRIP_FIELD_LABEL = {
     'title': 'Page headline',
     'subtitle': 'Subtitle',
     'congregation': 'Congregation',
-    'leader': 'Trip leader (e.g. Rabbi …)',
-    'leader_image': 'Trip leader portrait (optional, shown on PDF cover)',
+    'guides': 'Guides / leaders',
+    'about_company': "About L'Dor Vador Travel (PDF hosts page)",
     'dates': 'Dates',
     'duration': 'Duration',
     'group_size': 'Group size',
@@ -50,7 +50,7 @@ GROUPTRIP_FIELD_LABEL = {
     'published': 'Published',
     'listed': 'Show in the public menu / Group Journeys list',
 }
-GROUPTRIP_TEXTAREA = {'intro', 'highlights', 'included', 'not_included', 'notes', 'form_intro', 'notify_note'}
+GROUPTRIP_TEXTAREA = {'intro', 'highlights', 'included', 'not_included', 'notes', 'form_intro', 'notify_note', 'about_company'}
 GROUPTRIP_COMMENT = {
     'highlights': 'One item per line',
     'included': 'One item per line',
@@ -59,6 +59,7 @@ GROUPTRIP_COMMENT = {
     'pdf': 'Leave blank to hide the PDF download button',
     'published': 'Untick to hide the page from the website',
     'listed': 'Ticking this adds a "Group Journeys" link to the site menu and lists this trip publicly at /groups/ — also makes this trip’s own page indexable by search engines',
+    'about_company': 'Shown on the PDF hosts page only when filled in',
 }
 GROUP_LABEL = {
     'home': 'General', 'top': 'Hero', 'doors': 'Three doorways',
@@ -205,6 +206,30 @@ _structures:
           image:
             type: image
             label: 'Vignette photo'
+  guide:
+    values:
+      - value:
+          name: ''
+          role: ''
+          hosts_role: ''
+          image: ''
+          bio: ''
+        _inputs:
+          name:
+            type: text
+            label: 'Name'
+          role:
+            type: text
+            label: 'Role (e.g. Guide, Spiritual Leader and Guide)'
+          hosts_role:
+            type: text
+            label: 'Role shown on the hosts page (optional)'
+          image:
+            type: image
+            label: 'Photo (optional; shown on the PDF cover and hosts page when set)'
+          bio:
+            type: textarea
+            label: 'Bio (optional, shown on the PDF hosts page)'
 
 paths:
   uploads: assets/img
@@ -248,7 +273,7 @@ fc.append('  - glob: content/groups/*.json')
 fc.append('    _inputs:')
 for field, label in GROUPTRIP_FIELD_LABEL.items():
     fc.append('      %s:' % field)
-    if field in ('hero_image', 'leader_image'):
+    if field == 'hero_image':
         fc.append('        type: image')
     elif field == 'itinerary':
         fc.append('        type: array')
@@ -258,6 +283,10 @@ for field, label in GROUPTRIP_FIELD_LABEL.items():
         fc.append('        type: array')
         fc.append('        options:')
         fc.append('          structures: vignette')
+    elif field == 'guides':
+        fc.append('        type: array')
+        fc.append('        options:')
+        fc.append('          structures: guide')
     elif field == 'gallery':
         fc.append('        type: array')
         fc.append('        options:')

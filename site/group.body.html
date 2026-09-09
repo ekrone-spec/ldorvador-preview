@@ -40,6 +40,7 @@ __HEADER__
     <div class="grouphero-lede">
       <p class="eyebrow">__G_CONGREGATION__</p>
       <h1>__G_TITLE__</h1>
+      <p class="grouphero-with">__G_GUIDES_WITH__</p>
       <p class="grouphero-facts">__G_FACTS_LINE__</p>
       <p class="group-price-note">__G_PRICE_NOTE__</p>
       <div class="grouphero-ctas">
@@ -137,17 +138,11 @@ __HEADER__
         <div class="field room-field">
           <label>Room Preference <span class="req">*</span></label>
           <div class="room-options">
-            <label class="room-opt"><input type="radio" name="room" value="single" required><span>Single</span></label>
-            <label class="room-opt"><input type="radio" name="room" value="double" required><span>Double</span></label>
+            <label class="room-opt"><input type="radio" name="room" value="Single (1 bed)" required><span>Single (1 bed)</span></label>
+            <label class="room-opt"><input type="radio" name="room" value="Double (1 bed)" required><span>Double (1 bed)</span></label>
+            <label class="room-opt"><input type="radio" name="room" value="Double (2 beds)" required><span>Double (2 beds)</span></label>
           </div>
         </div>
-        <fieldset class="gbeds" hidden>
-          <label>Bed Preference <span class="req">*</span></label>
-          <div class="room-options">
-            <label class="room-opt"><input type="radio" name="beds" value="1 bed"><span>1 Bed</span></label>
-            <label class="room-opt"><input type="radio" name="beds" value="2 beds"><span>2 Beds</span></label>
-          </div>
-        </fieldset>
         <div class="field"><label for="gc">Comments</label><textarea id="gc" name="comments"></textarea></div>
       </fieldset>
       <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">

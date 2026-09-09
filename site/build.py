@@ -539,7 +539,8 @@ def build_groups():
             '__G_TITLE__':       gv('title'),
             '__G_SUBTITLE__':    gv('subtitle'),
             '__G_CONGREGATION__':gv('congregation'),
-            '__G_LEADER__':      gv('leader'),
+            '__G_GUIDES_WITH__': (_cesc('with %s' % ' & '.join(gd['name'] for gd in _group_guides(g)))
+                                   if _group_guides(g) else ''),
             '__G_DATES__':       gv('dates'),
             '__G_DURATION__':    gv('duration'),
             '__G_GROUP_SIZE__':  gv('group_size'),
@@ -651,11 +652,10 @@ def build_groups_index(listed_trips):
 # Rendered to PDF locally by make_pdf.py — the Cloudflare build has no Chrome.
 _story_bios_cache = None
 def _story_bios():
-    """Hosts content for the trip-details PDF, pulled from content/story.json
-    so the hosts page is identical across every group's brochure. Hannah's
-    bio is a run of discrete p_2.. paragraphs (one, p_3, continues an inline
-    link that splits p_2 — rejoined here); Cornelis's is one long p_10 field
-    with blank-line-separated paragraphs."""
+    """Hannah's host content for the trip-details PDF, pulled from
+    content/story.json so the hosts page is identical across every group's
+    brochure. Her bio is a run of discrete p_2.. paragraphs (one, p_3,
+    continues an inline link that splits p_2 — rejoined here)."""
     global _story_bios_cache
     if _story_bios_cache is None:
         try:
@@ -674,14 +674,7 @@ def _story_bios():
             'paras': hannah_full[:2],
             'full_paras': hannah_full,
         }
-        cornelis_paras = [p.strip() for p in str(bio.get('p_10') or '').split('\n\n') if p.strip()]
-        cornelis = {
-            'name': bio.get('h2_2') or 'Cornelis Greiwe',
-            'role': bio.get('p_9') or 'Co-founder',
-            'paras': cornelis_paras[:2],
-            'full_paras': cornelis_paras,
-        }
-        _story_bios_cache = (hannah, cornelis)
+        _story_bios_cache = hannah
     return _story_bios_cache
 
 
@@ -696,6 +689,23 @@ def _cap_words(text, limit=110):
     if cut > 0:
         return head[:cut + 1]
     return head.rstrip('.,;: ') + '.'
+
+
+def _group_guides(g):
+    """Guides/leaders for a trip: the current `guides` array, or (for older
+    content) a single `leader`/`leader_image` pair treated as one guide with
+    no photo unless an image was set."""
+    guides = g.get('guides')
+    if guides:
+        return [{'name': gd.get('name') or '', 'role': gd.get('role') or '',
+                  'hosts_role': gd.get('hosts_role') or '',
+                  'image': gd.get('image') or '', 'bio': gd.get('bio') or ''}
+                 for gd in guides if gd.get('name')]
+    leader = g.get('leader')
+    if leader:
+        return [{'name': leader, 'role': 'Guide', 'hosts_role': '',
+                  'image': g.get('leader_image') or '', 'bio': ''}]
+    return []
 
 
 _PRINT_DPI = 150  # px-per-inch used to size print derivatives to their CSS boxes
@@ -776,8 +786,7 @@ def print_page(g, slug):
     dates = pv('dates')
     duration = pv('duration')
     group_size = pv('group_size')
-    leader = pv('leader')
-    leader_image = g.get('leader_image')
+    guides = _group_guides(g)
     hero = pimg(print_image(g.get('hero_image'), 1275, 1650))
     # full copy: every intro paragraph runs on page 2, not just the first two
     intro_paras = [ln for ln in str(g.get('intro') or '').split('\n') if ln.strip()]
@@ -914,7 +923,7 @@ def print_page(g, slug):
     days_html = day1_html + ''.join(day_rows)
 
     # ---- hosts (full bios, own page) ----
-    hannah, cornelis = _story_bios()
+    hannah = _story_bios()
 
     def host_block(h, img):
         paras = ''.join('<p>%s</p>' % _cesc(p) for p in h['full_paras'])
@@ -924,7 +933,30 @@ def print_page(g, slug):
                 % (cropped, _cesc(h['name']), _cesc(h['role']), paras))
 
     hannah_html = host_block(hannah, 'assets/img/hannah.jpg')
-    cornelis_html = host_block(cornelis, 'assets/img/cornelis.jpg')
+
+    def about_company_html():
+        text = str(g.get('about_company') or '').strip()
+        if not text:
+            return ''
+        paras = ''.join('<p>%s</p>' % _cesc(ln) for ln in text.split('\n') if ln.strip())
+        return ('<div class="host-full host-about"><div class="host-full-copy">'
+                '<h3>About L&rsquo;Dor Vador Travel</h3>%s</div></div>' % paras)
+
+    def guide_host_html(gd):
+        name = _cesc(gd['name'])
+        role = _cesc(gd.get('hosts_role') or gd['role'])
+        bio = str(gd.get('bio') or '').strip()
+        bio_html = ''.join('<p>%s</p>' % _cesc(ln) for ln in bio.split('\n') if ln.strip())
+        img = gd.get('image')
+        if img:
+            cropped = print_image(img, 260, 260, top=True)
+            portrait = '<div class="host-full-portrait"><img src="../../%s" alt=""></div>' % cropped
+        else:
+            portrait = ''
+        return ('<div class="host-full">%s<div class="host-full-copy"><h3>%s</h3><p class="host-role">%s</p>%s</div></div>'
+                % (portrait, name, role, bio_html))
+
+    guides_html = ''.join(guide_host_html(gd) for gd in guides)
 
     included = bullets('included')
     not_included = bullets('not_included')
@@ -947,16 +979,21 @@ def print_page(g, slug):
         contact_rows += '<p>Phone &middot; <b>%s</b></p>' % contact_phone
     contact_rows += '<p>Online &middot; <b>%s</b></p>' % page_url
 
-    # ---- led-by row on the cover ----
-    led_portraits = ('<div class="led-portraits">'
-                     '<span class="led-p"><img src="../../%s" alt=""></span>' % print_image('assets/img/hannah.jpg', 120, 120, top=True) +
-                     '<span class="led-p"><img src="../../%s" alt=""></span>' % print_image('assets/img/cornelis.jpg', 120, 120, top=True) +
-                     ('<span class="led-p"><img src="%s" alt=""></span>' % pimg(print_image(leader_image, 120, 120, top=True)) if leader and leader_image else '')
-                     + '</div>')
-    led_names = ('<p class="led-names">Hannah Berkeley Cohen &amp; Cornelis Greiwe'
-                 '<br><span class="led-role">Co-founders</span>'
-                 + ('<br><span class="led-with">with %s</span>' % leader if leader else '') + '</p>')
-    led_row = '<div class="cover-led">%s%s</div>' % (led_portraits, led_names)
+    # ---- led-by row on the cover: Hannah, then each guide (portrait only
+    # when the guide has one set — no placeholder) ----
+    def led_cell(portrait_img, name, role):
+        p = ('<span class="led-p"><img src="%s" alt=""></span>' % portrait_img) if portrait_img else ''
+        return ('<div class="led-cell">%s<p class="led-names">%s<span class="led-role">%s</span></p></div>'
+                % (p, name, role))
+
+    led_cells = [led_cell(
+        '../../%s' % print_image('assets/img/hannah.jpg', 120, 120, top=True),
+        'Hannah Berkeley Cohen', 'Co-founder, L&rsquo;Dor Vador Travel')]
+    for gd in guides:
+        portrait = (pimg(print_image(gd['image'], 120, 120, top=True))
+                    if gd.get('image') else '')
+        led_cells.append(led_cell(portrait, _cesc(gd['name']), _cesc(gd['role'])))
+    led_row = '<div class="cover-led">%s</div>' % ''.join(led_cells)
 
     cover_contact_bits = [b for b in [contact_email, contact_phone, 'www.ldorvadortravel.com'] if b]
     cover_contact = '<p class="cover-contact">%s</p>' % ' &middot; '.join(cover_contact_bits)
@@ -1012,7 +1049,7 @@ def print_page(g, slug):
   <div class="day-flow-page">%(days_html)s</div>
 
   <section class="p-hosts"><p class="p-eyebrow">Your Hosts</p>
-  <div class="hosts-full-list">%(hannah)s%(cornelis)s</div></section>
+  <div class="hosts-full-list">%(hannah)s%(about_company)s%(guides)s</div></section>
 
   <section class="p-final">
   <div class="p-cols included-cols">
@@ -1036,7 +1073,7 @@ def print_page(g, slug):
         glance_items=glance_items,
         itin_glance=itin_glance_items(),
         days_html=days_html,
-        hannah=hannah_html, cornelis=cornelis_html,
+        hannah=hannah_html, about_company=about_company_html(), guides=guides_html,
         included=included, not_included=not_included,
         price_section=('<p class="p-price">%s</p>' % price_note) if price_note else '',
         notes=notes_html(),
@@ -1100,14 +1137,12 @@ def print_page(g, slug):
   .cover-text .p-eyebrow.on-photo{color:rgba(255,253,250,.85)}
   .cover-text h1{font-size:40pt;color:#fffdfa;line-height:1.04;margin:.1em 0 .3em}
   .p-facts{font-size:12.5pt;color:#f3ead9;font-family:var(--body);letter-spacing:.01em;margin-bottom:.4in}
-  .cover-led{display:flex;align-items:center;gap:.2in;padding-top:.3in;border-top:1px solid rgba(255,253,250,.35)}
-  .led-portraits{display:flex}
-  .led-p{width:0.8in;height:0.8in;border-radius:50%%;overflow:hidden;border:1.5px solid #e6d9c2;margin-right:-0.16in;box-shadow:0 0 0 3px #282819}
-  .led-p:last-child{margin-right:0}
+  .cover-led{display:flex;align-items:center;gap:.25in;padding-top:.3in;border-top:1px solid rgba(255,253,250,.35)}
+  .led-cell{display:flex;align-items:center;gap:.14in;width:2.3in}
+  .led-p{flex:none;width:0.75in;height:0.75in;border-radius:50%%;overflow:hidden;border:1.5px solid #e6d9c2;box-shadow:0 0 0 3px #282819}
   .led-p img{width:100%%;height:100%%;display:block}
-  .led-names{font-family:var(--body);font-size:10.5pt;color:#fffdfa;margin:0;line-height:1.4}
-  .led-role{display:block;text-transform:uppercase;letter-spacing:.2em;font-size:9pt;font-weight:700;color:#e6d9c2;margin-top:.15em}
-  .led-with{display:block;font-style:italic;color:#f3ead9}
+  .led-names{font-family:var(--body);font-size:10.5pt;color:#fffdfa;margin:0;line-height:1.3}
+  .led-role{display:block;text-transform:uppercase;letter-spacing:.2em;font-size:8pt;font-weight:700;color:#e6d9c2;margin-top:.15em}
   .cover-strip{position:absolute;left:0;right:0;bottom:0;background:#fff9f3;color:#282819;padding:.3in 0.6in;font-family:var(--body);font-size:9.5pt;letter-spacing:.02em}
   .cover-contact{margin:0}
 
