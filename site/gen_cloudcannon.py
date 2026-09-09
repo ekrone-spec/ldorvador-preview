@@ -130,14 +130,13 @@ collections_config:
     path: content/groups
     glob:
       - '*.json'
-      - '!.schema.json'
     name: Group Trips
     icon: groups
     create:
       path: '[relative_base_path]/{slug}.[ext]'
     schemas:
       default:
-        path: content/groups/.schema.json
+        path: schemas/group-trip.json
     preview:
       title: '{title}'
       subtitle: '{dates}'
