@@ -77,6 +77,27 @@ discover = R('discover.frag.html')
 # __C_page.group.field__ tokens the templates now carry. The CMS edits the
 # JSON; the build folds it back in before translation. ----
 import html as _html
+_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+           'August', 'September', 'October', 'November', 'December']
+
+def fmt_day_date(s):
+    """CloudCannon round-trips a plain 'date' field as an ISO date/datetime
+    string (e.g. '2027-03-06T00:00:00Z'). Editors expect the old human
+    format ('Saturday, March 6, 2027'); re-derive it from the calendar date
+    only (ignore any time/timezone). Anything else passes through unchanged."""
+    if not isinstance(s, str):
+        return s
+    m = re.match(r'^(\d{4})-(\d{2})-(\d{2})(?:[T ].*)?$', s.strip())
+    if not m:
+        return s
+    import datetime
+    y, mo, da = int(m.group(1)), int(m.group(2)), int(m.group(3))
+    try:
+        dt = datetime.date(y, mo, da)
+    except ValueError:
+        return s
+    return '%s, %s %d, %d' % (dt.strftime('%A'), _MONTHS[mo - 1], da, y)
+
 def _cesc(s):
     # CloudCannon writes null when an editor clears a field; treat it as empty
     if s is None:
@@ -390,7 +411,7 @@ def build_groups():
             return '<ul>%s</ul>' % ''.join('<li>%s</li>' % _cesc(it) for it in items)
 
         def gimg(path):
-            return ('../../' + path) if path else ''
+            return ('../../' + path.lstrip('/')) if path else ''
 
         def itinerary_rows():
             days = g.get('itinerary') or []
@@ -713,6 +734,7 @@ def print_image(src, w, h, top=False, focus=None):
     falls back to the original path."""
     if not src:
         return src
+    src = src.lstrip('/')
     src_path = os.path.join(D, src)
     if not os.path.isfile(src_path):
         return src
@@ -865,7 +887,7 @@ def print_page(g, slug):
     def day_header(d, card=False):
         """The non-splittable top of a day: eyebrow, title, subtitle, photo."""
         day = _cesc(d.get('day'))
-        date = _cesc(d.get('date'))
+        date = _cesc(fmt_day_date(d.get('date')))
         dtitle = _cesc(d.get('title'))
         subtitle = _cesc(d.get('subtitle'))
         subtitle_html = ('<p class="p-day-sub">%s</p>' % subtitle) if subtitle else ''

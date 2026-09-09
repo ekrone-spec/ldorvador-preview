@@ -23,6 +23,9 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Install Pillow
+        run: pip3 install pillow
+
       - name: Build the site
         id: build
         working-directory: site

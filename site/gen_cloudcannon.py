@@ -140,6 +140,159 @@ collections_config:
     preview:
       title: '{title}'
       subtitle: '{dates}'
+    _inputs:
+      _schema:
+        hidden: true
+      slug:
+        type: text
+        label: 'URL name (lowercase, hyphens; becomes /groups/<name>/)'
+      title:
+        type: text
+        label: 'Page headline'
+      subtitle:
+        type: text
+        label: 'Subtitle'
+      congregation:
+        type: text
+        label: 'Congregation'
+      about_company:
+        type: text
+        label: "About L'Dor Vador Travel (PDF hosts page)"
+      dates:
+        type: text
+        label: 'Dates'
+      duration:
+        type: text
+        label: 'Duration'
+      group_size:
+        type: text
+        label: 'Group size'
+      start_finish:
+        type: text
+        label: 'Start / finish'
+      pace:
+        type: text
+        label: 'Pace'
+      accommodation:
+        type: text
+        label: 'Accommodation'
+      price_note:
+        type: text
+        label: 'Price note'
+      contact_email:
+        type: text
+        label: 'Contact email (shown on the PDF)'
+      contact_phone:
+        type: text
+        label: 'Contact phone (shown on the PDF)'
+      pdf:
+        type: text
+        label: 'Trip details PDF (path, optional)'
+        comment: 'Leave blank to hide the PDF download button'
+      name:
+        type: text
+        label: 'Name'
+      role:
+        type: text
+        label: 'Role (e.g. Guide, Spiritual Leader and Guide)'
+      hosts_role:
+        type: text
+        label: 'Role shown on the Hosts page of the PDF (optional)'
+      day:
+        type: text
+        label: 'Day (e.g. Day 1)'
+      date:
+        type: text
+        label: 'Date (optional, e.g. Saturday, March 6, 2027)'
+      meals:
+        type: text
+        label: 'Meals included (optional, e.g. B, L, D)'
+      overnight:
+        type: text
+        label: 'Overnight location (optional)'
+      text:
+        type: textarea
+        label: 'Text'
+        comment: 'One item per line. A line with NO leading "- " becomes a bold sub-heading (e.g. "Mongui Maduro Historic House"); lines starting with "- " become bullet points under the heading above them. Leave a blank line between groups. Do not put "Overnight …" here — use the Overnight location / Meals fields below.'
+      summary:
+        type: textarea
+        label: 'Short summary (used in the PDF)'
+      bio:
+        type: textarea
+        label: 'Bio (optional, shown on the PDF hosts page)'
+      intro:
+        type: textarea
+        label: 'Intro'
+      highlights:
+        type: textarea
+        label: 'Highlights'
+        comment: 'One item per line'
+      included:
+        type: textarea
+        label: 'What is included'
+        comment: 'One item per line'
+      not_included:
+        type: textarea
+        label: 'What is not included'
+        comment: 'One item per line'
+      notes:
+        type: textarea
+        label: 'Program notes'
+        comment: 'One item per line, e.g. "Flights: International airfare is not included."'
+      form_intro:
+        type: textarea
+        label: 'Inquiry form intro'
+      notify_note:
+        type: textarea
+        label: 'Notify note'
+      image:
+        type: image
+        label: 'Image'
+      hero_image:
+        type: image
+        label: 'Hero image'
+      closing_image:
+        type: image
+        label: 'Closing photo (end of itinerary)'
+        comment: 'Shown full-width after the day-by-day itinerary on the web page, and after Day 6 in the PDF. Leave empty to hide.'
+      page_break:
+        type: checkbox
+        label: 'Start this day on a new page (PDF)'
+      published:
+        type: checkbox
+        label: 'Published (page is live)'
+        comment: 'Untick to hide the page from the website'
+      listed:
+        type: checkbox
+        label: 'Show on the Group Journeys list page'
+        comment: 'Ticking this adds a "Group Journeys" link to the site menu and lists this trip publicly at /groups/ — also makes this trip’s own page indexable by search engines'
+      image_focus:
+        type: select
+        label: 'Photo crop focus in the PDF'
+        comment: 'Which part of the photo to keep when the PDF crops it'
+        options:
+          values: ['center', 'top', 'bottom']
+          allow_empty: true
+      itinerary:
+        type: array
+        options:
+          structures: _structures.itinerary_day
+      guides:
+        type: array
+        options:
+          structures: _structures.guide
+      vignettes:
+        type: array
+        options:
+          structures: _structures.vignette
+      partner_logos:
+        type: array
+        options:
+          structures: _structures.partner_logo
+      gallery:
+        type: array
+        options:
+          subtype: image
 
 _inputs: {}
 

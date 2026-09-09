@@ -156,6 +156,8 @@ def golden_layer(update=False):
         return
     golden = json.load(open(MANIFEST))
     for page in sorted(set(golden) | set(current)):
+        if page != 'groups/index.html' and re.match(r'^groups/[^/]+/index\.html$', page):
+            continue  # group trip pages: DOM is content-driven, covered by the audit layer instead
         g, c = golden.get(page, []), current.get(page, [])
         if g == c:
             continue
