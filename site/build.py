@@ -1028,9 +1028,8 @@ def print_page(g, slug):
     led_row = '<div class="cover-led">%s</div>' % ''.join(led_cells)
 
     cover_contact_bits = [b for b in [contact_email, contact_phone, 'www.ldorvadortravel.com'] if b]
-    _line2 = ' &middot; '.join(b for b in [contact_phone, 'www.ldorvadortravel.com'] if b)
-    cover_contact = '<p class="cover-contact">%s<br><span style="white-space:nowrap">%s</span></p>' % (
-        contact_email or '', _line2)
+    cover_contact = '<p class="cover-contact">%s</p>' % '<br>'.join(
+        b for b in [contact_email, contact_phone, 'www.ldorvadortravel.com'] if b)
 
     # ---- stacked lockup (cover, on-photo, cream) and compact lockup (closing page) ----
     stack_mark = '<div class="brand p-brand-stack"><span class="brand-stack"><span class="brand-word">L&rsquo;Dor</span><span class="brand-word">Vador</span></span><span class="brand-tx">Heritage Travel</span></div>'
@@ -1173,20 +1172,20 @@ def print_page(g, slug):
   .cover-text{position:absolute;left:0.6in;right:0.6in;bottom:1.5in;color:#fffdfa}
   .cover-text .p-eyebrow.on-photo{color:rgba(255,253,250,.85)}
   .cover-text h1{font-size:40pt;color:#fffdfa;line-height:1.04;margin:.1em 0 .3em}
-  .cover-congregation{margin:.35em 0 0}
+  .cover-congregation{margin:.25em 0 0}
   .p-facts{font-size:12.5pt;color:#f3ead9;font-family:var(--body);letter-spacing:.01em;margin-bottom:.4in}
-  .cover-led{display:flex;align-items:center;gap:.25in;padding-top:.3in;border-top:1px solid rgba(255,253,250,.35)}
+  .cover-led{display:flex;align-items:center;gap:.25in;padding-top:.2in;border-top:1px solid rgba(255,253,250,.35)}
   .led-cell{display:flex;align-items:center;gap:.14in;width:2.3in}
   .led-p{flex:none;width:0.75in;height:0.75in;border-radius:50%%;overflow:hidden;border:1.5px solid #e6d9c2;box-shadow:0 0 0 3px #282819}
   .led-p img{width:100%%;height:100%%;display:block;object-fit:cover}
   .led-names{font-family:var(--body);font-size:10.5pt;color:#fffdfa;margin:0;line-height:1.3}
   .led-role{display:block;text-transform:uppercase;letter-spacing:.2em;font-size:8pt;font-weight:700;color:#e6d9c2;margin-top:.15em}
-  .cover-strip{position:absolute;left:0;right:0;bottom:0;background:#fff9f3;color:#282819;padding:.3in 0.6in;font-family:var(--body);font-size:9.5pt;letter-spacing:.02em;display:flex;align-items:center;justify-content:space-between;gap:0.4in}
-  .cover-contact{margin:0}
+  .cover-strip{position:absolute;left:0;right:0;bottom:0;background:#fff9f3;color:#282819;padding:.22in 0.6in;font-family:var(--body);font-size:9.5pt;letter-spacing:.02em;display:flex;align-items:center;justify-content:space-between;gap:0.4in}
+  .cover-contact{margin:0;line-height:1.55}
   .p-partner-logos{display:flex;align-items:center;gap:0.22in;flex:none}
   .p-partner-label{text-transform:uppercase;letter-spacing:.16em;font-size:7.5pt;font-weight:700;color:#7d9065;white-space:nowrap}
   .p-partner-row{display:flex;flex-direction:column;align-items:flex-start;gap:0.1in}
-  .p-partner-logo{display:block;width:2.1in}
+  .p-partner-logo{display:block;width:1.7in}
   .p-partner-logo img{width:100%%;height:auto;display:block;filter:grayscale(1)}
   .p-closing-photo{width:100%%;height:2.4in;overflow:hidden;margin:.35in 0 0;border-radius:2px;break-inside:avoid;page-break-inside:avoid}
   .p-closing-photo img{width:100%%;height:100%%;display:block;object-fit:cover}
