@@ -158,6 +158,7 @@ _structures:
           date: ''
           meals: ''
           overnight: ''
+          page_break: false
         _inputs:
           day:
             type: text
@@ -194,6 +195,9 @@ _structures:
           overnight:
             type: text
             label: 'Overnight location (optional)'
+          page_break:
+            type: checkbox
+            label: 'Start this day on a new page (PDF)'
   vignette:
     values:
       - value:

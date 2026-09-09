@@ -48,6 +48,7 @@ _structures:
           date: ''
           meals: ''
           overnight: ''
+          page_break: false
         _inputs:
           day:
             type: text
@@ -84,6 +85,9 @@ _structures:
           overnight:
             type: text
             label: 'Overnight location (optional)'
+          page_break:
+            type: checkbox
+            label: 'Start this day on a new page (PDF)'
   vignette:
     values:
       - value:
@@ -787,6 +791,14 @@ file_config:
         type: text
         label: "Link text 10"
         comment: "Originally: “Inquire about a Trip”"
+      header.a_11:
+        type: text
+        label: "Link text 11"
+        comment: "Originally: “Bespoke Journeys”"
+      header.a_12:
+        type: text
+        label: "Link text 12"
+        comment: "Originally: “Group Journeys”"
       top.text_aria_label_1:
         type: text
         label: "Aria Label 1"

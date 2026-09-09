@@ -821,10 +821,18 @@ def print_page(g, slug):
 
     # ---- day-by-day: full copy, day 1 as a feature (full-width photo),
     # days 2+ as two-column cards (photo sized to the narrower card) ----
-    DAY_IMG_W_PX = int(round(7.3 * _PRINT_DPI))
-    DAY_IMG_H_PX = int(round(2.4 * _PRINT_DPI))
-    CARD_IMG_W_PX = int(round(3.35 * _PRINT_DPI))
-    CARD_IMG_H_PX = int(round(2.23 * _PRINT_DPI))  # 3:2
+    # Every day (feature or card) now renders its photo at the full flow
+    # content width (8.5in page - 0.7in margins each side = 7.1in) and the
+    # shared .p-day-photo height override of 2.2in — see
+    # `.day1-feature .p-day-photo,.day-card .p-day-photo,.day-card-solo
+    # .p-day-photo{height:2.2in}` in the print stylesheet below. Both day
+    # types share one crop box so the derivative's aspect always matches
+    # the box it's drawn into (previously cards were pre-cropped at a
+    # half-column width that no longer exists, stretching every photo).
+    DAY_IMG_W_PX = int(round(7.1 * _PRINT_DPI))
+    DAY_IMG_H_PX = int(round(2.2 * _PRINT_DPI))
+    CARD_IMG_W_PX = DAY_IMG_W_PX
+    CARD_IMG_H_PX = DAY_IMG_H_PX
 
     def day_groups_html(d):
         """Render a day's `text` as heading+bullets groups, each wrapped so
@@ -873,16 +881,22 @@ def print_page(g, slug):
         return html
 
     # ---- day 1: the page-2 feature block, full copy (not a summary) ----
-    def day_block(d, css_class='day'):
+    def day_block(d, css_class='day', last=False):
         card = 'day-card' in css_class and 'day-card-solo' not in css_class
-        parts = ['<div class="%s">' % css_class, day_header(d, card=card), day_groups_html(d)]
+        classes = css_class
+        if d.get('page_break'):
+            classes += ' day-break'
+        if last:
+            classes += ' day-last'
+        parts = ['<div class="%s">' % classes, day_header(d, card=card), day_groups_html(d)]
         meta = day_meta(d)
         if meta:
             parts.append('<p class="p-day-meta">%s</p>' % meta)
         parts.append('</div>')
         return ''.join(parts)
 
-    day1_html = day_block(itinerary[0], 'day day1-feature') if itinerary else ''
+    last_day_idx = len(itinerary) - 1
+    day1_html = day_block(itinerary[0], 'day day1-feature', last=(last_day_idx == 0)) if itinerary else ''
 
     # ---- days 2+: a two-column card grid (the 2210a8a look), built with
     # floats rather than CSS grid/flex — Chrome's print engine fragments a
@@ -902,13 +916,16 @@ def print_page(g, slug):
     while i < len(rest_days):
         d = rest_days[i]
         if avg_len and len(str(d.get('text') or '')) > 1.8 * avg_len:
-            day_rows.append('<div class="day-row day-row-solo">%s</div>'
-                             % day_block(d, 'day day-card day-card-solo'))
+            is_last = (1 + i == last_day_idx)
+            wrap_class = 'day-row day-row-solo day-last' if is_last else 'day-row day-row-solo'
+            day_rows.append('<div class="%s">%s</div>'
+                             % (wrap_class, day_block(d, 'day day-card day-card-solo')))
             i += 1
             continue
         pair = rest_days[i:i + 2]
         cards = ''.join(
-            day_block(d, 'day day-card day-card-left' if j == 0 else 'day day-card day-card-right')
+            day_block(d, 'day day-card day-card-left' if j == 0 else 'day day-card day-card-right',
+                      last=(1 + i + j == last_day_idx))
             for j, d in enumerate(pair))
         day_rows.append('<div class="day-row">%s</div>' % cards)
         i += 2
@@ -1125,7 +1142,7 @@ def print_page(g, slug):
 
   /* ---- cover: full-bleed photo, no padding ---- */
   .sheet.cover{background:#282819}
-  .sheet.cover > img{position:absolute;inset:0;width:100%%;height:100%%}
+  .sheet.cover > img{position:absolute;inset:0;width:100%%;height:100%%;object-fit:cover}
   .sheet.cover .led-p img{position:static;inset:auto}
   .cover-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,20,10,.42) 0%%,rgba(20,20,10,0) 30%%,rgba(20,20,10,0) 55%%,rgba(20,20,10,.86) 100%%)}
 
@@ -1157,7 +1174,7 @@ def print_page(g, slug):
   .cover-led{display:flex;align-items:center;gap:.25in;padding-top:.3in;border-top:1px solid rgba(255,253,250,.35)}
   .led-cell{display:flex;align-items:center;gap:.14in;width:2.3in}
   .led-p{flex:none;width:0.75in;height:0.75in;border-radius:50%%;overflow:hidden;border:1.5px solid #e6d9c2;box-shadow:0 0 0 3px #282819}
-  .led-p img{width:100%%;height:100%%;display:block}
+  .led-p img{width:100%%;height:100%%;display:block;object-fit:cover}
   .led-names{font-family:var(--body);font-size:10.5pt;color:#fffdfa;margin:0;line-height:1.3}
   .led-role{display:block;text-transform:uppercase;letter-spacing:.2em;font-size:8pt;font-weight:700;color:#e6d9c2;margin-top:.15em}
   .cover-strip{position:absolute;left:0;right:0;bottom:0;background:#fff9f3;color:#282819;padding:.3in 0.6in;font-family:var(--body);font-size:9.5pt;letter-spacing:.02em;display:flex;align-items:center;justify-content:space-between;gap:0.4in}
@@ -1168,7 +1185,7 @@ def print_page(g, slug):
   .p-partner-logo{display:inline-flex;align-items:center;height:0.28in}
   .p-partner-logo img{height:100%%;width:auto;display:block;filter:grayscale(1)}
   .p-closing-photo{width:100%%;height:2.4in;overflow:hidden;margin:.35in 0 0;border-radius:2px;break-inside:avoid;page-break-inside:avoid}
-  .p-closing-photo img{width:100%%;height:100%%;display:block}
+  .p-closing-photo img{width:100%%;height:100%%;display:block;object-fit:cover}
 
   /* ---- journey / at-a-glance (page 2) ---- */
   .p-cols{display:flex;gap:0.55in}
@@ -1201,11 +1218,12 @@ def print_page(g, slug):
      Day 1 runs full-width as the page-2 feature; days 2+ are two-up cards
      built with floats (see day-row/day-card below) ---- */
   .day{break-before:auto}
-  .p-day-header{break-inside:avoid;page-break-inside:avoid}
+  .p-day-header{break-inside:avoid;page-break-inside:avoid;break-after:avoid;page-break-after:avoid}
+  .p-day-header + h4,.p-day-header + h4 + ul{break-before:avoid;page-break-before:avoid}
   .day-flow-page h3{font-size:16.5pt;margin-bottom:.08em}
   .p-day-sub{font-family:var(--body);font-style:italic;font-size:10.5pt;color:#8a8270;margin:0 0 .3em}
   .p-day-photo{width:100%%;height:2.4in;overflow:hidden;margin:.1em 0 .2em;border-radius:2px;break-inside:avoid;page-break-inside:avoid}
-  .p-day-photo img{width:100%%;height:100%%;display:block}
+  .p-day-photo img{width:100%%;height:100%%;display:block;object-fit:cover}
   .p-day-group{break-inside:avoid;page-break-inside:avoid}
   .day-flow-page h4{font-size:12pt;font-family:var(--display);font-weight:600;color:#282819;margin:.9em 0 .2em}
   .day-flow-page h4:first-of-type{margin-top:.05em}
@@ -1216,10 +1234,16 @@ def print_page(g, slug):
   /* one rule set for EVERY day (feature and cards alike): same eyebrow, title, subtitle,
      body size, photo height and a fixed gap + hairline between consecutive days */
   .day1-feature,.day-card,.day-card-solo{font-size:10.5pt;width:100%%;float:none}
-  .day1-feature{margin-top:.3in;padding-top:.3in;border-top:1px solid #ebe1d1}
+  /* hairline sits BELOW each day (not above, where it reads as a stray
+     line under the header when a day lands at the top of a page); the
+     gap between days is unchanged, just relocated to the trailing edge.
+     No line after the very last day (.day-last). */
+  .day1-feature{margin-top:.3in;padding-bottom:.3in;border-bottom:1px solid #ebe1d1}
   .day-row{display:block}
-  .day-card,.day-row-solo{margin-top:.45in;padding-top:.3in;border-top:1px solid #ebe1d1}
-  .day-row-solo .day-card{margin-top:0;padding-top:0;border-top:0}
+  .day-card,.day-row-solo{margin-top:.45in;padding-bottom:.3in;border-bottom:1px solid #ebe1d1}
+  .day-row-solo .day-card{margin-top:0;padding-bottom:0;border-bottom:0}
+  .day-last.day1-feature,.day-row-solo.day-last,.day-card.day-last{border-bottom:0;padding-bottom:0}
+  .day-break{break-before:page;page-break-before:always}
   .day1-feature .p-day-photo,.day-card .p-day-photo,.day-card-solo .p-day-photo{height:2.2in}
   .day-flow-page h3,.day1-feature h3,.day-card h3,.day-card-solo h3{font-size:16.5pt;font-family:var(--display);font-weight:600;color:#282819;margin:0 0 .08em}
   .day1-feature .p-eyebrow-sm,.day-card .p-eyebrow-sm{font-size:9pt;letter-spacing:.18em;color:#7d9065;margin:0 0 .3em}
@@ -1246,7 +1270,7 @@ def print_page(g, slug):
   .host-full-portrait{float:left;margin:0 .35in .15in 0}
   .host-full::after{content:'';display:table;clear:both}
   .host-full-portrait{flex:0 0 auto;width:1.7in;height:1.7in;overflow:hidden;border-radius:2px}
-  .host-full-portrait img{width:100%%;height:100%%;display:block}
+  .host-full-portrait img{width:100%%;height:100%%;display:block;object-fit:cover}
   .host-full-copy{display:block;orphans:3;widows:3}
   .host-full-copy h3,.host-full-copy .p-eyebrow{break-after:avoid}
   .host-full-copy h3{font-size:16.5pt;margin:0 0 .02em;line-height:1.1}
