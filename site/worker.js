@@ -126,7 +126,9 @@ function bytesToBase64(bytes) {
 }
 
 function sanitizeFilename(name) {
-  const base = String(name || 'trip-details').trim().replace(/[^A-Za-z0-9 _.-]/g, '').trim() || 'trip-details';
+  // strip accents to ASCII (Curaçao -> Curacao) instead of deleting the letter
+  const ascii = String(name || 'trip-details').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const base = ascii.trim().replace(/[^A-Za-z0-9 _.-]/g, '').trim() || 'trip-details';
   return `${base}.pdf`;
 }
 
@@ -378,7 +380,7 @@ async function sendInterestEmails(env, fields, groupCount, request) {
       <p style="margin:0 0 22px;">This is not a booking. We will contact you once the program and booking details are finalized.</p>
       ${emailButton(groupUrl, 'View the trip page')}
       <p style="margin:26px 0 16px;">${phoneSentenceHtml}</p>
-      <p style="margin:0;">Warmly,<br>Hannah &amp; Cornelis<br>L&rsquo;Dor Vador Travel</p>
+      <p style="margin:0;">Warmly,<br>Hannah Berkeley Cohen<br>L&rsquo;Dor Vador Travel</p>
     `,
     footerNote: 'L&rsquo;Dor Vador Travel',
     origin: emailOrigin,
@@ -390,7 +392,7 @@ async function sendInterestEmails(env, fields, groupCount, request) {
     `This is not a booking. We will contact you once the program and booking details are finalized.\n\n` +
     `View the trip page: ${groupUrl}\n\n` +
     `${phoneSentence}\n\n` +
-    `Warmly,\nHannah & Cornelis\nL'Dor Vador Travel\n\nwww.ldorvadortravel.com`;
+    `Warmly,\nHannah Berkeley Cohen\nL'Dor Vador Travel\n\nwww.ldorvadortravel.com`;
 
   const registrantPayload = {
     from: "L'Dor Vador Travel <connect@ldorvadortravel.com>",
