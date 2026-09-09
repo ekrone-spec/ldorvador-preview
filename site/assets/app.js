@@ -383,6 +383,48 @@ if(mapwrap){
   });
 })();
 
+/* Nav dropdowns (Journeys, About). Hover already reveals these on pointer
+   devices (@media(hover:hover) in the CSS); this adds tap-to-open on touch
+   and full keyboard control (Enter/Space toggles, Escape closes) with a
+   proper aria-expanded state, for every .navitem.has-sub in the header. */
+(function(){
+  var items = document.querySelectorAll('.navitem.has-sub');
+  [].forEach.call(items, function(item){
+    var trigger = item.querySelector(':scope > a');
+    var menu = item.querySelector('.submenu');
+    if(!trigger || !menu) return;
+    function isOpen(){ return trigger.getAttribute('aria-expanded') === 'true'; }
+    function open(){ item.classList.add('open'); trigger.setAttribute('aria-expanded','true'); }
+    function close(){ item.classList.remove('open'); trigger.setAttribute('aria-expanded','false'); }
+    trigger.addEventListener('click', function(e){
+      if(!window.matchMedia('(hover:hover)').matches){
+        e.preventDefault();
+        isOpen() ? close() : open();
+      }
+    });
+    trigger.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        isOpen() ? close() : open();
+      } else if(e.key === 'Escape'){
+        close();
+      } else if(e.key === 'ArrowDown'){
+        e.preventDefault(); open();
+        var first = menu.querySelector('a'); if(first) first.focus();
+      }
+    });
+    menu.addEventListener('keydown', function(e){
+      if(e.key === 'Escape'){ close(); trigger.focus(); }
+    });
+    document.addEventListener('click', function(e){
+      if(!item.contains(e.target)) close();
+    });
+    item.addEventListener('focusout', function(e){
+      if(!item.contains(e.relatedTarget)) close();
+    });
+  });
+})();
+
 /* Testimonials glide on their own where there is no cursor to drag with.
    Any touch or scroll hands control back to the reader. */
 (function(){

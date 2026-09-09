@@ -18,6 +18,8 @@
     __G_GALLERY__            mosaic tiles + lightbox trigger from "gallery"
     __G_PDF_LINK__           secondary "Download trip details" link from "pdf" (register section)
     __G_PDF_LINK_HERO__      same, outline style, next to the hero CTA
+    __G_PARTNER_LOGOS__      "In partnership with" logo row from "partner_logos" (top of Overview)
+    __G_CLOSING_IMAGE__      full-width photo from "closing_image", after the day-by-day itinerary
   All scalar tokens pass through _cesc()/_drop_empties() exactly like the
   content tokens elsewhere on the site, so \n -> <br> and empty fields vanish
   cleanly. Sections with no content (empty arrays/strings) render nothing.
@@ -57,6 +59,7 @@ __HEADER__
 <div class="page-wrap">
 
   <section id="overview" class="group-overview">
+    __G_PARTNER_LOGOS__
     <p class="triad-body group-intro">__G_INTRO__</p>
 
     <div class="group-cards" id="highlights">
@@ -88,6 +91,8 @@ __HEADER__
       __G_ITINERARY_ROWS__
     </div>
   </section>
+
+  __G_CLOSING_IMAGE__
 
   __G_GALLERY__
 

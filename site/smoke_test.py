@@ -62,6 +62,18 @@ def main():
             for i in REQUIRED_IDS:
                 check('id="%s"' % i in html,
                       '%s: missing id="%s" (a script hook — its absence breaks app.js)' % (path, i))
+
+            # Journeys nav dropdown: trigger + its two items, on every page/locale
+            jnav = re.search(r'<span class="navitem has-sub">\s*<a href="itinerary\.html"[^>]*>.*?</span>\s*</span>',
+                              html, re.S)
+            check(bool(jnav), '%s: Journeys dropdown trigger missing' % path)
+            if jnav:
+                blk = jnav.group(0)
+                check('aria-haspopup="menu"' in blk, '%s: Journeys trigger missing aria-haspopup' % path)
+                check('role="menu"' in blk, '%s: Journeys submenu missing role="menu"' % path)
+                check(blk.count('role="menuitem"') == 2,
+                      '%s: Journeys dropdown expected 2 items, found %d' % (path, blk.count('role="menuitem"')))
+                check('href="/groups/"' in blk, '%s: Journeys dropdown missing Group Journeys link' % path)
             if page == 'index.html':
                 for i in HOME_IDS:
                     check('id="%s"' % i in html, '%s: missing id="%s"' % (path, i))
@@ -252,14 +264,12 @@ def main():
         else:
             check('New group journeys will be announced here.' in gi_html,
                   '%s: missing empty-state message' % gi_path)
-        # menu link: present site-wide only when at least one trip is listed
+        # menu link: always present now (header dropdown + footer), regardless
+        # of whether any trip is listed - /groups/ always exists
         home_html = get('index.html')
         if home_html:
             count = home_html.count('href="/groups/"')
-            if listed_slugs:
-                check(count >= 1, 'index.html: "Group Journeys" menu link missing though a trip is listed')
-            else:
-                check(count == 0, 'index.html: "Group Journeys" menu link present though no trip is listed')
+            check(count >= 1, 'index.html: "Group Journeys" menu link missing')
 
     # the main sitemap lists /groups/ (always) and any listed trip pages,
     # but never an unlisted one (those stay noindex/private)

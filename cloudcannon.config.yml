@@ -124,6 +124,18 @@ _structures:
           bio:
             type: textarea
             label: 'Bio (optional, shown on the PDF hosts page)'
+  partner_logo:
+    values:
+      - value:
+          name: ''
+          image: ''
+        _inputs:
+          name:
+            type: text
+            label: 'Partner name (e.g. congregation, JCCPF)'
+          image:
+            type: image
+            label: 'Logo image'
 
 paths:
   uploads: assets/img
@@ -504,6 +516,14 @@ file_config:
         type: text
         label: "Link text 11"
         comment: "Originally: “Inquire about a Trip”"
+      header.a_12:
+        type: text
+        label: "Link text 12"
+        comment: "Originally: “Bespoke Journeys”"
+      header.a_13:
+        type: text
+        label: "Link text 13"
+        comment: "Originally: “Group Journeys”"
   - glob: content/history.json
     _inputs:
       subhero:
@@ -1472,6 +1492,16 @@ file_config:
       hero_image:
         type: image
         label: "Hero image"
+      partner_logos:
+        type: array
+        options:
+          structures: partner_logo
+        label: "Partner logos (e.g. congregation, JCCPF)"
+        comment: "Shown on the web page (Overview section) and on the PDF cover strip. Leave empty to hide."
+      closing_image:
+        type: image
+        label: "Closing photo (end of itinerary)"
+        comment: "Shown full-width after the day-by-day itinerary on the web page, and after Day 6 in the PDF. Leave empty to hide."
       intro:
         type: textarea
         label: "Intro"

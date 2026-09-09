@@ -34,6 +34,8 @@ GROUPTRIP_FIELD_LABEL = {
     'accommodation': 'Accommodation',
     'price_note': 'Price note',
     'hero_image': 'Hero image',
+    'partner_logos': 'Partner logos (e.g. congregation, JCCPF)',
+    'closing_image': 'Closing photo (end of itinerary)',
     'intro': 'Intro',
     'highlights': 'Highlights',
     'included': 'What is included',
@@ -60,6 +62,8 @@ GROUPTRIP_COMMENT = {
     'published': 'Untick to hide the page from the website',
     'listed': 'Ticking this adds a "Group Journeys" link to the site menu and lists this trip publicly at /groups/ — also makes this trip’s own page indexable by search engines',
     'about_company': 'Shown on the PDF hosts page only when filled in',
+    'partner_logos': 'Shown on the web page (Overview section) and on the PDF cover strip. Leave empty to hide.',
+    'closing_image': 'Shown full-width after the day-by-day itinerary on the web page, and after Day 6 in the PDF. Leave empty to hide.',
 }
 GROUP_LABEL = {
     'home': 'General', 'top': 'Hero', 'doors': 'Three doorways',
@@ -230,6 +234,18 @@ _structures:
           bio:
             type: textarea
             label: 'Bio (optional, shown on the PDF hosts page)'
+  partner_logo:
+    values:
+      - value:
+          name: ''
+          image: ''
+        _inputs:
+          name:
+            type: text
+            label: 'Partner name (e.g. congregation, JCCPF)'
+          image:
+            type: image
+            label: 'Logo image'
 
 paths:
   uploads: assets/img
@@ -291,6 +307,12 @@ for field, label in GROUPTRIP_FIELD_LABEL.items():
         fc.append('        type: array')
         fc.append('        options:')
         fc.append('          subtype: image')
+    elif field == 'partner_logos':
+        fc.append('        type: array')
+        fc.append('        options:')
+        fc.append('          structures: partner_logo')
+    elif field == 'closing_image':
+        fc.append('        type: image')
     elif field in ('published', 'listed'):
         fc.append('        type: checkbox')
     elif field in GROUPTRIP_TEXTAREA:

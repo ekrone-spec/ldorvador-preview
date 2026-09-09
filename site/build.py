@@ -263,32 +263,6 @@ def jsonld(code, desc):
     }
     return '<script type="application/ld+json">%s</script>' % json.dumps(data)
 
-# ---- "Group Journeys" menu link: shown site-wide only when at least one
-# trip opts in via `listed`. LDV_PLACEBO forces this false so the golden
-# structural manifest never depends on live CMS content. ----
-def _groups_any_listed():
-    gdir = os.path.join(D, 'content', 'groups')
-    if not os.path.isdir(gdir) or os.environ.get('LDV_PLACEBO'):
-        return False
-    for fn in sorted(os.listdir(gdir)):
-        if fn.startswith('.') or not fn.endswith('.json'):
-            continue
-        try:
-            g = json.load(open(os.path.join(gdir, fn), encoding='utf-8'))
-        except Exception:
-            continue
-        if g.get('published') is False:
-            continue
-        if g.get('listed'):
-            return True
-    return False
-
-GROUPS_ANY_LISTED = _groups_any_listed()
-GROUPSNAV_HTML = '<a href="/groups/">Group Journeys</a>' if GROUPS_ANY_LISTED else ''
-GROUPSNAV_FOOT_HTML = '<a href="/groups/">Group Journeys</a>' if GROUPS_ANY_LISTED else ''
-header = header.replace('__GROUPSNAV__', GROUPSNAV_HTML)
-footer = footer.replace('__GROUPSNAV_FOOT__', GROUPSNAV_FOOT_HTML)
-
 HEAD = ('<!doctype html>\n<html lang="%s"%s><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
         + ('' if PROD else '<meta name="robots" content="noindex, nofollow">') +
@@ -317,9 +291,7 @@ for code in LOCALES:
         body = R(BODY[page])
         body = (body.replace('__HEADER__', header)
                     .replace('__FOOTER__', footer)
-                    .replace('__DISCOVER__', discover)
-                    .replace('__GROUPSNAV__', GROUPSNAV_HTML)
-                    .replace('__GROUPSNAV_FOOT__', GROUPSNAV_FOOT_HTML))
+                    .replace('__DISCOVER__', discover))
         body = fill_content(body)
         body = body.replace('__WEB3FORMS_KEY__',
                             os.environ.get('WEB3FORMS_KEY', 'b650cfb7-2868-422a-8d34-553c7674e073'))
@@ -489,6 +461,24 @@ def build_groups():
                     '<p class="eyebrow">In Pictures</p></div>'
                     '<div class="gallery-grid">%s</div></section>' % tiles)
 
+        def partner_logos():
+            items = [p for p in (g.get('partner_logos') or []) if p.get('image')]
+            if not items:
+                return ''
+            tiles = ''.join(
+                '<div class="partner-logo"><img src="%s" alt="PLACEHOLDER logo &#8212; %s" loading="lazy"></div>'
+                % (gimg(p['image']), _cesc(p.get('name') or 'Partner logo'))
+                for p in items)
+            return ('<div class="partner-logos"><p class="partner-logos-label">In partnership with</p>'
+                    '<div class="partner-logos-row">%s</div></div>' % tiles)
+
+        def closing_image():
+            img = g.get('closing_image')
+            if not img:
+                return ''
+            return ('<div class="group-closing-photo"><img src="%s" alt="PLACEHOLDER photo" loading="lazy"></div>'
+                    % gimg(img))
+
         def facts_line():
             bits = [gv(k) for k in ('dates', 'duration', 'group_size') if g.get(k)]
             return ' · '.join(bits)
@@ -565,6 +555,8 @@ def build_groups():
             '__G_GALLERY__':           gallery(),
             '__G_PDF_LINK__':          pdf_link(),
             '__G_PDF_LINK_HERO__':     pdf_link_hero(),
+            '__G_PARTNER_LOGOS__':     partner_logos(),
+            '__G_CLOSING_IMAGE__':     closing_image(),
             '__TURNSTILE_SITEKEY__':   _cesc(TURNSTILE_SITEKEY),
         }
         for tok, val in subs.items():
@@ -958,6 +950,29 @@ def print_page(g, slug):
 
     guides_html = ''.join(guide_host_html(gd) for gd in guides)
 
+    # ---- partner logos (cover strip, right side) ----
+    def partner_logos_html():
+        items = [p for p in (g.get('partner_logos') or []) if p.get('image')]
+        if not items:
+            return ''
+        tiles = ''.join(
+            '<span class="p-partner-logo"><img src="%s" alt="%s"></span>'
+            % (pimg(p['image']), _cesc(p.get('name') or 'Partner logo'))
+            for p in items)
+        return ('<div class="p-partner-logos"><span class="p-partner-label">In Partnership With</span>'
+                '<span class="p-partner-row">%s</span></div>' % tiles)
+
+    # ---- closing photo, full-width, after Day 6 (the last itinerary day) ----
+    CLOSING_IMG_W_PX = int(round(7.1 * _PRINT_DPI))
+    CLOSING_IMG_H_PX = int(round(2.4 * _PRINT_DPI))
+
+    def closing_photo_html():
+        img = g.get('closing_image')
+        if not img:
+            return ''
+        src = pimg(print_image(img, CLOSING_IMG_W_PX, CLOSING_IMG_H_PX))
+        return '<div class="p-closing-photo"><img src="%s" alt=""></div>' % src
+
     included = bullets('included')
     not_included = bullets('not_included')
 
@@ -1020,13 +1035,14 @@ def print_page(g, slug):
     <p class="p-facts">%(facts)s</p>
     %(led_row)s
   </div>
-  <div class="cover-strip">%(cover_contact)s</div>
+  <div class="cover-strip">%(cover_contact)s%(partner_logos)s</div>
 </div>""" % dict(
         hero_img=('<img src="%s" alt="">' % hero) if hero else '',
         congregation=congregation, title=title,
         facts=' &middot; '.join(b for b in [dates, duration, group_size] if b),
         led_row=led_row, stack_mark=stack_mark,
         cover_contact=cover_contact,
+        partner_logos=partner_logos_html(),
     )
 
     body_html = cover_html + """
@@ -1046,7 +1062,7 @@ def print_page(g, slug):
     </div>
   </div>
 
-  <div class="day-flow-page">%(days_html)s</div>
+  <div class="day-flow-page">%(days_html)s%(closing_photo)s</div>
 
   <section class="p-hosts"><p class="p-eyebrow">Your Hosts</p>
   <div class="hosts-full-list">%(hannah)s%(about_company)s%(guides)s</div></section>
@@ -1073,6 +1089,7 @@ def print_page(g, slug):
         glance_items=glance_items,
         itin_glance=itin_glance_items(),
         days_html=days_html,
+        closing_photo=closing_photo_html(),
         hannah=hannah_html, about_company=about_company_html(), guides=guides_html,
         included=included, not_included=not_included,
         price_section=('<p class="p-price">%s</p>' % price_note) if price_note else '',
@@ -1143,8 +1160,15 @@ def print_page(g, slug):
   .led-p img{width:100%%;height:100%%;display:block}
   .led-names{font-family:var(--body);font-size:10.5pt;color:#fffdfa;margin:0;line-height:1.3}
   .led-role{display:block;text-transform:uppercase;letter-spacing:.2em;font-size:8pt;font-weight:700;color:#e6d9c2;margin-top:.15em}
-  .cover-strip{position:absolute;left:0;right:0;bottom:0;background:#fff9f3;color:#282819;padding:.3in 0.6in;font-family:var(--body);font-size:9.5pt;letter-spacing:.02em}
+  .cover-strip{position:absolute;left:0;right:0;bottom:0;background:#fff9f3;color:#282819;padding:.3in 0.6in;font-family:var(--body);font-size:9.5pt;letter-spacing:.02em;display:flex;align-items:center;justify-content:space-between;gap:0.4in}
   .cover-contact{margin:0}
+  .p-partner-logos{display:flex;align-items:center;gap:0.18in;flex:none}
+  .p-partner-label{text-transform:uppercase;letter-spacing:.16em;font-size:7.5pt;font-weight:700;color:#7d9065;white-space:nowrap}
+  .p-partner-row{display:flex;align-items:center;gap:0.16in}
+  .p-partner-logo{display:inline-flex;align-items:center;height:0.28in}
+  .p-partner-logo img{height:100%%;width:auto;display:block;filter:grayscale(1)}
+  .p-closing-photo{width:100%%;height:2.4in;overflow:hidden;margin:.35in 0 0;border-radius:2px;break-inside:avoid;page-break-inside:avoid}
+  .p-closing-photo img{width:100%%;height:100%%;display:block}
 
   /* ---- journey / at-a-glance (page 2) ---- */
   .p-cols{display:flex;gap:0.55in}
@@ -1161,13 +1185,13 @@ def print_page(g, slug):
   .glance-item{padding:10px 0;border-bottom:1px solid #ebe1d1;break-inside:avoid;page-break-inside:avoid}
   .glance-item:first-child{padding-top:0}
   .gl-label{display:block;text-transform:uppercase;letter-spacing:.2em;font-size:9pt;font-weight:700;font-family:var(--body);color:#7d9065;margin-bottom:3px}
-  .gl-value{display:block;font-size:10.5pt;line-height:1.5;color:#282819}
+  .gl-value{display:block;font-size:10.5pt;line-height:1.35;color:#282819}
   .journey-copy p{font-size:10.5pt;line-height:1.5;color:#555a45;margin:0 0 .5em}
   .p-highlights{list-style:none;margin:0;padding:0;column-count:1;font-size:10.5pt;line-height:1.5;color:#555a45}
   .p-highlights li{position:relative;padding-left:1.05em;margin:.24em 0;line-height:1.32}
   .p-highlights li::before{content:'';position:absolute;left:0;top:.55em;width:5px;height:5px;background:#7d9065;border-radius:50%%}
   ul.p-highlights{padding-left:0}
-  .p-itin-glance{list-style:none;margin:0;padding:0;font-size:10.5pt;line-height:1.5;color:#555a45}
+  .p-itin-glance{list-style:none;margin:0;padding:0;font-size:10.5pt;line-height:1.35;color:#555a45}
   .p-itin-glance li{padding:5px 0;border-bottom:1px solid #ebe1d1;line-height:1.3;break-inside:avoid;page-break-inside:avoid}
   .p-itin-glance li:first-child{padding-top:0}
 
@@ -1259,8 +1283,7 @@ def datauri(path):
     return 'data:%s;base64,%s' % (mt, base64.b64encode(open(os.path.join(D, path), 'rb').read()).decode())
 
 body = fill_content(R('home.body.html').replace('__HEADER__', header).replace('__FOOTER__', footer)
-        .replace('__DISCOVER__', discover).replace('__GROUPSNAV__', GROUPSNAV_HTML)
-        .replace('__GROUPSNAV_FOOT__', GROUPSNAV_FOOT_HTML)).replace('__LANGNAV__', langnav('en', 'index.html', TRANS['en']))
+        .replace('__DISCOVER__', discover)).replace('__LANGNAV__', langnav('en', 'index.html', TRANS['en']))
 css_self = css_raw
 for tok, rel in imgmap.items():
     css_self = css_self.replace(tok, datauri(rel))

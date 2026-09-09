@@ -696,11 +696,11 @@ nav.main{align-items:center}
 .navitem>a::after{content:"";position:absolute;left:0;bottom:-3px;width:0;height:1.5px;background:currentColor;transition:width .25s}
 .navitem:focus-within>a::after{width:100%}@media(hover:hover){.navitem:hover>a::after{width:100%}}
 .submenu{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(-6px);margin-top:14px;
-  min-width:238px;display:flex;flex-direction:column;padding:8px;
+  min-width:238px;display:flex;flex-direction:column;padding:8px;border-radius:2px;
   background:var(--cream);border:1px solid var(--line);box-shadow:0 24px 54px -24px rgba(40,40,25,.5);
   opacity:0;visibility:hidden;transition:opacity .22s ease,transform .22s ease,visibility .22s;z-index:60}
 @media(hover:hover){.navitem:hover .submenu{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}}
-.navitem:focus-within .submenu{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+.navitem:focus-within .submenu,.navitem.open .submenu{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
 /* bridge the gap so the menu does not close while the pointer travels to it */
 .submenu::before{content:"";position:absolute;left:0;right:0;top:-14px;height:14px}
 .submenu a{display:block;padding:10px 15px;font-family:var(--body);font-size:11.5px;letter-spacing:.13em;
@@ -708,7 +708,7 @@ nav.main{align-items:center}
 .submenu a::after{display:none}
 .submenu a:hover{background:var(--sage-2)}
 @media(max-width:1040px){.submenu{left:0;transform:translateY(-6px)}
-  .navitem:focus-within .submenu{transform:translateY(0)}}
+  .navitem:focus-within .submenu,.navitem.open .submenu{transform:translateY(0)}}
 
 /* ===== v3.5 fixes ===== */
 /* (a) position:sticky is dead inside an overflow:hidden ancestor, which is why the
@@ -1013,6 +1013,13 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
 .gcurtain p,.gcurtain li,.gcurtain b,.gcurtain span,.gcurtain label{font-size:19px}
 @media(max-width:720px){.gcurtain p,.gcurtain li,.gcurtain b,.gcurtain span,.gcurtain label{font-size:18px}}
 
+.partner-logos{display:flex;align-items:center;gap:18px;margin:0 auto 36px;flex-wrap:wrap}
+.partner-logos-label{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--sage);margin:0}
+.partner-logos-row{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.partner-logo{height:36px;display:flex;align-items:center}
+.partner-logo img{height:100%;width:auto;display:block;filter:grayscale(1);opacity:.85}
+.group-closing-photo{max-width:none;margin:0 0 var(--gsec,clamp(64px,8vw,96px));border-radius:2px;overflow:hidden}
+.group-closing-photo img{width:100%;height:clamp(260px,32vw,420px);object-fit:cover;display:block}
 .group-overview{padding:0 0 var(--gsec,clamp(64px,8vw,96px))}
 .group-intro.triad-body{max-width:70ch;margin:0 auto 40px;font-size:22px;line-height:1.65}
 .group-price-note{max-width:none;margin:0 auto 40px;color:var(--ink-soft);font-size:15px;font-style:italic;font-weight:600}

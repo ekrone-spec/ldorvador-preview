@@ -21,6 +21,13 @@
   "accommodation": "",
   "price_note": "",
   "hero_image": "",
+  "partner_logos": [
+    {
+      "name": "",
+      "image": ""
+    }
+  ],
+  "closing_image": "",
   "intro": "",
   "highlights": "",
   "included": "",
