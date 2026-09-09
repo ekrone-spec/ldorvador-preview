@@ -344,7 +344,7 @@ function emailButton(href, label) {
 </table>`;
 }
 
-async function sendInterestEmails(env, fields, groupCount, request) {
+async function sendInterestEmails(env, fields, groupCount, request, registrantOnly = false) {
   const { full_name, email, phone, travelers, room, beds, comments, group_slug, group_title, group_dates, contact_phone } = fields;
   const roomLine = room ? (beds ? `${room}, ${beds}` : room) : '';
   const firstName = (full_name || '').trim().split(/\s+/)[0] || full_name;
@@ -442,6 +442,10 @@ async function sendInterestEmails(env, fields, groupCount, request) {
     origin: emailOrigin,
   });
 
+  if (registrantOnly) {
+    const only = await Promise.allSettled([sendResendEmail(env, registrantPayload)]);
+    return only[0].status === 'fulfilled' && only[0].value;
+  }
   const results = await Promise.allSettled([
     sendResendEmail(env, registrantPayload),
     sendResendEmail(env, {
@@ -537,6 +541,16 @@ async function handleInterestPost(request, env, url) {
     .bind(emailLower, group_slug, dedupeStart)
     .all();
   if (dupeRows && dupeRows.length) {
+    // Repeat within the window: no new row, no internal notification, but the
+    // person still gets their confirmation (a resubmission is not spam; the
+    // IP rate limit above still caps volume).
+    if (env.RESEND_API_KEY) {
+      try {
+        await sendInterestEmails(env,
+          { full_name, email, phone, travelers, room, beds, comments, group_slug, group_title, group_dates, contact_phone },
+          0, request, true);
+      } catch (err) { console.error('Resend resend-on-duplicate failed', err); }
+    }
     return json({ ok: true }, 200);
   }
 
