@@ -1036,7 +1036,7 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
 .partner-logo img{height:36px;width:auto;display:block;filter:grayscale(1);opacity:.85}
 .partner-logo img[src$='.svg']{width:216px}
 .group-closing-photo{max-width:none;margin:0 0 var(--gsec,clamp(64px,8vw,96px));border-radius:2px;overflow:hidden}
-.group-closing-photo img{width:100%;height:clamp(260px,32vw,420px);object-fit:cover;display:block}
+.group-closing-photo img{width:100%;height:auto;display:block}
 .group-overview{padding:0 0 var(--gsec,clamp(64px,8vw,96px))}
 .group-intro.triad-body{max-width:70ch;margin:0 auto 40px;font-size:22px;line-height:1.65}
 .group-price-note{max-width:none;margin:0 auto 40px;color:var(--ink-soft);font-size:15px;font-style:italic;font-weight:600}
@@ -1112,7 +1112,7 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
 .gcurtain .gday-n{display:block;grid-column:1;grid-row:1;font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--sage)}
 .gcurtain .gday-t{display:block;grid-column:1;grid-row:2;font-family:var(--display);font-size:clamp(26px,2.4vw,34px);line-height:1.15;color:var(--blue);margin:8px 0 18px}
 .gcurtain .gday-sub{display:block;grid-column:1;font-family:var(--body);font-style:italic;font-size:15px;color:var(--ink-soft);margin:-10px 0 18px}
-.gday-body img{grid-column:2;grid-row:1/span 40;width:100%;height:clamp(260px,32vh,440px);object-fit:cover;border-radius:2px;align-self:start}
+.gday-body img{grid-column:2;grid-row:1/span 40;width:100%;height:auto;object-fit:contain;border-radius:2px;align-self:start}
 .gday-body p,.gday-body h4,.gday-body ul{grid-column:1;color:var(--ink-soft);max-width:70ch;margin-top:0}
 .gday-body p{font-size:19px;line-height:1.65}
 .gday-body h4{font-family:var(--display);font-weight:600;font-size:21px;color:var(--blue);margin:20px 0 4px}
@@ -1136,7 +1136,7 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
   .gcurtain .gday-n,.gcurtain .gday-t,.gcurtain .gday-sub,.gday-body p,.gday-body h4,.gday-body ul,
   .group-day:nth-of-type(even) .gday-n,.group-day:nth-of-type(even) .gday-t,.group-day:nth-of-type(even) .gday-sub,
   .group-day:nth-of-type(even) .gday-body p,.group-day:nth-of-type(even) .gday-body h4,.group-day:nth-of-type(even) .gday-body ul{grid-column:1;max-width:none}
-  .gday-body img,.group-day:nth-of-type(even) .gday-body img{grid-column:1;grid-row:3;height:220px;margin-bottom:14px}
+  .gday-body img,.group-day:nth-of-type(even) .gday-body img{grid-column:1;grid-row:3;height:auto;margin-bottom:14px}
   .gday-body p,.gday-body h4,.gday-body ul{grid-row:auto}
   .gcurtain .gday-t{font-size:26px}
 }

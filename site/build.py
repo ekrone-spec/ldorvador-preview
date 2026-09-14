@@ -878,21 +878,17 @@ def print_page(g, slug):
     CARD_IMG_W_PX = DAY_IMG_W_PX
     CARD_IMG_H_PX = DAY_IMG_H_PX
 
-    def day_groups_html(d):
-        """Render a day's `text` as heading+bullets groups, each wrapped so
-        it never breaks across a printed page (see render_day_text's
-        heading/`- bullet` convention)."""
+    def day_groups(d):
+        """Parse a day's `text` into heading+bullets groups (see
+        render_day_text's heading/`- bullet` convention)."""
         lines = str(d.get('text') or '').split('\n')
-        out = []
+        groups = []
         heading, cur_bullets = None, []
 
         def flush():
             if heading is None:
                 return
-            html = '<h4>%s</h4>' % md_links(_cesc(heading), web=False)
-            if cur_bullets:
-                html += '<ul>%s</ul>' % ''.join('<li>%s</li>' % md_links(_cesc(b), web=False) for b in cur_bullets)
-            out.append('<div class="p-day-group">%s</div>' % html)
+            groups.append((heading, cur_bullets[:]))
 
         for raw in lines:
             s = raw.strip()
@@ -904,7 +900,13 @@ def print_page(g, slug):
                 flush()
                 heading, cur_bullets = s, []
         flush()
-        return ''.join(out)
+        return groups
+
+    def _group_html(heading, bullet_list):
+        html = '<h4>%s</h4>' % md_links(_cesc(heading), web=False)
+        if bullet_list:
+            html += '<ul>%s</ul>' % ''.join('<li>%s</li>' % md_links(_cesc(b), web=False) for b in bullet_list)
+        return html
 
     def day_header(d, card=False):
         """The non-splittable top of a day: eyebrow, title, subtitle, photo."""
@@ -932,7 +934,30 @@ def print_page(g, slug):
             classes += ' day-break'
         if last:
             classes += ' day-last'
-        parts = ['<div class="%s">' % classes, day_header(d, card=card), day_groups_html(d)]
+        header_html = day_header(d, card=card)
+        groups = day_groups(d)
+        # The header travels together with the first heading + first bullet
+        # in one break-inside:avoid wrapper, so a day either starts with real
+        # content on a page or moves as a whole to the next page — never an
+        # orphaned header-only page. The rest of that first group's bullets,
+        # and every later group, render outside the wrapper so they can flow
+        # across a page break (each li still holds together on its own).
+        if groups:
+            first_heading, first_bullets = groups[0]
+            lead_bullets = first_bullets[:1]
+            rest_bullets = first_bullets[1:]
+            wrapper_html = ('<div class="p-day-header-group">%s%s</div>'
+                             % (header_html, _group_html(first_heading, lead_bullets)))
+            rest_parts = []
+            if rest_bullets:
+                rest_parts.append('<ul>%s</ul>' % ''.join(
+                    '<li>%s</li>' % md_links(_cesc(b), web=False) for b in rest_bullets))
+            for heading, bullet_list in groups[1:]:
+                rest_parts.append('<div class="p-day-group">%s</div>' % _group_html(heading, bullet_list))
+            groups_html = wrapper_html + ''.join(rest_parts)
+        else:
+            groups_html = '<div class="p-day-header-group">%s</div>' % header_html
+        parts = ['<div class="%s">' % classes, groups_html]
         meta = day_meta(d)
         if meta:
             parts.append('<p class="p-day-meta">%s</p>' % meta)
@@ -1022,7 +1047,7 @@ def print_page(g, slug):
         return ('<div class="host-full">%s<div class="host-full-copy"><h3>%s</h3><p class="host-role">%s</p>%s</div></div>'
                 % (portrait, name, role, bio_html))
 
-    guides_html = ''.join(guide_host_html(gd) for gd in guides)
+    guides_html = '<div class="p-guides-wrapper">%s</div>' % ''.join(guide_host_html(gd) for gd in guides)
 
     # ---- partner logos (cover strip, right side) ----
     def partner_logos_html():
@@ -1227,7 +1252,7 @@ def print_page(g, slug):
   .p-brand-compact,.p-brand-compact .brand{border:0!important}
   .sheet a{color:inherit;text-decoration:none}
 
-  .cover-text{position:absolute;left:0.6in;right:0.6in;bottom:1.5in;color:#fffdfa}
+  .cover-text{position:absolute;left:0.6in;right:0.6in;bottom:2.05in;color:#fffdfa}
   .cover-text .p-eyebrow.on-photo{color:rgba(255,253,250,.85)}
   .cover-text h1{font-size:40pt;color:#fffdfa;line-height:1.04;margin:.1em 0 .3em}
   .cover-congregation{margin:.25em 0 0}
@@ -1243,8 +1268,13 @@ def print_page(g, slug):
   .p-partner-logos{display:flex;align-items:center;gap:0.22in;flex:none}
   .p-partner-label{text-transform:uppercase;letter-spacing:.16em;font-size:7.5pt;font-weight:700;color:#7d9065;white-space:nowrap}
   .p-partner-row{display:flex;flex-direction:column;align-items:flex-start;gap:0.1in}
-  .p-partner-logo{display:block;width:1.7in}
-  .p-partner-logo img{width:100%%;height:auto;display:block;filter:grayscale(1)}
+  .p-partner-logo{display:block;height:.55in;width:auto;max-width:2.6in}
+  .p-partner-logo img{width:auto;height:100%%;display:block;filter:grayscale(1)}
+  /* the TBE mark's glyph + type are visually lighter (thin serif, pale
+     grey) than JCCPF's bold star + heavier type at the same box height,
+     so it reads smaller even though the boxes match — bump just this
+     logo's height to equalize visual mass without moving the strip. */
+  .p-partner-logo:first-child{height:.72in}
   .p-closing-photo{width:100%%;height:2.4in;overflow:hidden;margin:.35in 0 0;border-radius:2px;break-inside:avoid;page-break-inside:avoid}
   .p-closing-photo img{width:100%%;height:100%%;display:block;object-fit:cover}
 
@@ -1281,15 +1311,15 @@ def print_page(g, slug):
   .day{break-before:auto}
   .p-day-header{break-inside:avoid;page-break-inside:avoid;break-after:avoid;page-break-after:avoid}
   .p-day-header + h4,.p-day-header + h4 + ul{break-before:avoid;page-break-before:avoid}
+  .p-day-header-group{break-inside:avoid;page-break-inside:avoid}
   .day-flow-page h3{font-size:16.5pt;margin-bottom:.08em}
   .p-day-sub{font-family:var(--body);font-style:italic;font-size:10.5pt;color:#8a8270;margin:0 0 .3em}
   .p-day-photo{width:100%%;height:2.4in;overflow:hidden;margin:.1em 0 .2em;border-radius:2px;break-inside:avoid;page-break-inside:avoid}
   .p-day-photo img{width:100%%;height:100%%;display:block;object-fit:cover}
-  .p-day-group{break-inside:avoid;page-break-inside:avoid}
   .day-flow-page h4{font-size:12pt;font-family:var(--display);font-weight:600;color:#282819;margin:.9em 0 .2em}
   .day-flow-page h4:first-of-type{margin-top:.05em}
   .day-flow-page ul{list-style:none;margin:0 0 .1em;padding:0}
-  .day-flow-page li{position:relative;padding-left:1em;margin:.22em 0;font-size:10.5pt;line-height:1.5;color:#555a45}
+  .day-flow-page li{position:relative;padding-left:1em;margin:.22em 0;font-size:10.5pt;line-height:1.5;color:#555a45;break-inside:avoid;page-break-inside:avoid}
   .day-flow-page li::before{content:'';position:absolute;left:0;top:.55em;width:4px;height:4px;background:#7d9065;border-radius:50%%}
   .p-day-meta{font-family:var(--body);font-size:10.5pt;color:#8a8270;margin-top:.3em;margin-bottom:.5em}
   /* one rule set for EVERY day (feature and cards alike): same eyebrow, title, subtitle,
@@ -1309,7 +1339,7 @@ def print_page(g, slug):
   .day-flow-page h3,.day1-feature h3,.day-card h3,.day-card-solo h3{font-size:16.5pt;font-family:var(--display);font-weight:600;color:#282819;margin:0 0 .08em}
   .day1-feature .p-eyebrow-sm,.day-card .p-eyebrow-sm{font-size:9pt;letter-spacing:.18em;color:#7d9065;margin:0 0 .3em}
   .p-hosts{break-before:page;page-break-before:always;break-after:avoid;margin:0;padding:0;font-size:10.5pt;height:9.5in;overflow:visible}
-  .hosts-full-list{column-count:2;column-gap:.3in;column-fill:auto;height:9.3in}
+  .hosts-full-list{display:grid;grid-template-columns:1fr 1fr;column-gap:.3in;height:9.3in}
   .host-full{break-inside:auto}
   .p-hosts p{font-size:10.5pt;line-height:1.4;color:#555a45;margin:.2em 0}
   .p-hosts .host-full-portrait{width:.9in;height:.9in;margin:0 .18in .08in 0}
@@ -1327,8 +1357,8 @@ def print_page(g, slug):
   .p-hosts .p-eyebrow{break-after:avoid}
 
   /* ---- hosts: full bios, each never split (but the two hosts can) ---- */
-  .hosts-full-list{display:block;margin-bottom:.3in}
-  .hosts-full-list > * + *{margin-top:.25in}
+  .hosts-full-list{margin-bottom:.3in}
+  .p-guides-wrapper > * + *{margin-top:.25in}
   .host-full{display:block;break-inside:auto}
   .host-full-portrait{float:left;margin:0 .35in .15in 0}
   .host-full::after{content:'';display:table;clear:both}
