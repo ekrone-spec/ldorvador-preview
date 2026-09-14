@@ -27,7 +27,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -73,6 +73,7 @@
 "5|video|id=|class=hero-video|attrs=autoplay,class,data-src,muted,playsinline,preload|refs=/assets/vid/hero-1-surf.mp4",
 "5|video|id=|class=hero-video|attrs=autoplay,class,data-src,muted,playsinline,preload|refs=/assets/vid/hero-2-bay.mp4",
 "5|video|id=|class=hero-video|attrs=autoplay,class,data-src,muted,playsinline,preload|refs=/assets/vid/hero-3-bethhaim.mp4",
+"4|script|id=|class=|attrs=|refs=",
 "4|div|id=|class=hero-inner|attrs=class|refs=",
 "5|div|id=|class=hero-title|attrs=class|refs=",
 "6|h1|id=|class=|attrs=|refs=",
@@ -457,7 +458,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=bf1c22a2ca"
 ],
 "history.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -487,7 +488,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -609,7 +610,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=bf1c22a2ca"
 ],
 "story.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -639,7 +640,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -751,7 +752,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=bf1c22a2ca"
 ],
 "itinerary.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -781,7 +782,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -903,7 +904,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=bf1c22a2ca"
 ],
 "privacy.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -933,7 +934,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -1025,7 +1026,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=bf1c22a2ca"
 ],
 "es/index.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -1055,7 +1056,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -1101,6 +1102,7 @@
 "5|video|id=|class=hero-video|attrs=autoplay,class,data-src,muted,playsinline,preload|refs=/assets/vid/hero-1-surf.mp4",
 "5|video|id=|class=hero-video|attrs=autoplay,class,data-src,muted,playsinline,preload|refs=/assets/vid/hero-2-bay.mp4",
 "5|video|id=|class=hero-video|attrs=autoplay,class,data-src,muted,playsinline,preload|refs=/assets/vid/hero-3-bethhaim.mp4",
+"4|script|id=|class=|attrs=|refs=",
 "4|div|id=|class=hero-inner|attrs=class|refs=",
 "5|div|id=|class=hero-title|attrs=class|refs=",
 "6|h1|id=|class=|attrs=|refs=",
@@ -1485,7 +1487,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
 ],
 "es/history.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -1515,7 +1517,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -1637,7 +1639,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
 ],
 "es/story.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -1667,7 +1669,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -1779,7 +1781,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
 ],
 "es/itinerary.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -1809,7 +1811,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -1931,7 +1933,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
 ],
 "es/privacy.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -1961,7 +1963,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -2053,7 +2055,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
 ],
 "nl/index.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -2083,7 +2085,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -2129,6 +2131,7 @@
 "5|video|id=|class=hero-video|attrs=autoplay,class,data-src,muted,playsinline,preload|refs=/assets/vid/hero-1-surf.mp4",
 "5|video|id=|class=hero-video|attrs=autoplay,class,data-src,muted,playsinline,preload|refs=/assets/vid/hero-2-bay.mp4",
 "5|video|id=|class=hero-video|attrs=autoplay,class,data-src,muted,playsinline,preload|refs=/assets/vid/hero-3-bethhaim.mp4",
+"4|script|id=|class=|attrs=|refs=",
 "4|div|id=|class=hero-inner|attrs=class|refs=",
 "5|div|id=|class=hero-title|attrs=class|refs=",
 "6|h1|id=|class=|attrs=|refs=",
@@ -2513,7 +2516,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
 ],
 "nl/history.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -2543,7 +2546,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -2665,7 +2668,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
 ],
 "nl/story.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -2695,7 +2698,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -2807,7 +2810,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
 ],
 "nl/itinerary.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -2837,7 +2840,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -2959,7 +2962,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
 ],
 "nl/privacy.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -2989,7 +2992,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -3081,7 +3084,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
 ],
 "he/index.html": [
 "0|html|id=|class=|attrs=dir,lang|refs=",
@@ -3111,7 +3114,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -3157,6 +3160,7 @@
 "5|video|id=|class=hero-video|attrs=autoplay,class,data-src,muted,playsinline,preload|refs=/assets/vid/hero-1-surf.mp4",
 "5|video|id=|class=hero-video|attrs=autoplay,class,data-src,muted,playsinline,preload|refs=/assets/vid/hero-2-bay.mp4",
 "5|video|id=|class=hero-video|attrs=autoplay,class,data-src,muted,playsinline,preload|refs=/assets/vid/hero-3-bethhaim.mp4",
+"4|script|id=|class=|attrs=|refs=",
 "4|div|id=|class=hero-inner|attrs=class|refs=",
 "5|div|id=|class=hero-title hero-title-he|attrs=class|refs=",
 "6|h1|id=|class=heb-hero|attrs=class,dir,lang|refs=",
@@ -3539,7 +3543,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
 ],
 "he/history.html": [
 "0|html|id=|class=|attrs=dir,lang|refs=",
@@ -3569,7 +3573,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -3691,7 +3695,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
 ],
 "he/story.html": [
 "0|html|id=|class=|attrs=dir,lang|refs=",
@@ -3721,7 +3725,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -3833,7 +3837,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
 ],
 "he/itinerary.html": [
 "0|html|id=|class=|attrs=dir,lang|refs=",
@@ -3863,7 +3867,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -3985,7 +3989,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
 ],
 "he/privacy.html": [
 "0|html|id=|class=|attrs=dir,lang|refs=",
@@ -4015,7 +4019,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -4107,7 +4111,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
 ],
 "groups/index.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -4117,7 +4121,7 @@
 "2|meta|id=|class=|attrs=content,name|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
 "2|header|id=header|class=header-solid|attrs=class,id|refs=",
@@ -4192,7 +4196,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
 ],
 "groups/temple-beth-elohim/index.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -4203,7 +4207,7 @@
 "2|meta|id=|class=|attrs=content,name|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../../assets/app.css?v=c44ffcfe45",
+"2|link|id=|class=|attrs=href,rel|refs=../../assets/app.css?v=bf1c22a2ca",
 "2|script|id=|class=|attrs=async,defer,src|refs=https://challenges.cloudflare.com/turnstile/v0/api.js",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -4624,6 +4628,6 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../../assets/app.js?v=c44ffcfe45"
+"2|script|id=|class=|attrs=defer,src|refs=../../assets/app.js?v=bf1c22a2ca"
 ]
 }

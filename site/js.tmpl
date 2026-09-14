@@ -218,6 +218,7 @@ if(mapwrap){
     window.addEventListener('scroll', again, {once:true, passive:true});
     cancelRetry=cleanup;
   }
+  var firstRevealDone=false;
   function reveal(n){
     var v=vids[n];
     try{ v.currentTime=0; }catch(e){}      // always enter on the first frame
@@ -226,7 +227,17 @@ if(mapwrap){
          here, after play() has actually succeeded, so a paused video (and the
          play icon browsers draw on one) can never be on screen. */
       vids.forEach(function(o,k){ o.style.zIndex = (k===n) ? 2 : 1; });
+      var fastFirst = (n===0 && !firstRevealDone);
+      if(fastFirst){
+        // The very first reveal replaces the poster still, so a quick fade
+        // reads as fast; later cross-fades keep the slower CSS transition.
+        v.style.transition='opacity .5s ease-out';
+      }
       v.classList.add('on');                // only the incoming animates
+      if(fastFirst){
+        firstRevealDone=true;
+        setTimeout(function(){ v.style.transition=''; }, 500);
+      }
       setTimeout(function(){                // retire the others once it is covered
         vids.forEach(function(o,k){
           if(k!==n){ o.classList.remove('on'); o.pause(); }

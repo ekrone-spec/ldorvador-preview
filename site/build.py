@@ -59,6 +59,32 @@ for fn in os.listdir(os.path.join(D, 'assets', 'img')):
 import hashlib as _h
 VER = _h.md5((R('css.tmpl') + R('js.tmpl')).encode()).hexdigest()[:10]
 
+# ---- hero warm-up: fetch the first hero clip at HTML-parse time, before the
+# deferred app.js even runs, so the video (not the poster still) is what the
+# very first paint settles on. Mirrors eligible()/load() in js.tmpl exactly.
+# Kept as one Python constant so the byte-identical text is what gets both
+# embedded on the page and hashed for the CSP allowlist below - it can never
+# drift between the two. __HERO_WARM_SCRIPT__ in home.body.html is the same
+# markup on every locale page (i18n.translate skips <script> contents), so
+# one hash covers en/es/nl/he alike.
+HERO_WARM_JS = (
+    "(function(){"
+    "var b=document.currentScript.previousElementSibling;"
+    "if(!b||!b.classList||!b.classList.contains('hero-videos'))return;"
+    "var v=b.querySelector('.hero-video');"
+    "if(!v)return;"
+    "if(window.matchMedia('(prefers-reduced-motion:reduce)').matches)return;"
+    "var w=window.innerWidth||document.documentElement.clientWidth||0;"
+    "if(w<820)return;"
+    "var c=navigator.connection||{};"
+    "if(c.saveData||/(^|-)2g$/.test(c.effectiveType||''))return;"
+    "v.dataset.loaded='1';v.preload='auto';v.src=v.getAttribute('data-src');v.load();"
+    "})();"
+)
+HERO_WARM_TAG = '<script>%s</script>' % HERO_WARM_JS
+HERO_INLINE_HASH = "'sha256-%s'" % base64.b64encode(
+    _h.sha256(HERO_WARM_JS.encode()).digest()).decode()
+
 css_raw = R('css.tmpl').replace('/*__FONTS__*/', fonts)   # keeps __IMG_ tokens
 css = css_raw
 for k, v in imgmap.items():                                # app.css sits in /assets/
@@ -334,7 +360,8 @@ for code in LOCALES:
         body = R(BODY[page])
         body = (body.replace('__HEADER__', header)
                     .replace('__FOOTER__', footer)
-                    .replace('__DISCOVER__', discover))
+                    .replace('__DISCOVER__', discover)
+                    .replace('__HERO_WARM_SCRIPT__', HERO_WARM_TAG))
         body = fill_content(body)
         body = body.replace('__WEB3FORMS_KEY__',
                             os.environ.get('WEB3FORMS_KEY', 'b650cfb7-2868-422a-8d34-553c7674e073'))
@@ -1399,7 +1426,8 @@ def datauri(path):
     return 'data:%s;base64,%s' % (mt, base64.b64encode(open(os.path.join(D, path), 'rb').read()).decode())
 
 body = fill_content(R('home.body.html').replace('__HEADER__', header).replace('__FOOTER__', footer)
-        .replace('__DISCOVER__', discover)).replace('__LANGNAV__', langnav('en', 'index.html', TRANS['en']))
+        .replace('__DISCOVER__', discover).replace('__HERO_WARM_SCRIPT__', HERO_WARM_TAG)
+        ).replace('__LANGNAV__', langnav('en', 'index.html', TRANS['en']))
 css_self = css_raw
 for tok, rel in imgmap.items():
     css_self = css_self.replace(tok, datauri(rel))
@@ -1419,8 +1447,11 @@ W('_headers', '''/*
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; media-src 'self'; connect-src 'self' https://api.web3forms.com https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'
-''')
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com %s; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; media-src 'self'; connect-src 'self' https://api.web3forms.com https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; form-action 'self' https://api.web3forms.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'
+
+/assets/vid/*
+  Cache-Control: public, max-age=31536000, immutable
+''' % HERO_INLINE_HASH)
 def _listed_slugs():
     gdir = os.path.join(D, 'content', 'groups')
     out = []
