@@ -9,6 +9,21 @@ match inside a longer one.
 import html, re
 from html.parser import HTMLParser
 
+_MD_LINK_RE = re.compile(r'\[([^\]]+)\]\((https?://[^\s)]+|mailto:[^\s)]+|/[^\s)]+)\)')
+
+
+def _md_links(s):
+    """Mirror of build.py's md_links: convert Markdown-style `[text](url)`
+    into an <a> tag in already-escaped text. Only body-text runs go through
+    this (never attribute values), and this module only ever produces web
+    pages, so external links always open in a new tab."""
+    def repl(m):
+        text, url = m.group(1), m.group(2)
+        if url.startswith('http://') or url.startswith('https://'):
+            return '<a href="%s" target="_blank" rel="noopener">%s</a>' % (url, text)
+        return '<a href="%s">%s</a>' % (url, text)
+    return _MD_LINK_RE.sub(repl, s)
+
 
 def _esc(s):
     """Escape a replacement value for insertion into markup."""
@@ -52,7 +67,7 @@ class _Walk(HTMLParser):
         if new is None or new == key:
             self.buf.append(raw)          # untouched: keep original entity forms
         else:
-            self.buf.append(lead + _esc(new) + tail)
+            self.buf.append(lead + _md_links(_esc(new)) + tail)
 
     def handle_data(self, d):
         self.run.append(d)

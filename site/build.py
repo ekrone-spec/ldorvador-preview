@@ -108,6 +108,25 @@ def _cesc(s):
     s = re.sub(r'\r?\n', '<br>', s)
     return s
 
+_MD_LINK_RE = re.compile(r'\[([^\]]+)\]\((https?://[^\s)]+|mailto:[^\s)]+|/[^\s)]+)\)')
+
+def md_links(s, web=True):
+    """Convert Markdown-style `[text](url)` into an <a> tag, after HTML
+    escaping (so `s` is already-escaped markup, e.g. from _cesc). Only
+    fires for a url starting with http://, https://, mailto: or / — anything
+    else is left as literal text. External http(s) links open in a new tab
+    on the web; print output never carries a target attribute."""
+    if not s:
+        return s
+
+    def repl(m):
+        text, url = m.group(1), m.group(2)
+        if web and (url.startswith('http://') or url.startswith('https://')):
+            return '<a href="%s" target="_blank" rel="noopener">%s</a>' % (url, text)
+        return '<a href="%s">%s</a>' % (url, text)
+
+    return _MD_LINK_RE.sub(repl, s)
+
 CONTENT = {}
 cdir = os.path.join(D, 'content')
 for fn in sorted(os.listdir(cdir)):
@@ -117,7 +136,10 @@ for fn in sorted(os.listdir(cdir)):
     data = json.load(open(os.path.join(cdir, fn), encoding='utf-8'))
     for group, fields in data.items():
         for field, text in fields.items():
-            CONTENT['__C_%s.%s.%s__' % (page, group, field)] = _cesc(text)
+            esc = _cesc(text)
+            if not field.startswith('text_alt'):
+                esc = md_links(esc, web=True)
+            CONTENT['__C_%s.%s.%s__' % (page, group, field)] = esc
 
 def _drop_empties(body):
     """Cleared fields leave hollow markup behind. Strip empty inline wrappers
@@ -359,7 +381,7 @@ def render_day_text(text):
 
     def flush():
         if bullets:
-            out.append('<ul>%s</ul>' % ''.join('<li>%s</li>' % _cesc(b) for b in bullets))
+            out.append('<ul>%s</ul>' % ''.join('<li>%s</li>' % md_links(_cesc(b)) for b in bullets))
             bullets.clear()
 
     for raw in lines:
@@ -370,7 +392,7 @@ def render_day_text(text):
             bullets.append(s[2:].strip())
         else:
             flush()
-            out.append('<h4>%s</h4>' % _cesc(s))
+            out.append('<h4>%s</h4>' % md_links(_cesc(s)))
     flush()
     return ''.join(out)
 
@@ -408,7 +430,7 @@ def build_groups():
             items = [ln.strip() for ln in str(raw).split('\n') if ln.strip()]
             if not items:
                 return ''
-            return '<ul>%s</ul>' % ''.join('<li>%s</li>' % _cesc(it) for it in items)
+            return '<ul>%s</ul>' % ''.join('<li>%s</li>' % md_links(_cesc(it)) for it in items)
 
         def gimg(path):
             return ('../../' + path.lstrip('/')) if path else ''
@@ -518,7 +540,7 @@ def build_groups():
             items = [ln.strip() for ln in str(raw).split('\n') if ln.strip()]
             if not items:
                 return ''
-            lis = ''.join('<li>%s</li>' % _cesc(it) for it in items)
+            lis = ''.join('<li>%s</li>' % md_links(_cesc(it)) for it in items)
             return ('<section class="group-notes"><h3>Program Notes</h3><ul>%s</ul></section>'
                     % lis)
 
@@ -555,15 +577,15 @@ def build_groups():
             '__G_DATES__':       gv('dates'),
             '__G_DURATION__':    gv('duration'),
             '__G_GROUP_SIZE__':  gv('group_size'),
-            '__G_PRICE_NOTE__':  gv('price_note'),
+            '__G_PRICE_NOTE__':  md_links(gv('price_note')),
             '__G_HERO_IMAGE__':  '../../' + (g.get('hero_image') or ''),
-            '__G_INTRO__':       gv('intro'),
+            '__G_INTRO__':       md_links(gv('intro')),
             '__G_START_FINISH__': gv('start_finish'),
             '__G_PACE__':        gv('pace'),
             '__G_ACCOMMODATION__': gv('accommodation'),
             '__G_CONTACT_PHONE__': gv('contact_phone'),
-            '__G_FORM_INTRO__':  gv('form_intro'),
-            '__G_NOTIFY_NOTE__': gv('notify_note'),
+            '__G_FORM_INTRO__':  md_links(gv('form_intro')),
+            '__G_NOTIFY_NOTE__': md_links(gv('notify_note')),
             '__G_INCLUDED_LIST__':     bullets('included'),
             '__G_NOT_INCLUDED_LIST__': bullets('not_included'),
             '__G_NOTES_BLOCK__':       notes_block(),
@@ -793,7 +815,7 @@ def print_page(g, slug):
         if not raw:
             return ''
         items = [ln.strip() for ln in str(raw).split('\n') if ln.strip()]
-        return ''.join('<li>%s</li>' % _cesc(it) for it in items)
+        return ''.join('<li>%s</li>' % md_links(_cesc(it), web=False) for it in items)
 
     title = pv('title')
     congregation = pv('congregation')
@@ -804,11 +826,11 @@ def print_page(g, slug):
     hero = pimg(print_image(g.get('hero_image'), 1275, 1650))
     # full copy: every intro paragraph runs on page 2, not just the first two
     intro_paras = [ln for ln in str(g.get('intro') or '').split('\n') if ln.strip()]
-    intro = ''.join('<p>%s</p>' % _cesc(ln) for ln in intro_paras)
+    intro = ''.join('<p>%s</p>' % md_links(_cesc(ln), web=False) for ln in intro_paras)
     page_url = '%s/groups/%s/' % (SITE, slug)
     contact_email = pv('contact_email') or 'connect@ldorvadortravel.com'
     contact_phone = pv('contact_phone')
-    price_note = pv('price_note')
+    price_note = md_links(pv('price_note'), web=False)
 
     glance_items = ''.join(
         '<div class="glance-item"><span class="gl-label">%s</span><span class="gl-value">%s</span></div>'
@@ -867,9 +889,9 @@ def print_page(g, slug):
         def flush():
             if heading is None:
                 return
-            html = '<h4>%s</h4>' % _cesc(heading)
+            html = '<h4>%s</h4>' % md_links(_cesc(heading), web=False)
             if cur_bullets:
-                html += '<ul>%s</ul>' % ''.join('<li>%s</li>' % _cesc(b) for b in cur_bullets)
+                html += '<ul>%s</ul>' % ''.join('<li>%s</li>' % md_links(_cesc(b), web=False) for b in cur_bullets)
             out.append('<div class="p-day-group">%s</div>' % html)
 
         for raw in lines:
@@ -954,22 +976,35 @@ def print_page(g, slug):
     days_html = day1_html + ''.join(day_rows)
 
     # ---- hosts (full bios, own page) ----
+    # Per-trip overrides for the PDF-only host block (cover led-cell + Hosts
+    # page), each falling back to the site-wide story bio when unset.
     hannah = _story_bios()
+    host_name_raw = str(g.get('host_name') or '').strip() or hannah['name']
+    host_title_override = str(g.get('host_title') or '').strip()
+    host_image_raw = str(g.get('host_image') or '').strip() or 'assets/img/hannah.jpg'
+    host_bio_raw = str(g.get('host_bio') or '').strip()
+    host_full_paras = ([ln for ln in host_bio_raw.split('\n') if ln.strip()]
+                        if host_bio_raw else hannah['full_paras'])
+    # The site-wide default title differs between the cover led-cell ("the
+    # company") and the Hosts page (her bio's role/title) - an override
+    # applies to both, but each falls back to its own existing default.
+    host_cover_title_raw = host_title_override or 'L’Dor Vador Travel'
+    host_page_title_raw = host_title_override or hannah['role']
 
-    def host_block(h, img):
-        paras = ''.join('<p>%s</p>' % _cesc(p) for p in h['full_paras'])
+    def host_block(name, role, paras_list, img):
+        paras = ''.join('<p>%s</p>' % md_links(_cesc(p), web=False) for p in paras_list)
         cropped = print_image(img, 260, 260, top=True)
         return ('<div class="host-full"><div class="host-full-portrait"><img src="../../%s" alt=""></div>'
                 '<div class="host-full-copy"><h3>%s</h3><p class="host-role">%s</p>%s</div></div>'
-                % (cropped, _cesc(h['name']), _cesc(h['role']), paras))
+                % (cropped, _cesc(name), _cesc(role), paras))
 
-    hannah_html = host_block(hannah, 'assets/img/hannah.jpg')
+    hannah_html = host_block(host_name_raw, host_page_title_raw, host_full_paras, host_image_raw)
 
     def about_company_html():
         text = str(g.get('about_company') or '').strip()
         if not text:
             return ''
-        paras = ''.join('<p>%s</p>' % _cesc(ln) for ln in text.split('\n') if ln.strip())
+        paras = ''.join('<p>%s</p>' % md_links(_cesc(ln), web=False) for ln in text.split('\n') if ln.strip())
         return ('<div class="host-full host-about"><div class="host-full-copy">'
                 '<h3>About L&rsquo;Dor Vador Travel</h3>%s</div></div>' % paras)
 
@@ -977,7 +1012,7 @@ def print_page(g, slug):
         name = _cesc(gd['name'])
         role = _cesc(gd.get('hosts_role') or gd['role'])
         bio = str(gd.get('bio') or '').strip()
-        bio_html = ''.join('<p>%s</p>' % _cesc(ln) for ln in bio.split('\n') if ln.strip())
+        bio_html = ''.join('<p>%s</p>' % md_links(_cesc(ln), web=False) for ln in bio.split('\n') if ln.strip())
         img = gd.get('image')
         if img:
             cropped = print_image(img, 260, 260, top=True)
@@ -1022,7 +1057,7 @@ def print_page(g, slug):
         items = [ln.strip() for ln in str(raw).split('\n') if ln.strip()]
         if not items:
             return ''
-        lis = ''.join('<li>%s</li>' % _cesc(it) for it in items)
+        lis = ''.join('<li>%s</li>' % md_links(_cesc(it), web=False) for it in items)
         return ('<div class="p-notes"><p class="p-eyebrow">Program Notes</p>'
                 '<ul class="p-notes-list">%s</ul></div>' % lis)
 
@@ -1041,8 +1076,8 @@ def print_page(g, slug):
                 % (p, name, role))
 
     led_cells = [led_cell(
-        '../../%s' % print_image('assets/img/hannah.jpg', 120, 120, top=True),
-        'Hannah Berkeley Cohen', 'L&rsquo;Dor Vador Travel')]
+        '../../%s' % print_image(host_image_raw, 120, 120, top=True),
+        _cesc(host_name_raw), _cesc(host_cover_title_raw))]
     for gd in guides:
         portrait = (pimg(print_image(gd['image'], 120, 120, top=True))
                     if gd.get('image') else '')
@@ -1160,6 +1195,7 @@ def print_page(g, slug):
 
   /* ---- continuous flow: everything after the cover, natural pagination ---- */
   .flow{padding:0.7in 0.7in 0.8in;-webkit-box-decoration-break:clone;box-decoration-break:clone;background:#fff9f3}
+  .flow a{color:inherit;text-decoration:underline;text-decoration-color:rgba(85,90,69,.4)}
 
   .p-eyebrow{text-transform:uppercase;letter-spacing:.2em;font-size:9pt;font-weight:700;color:#7d9065;font-family:var(--body);margin:0 0 .5em}
   .p-eyebrow-sm{text-transform:uppercase;letter-spacing:.2em;font-size:9pt;font-weight:700;color:#7d9065;font-family:var(--body);margin:0 0 .3em}
@@ -1282,6 +1318,8 @@ def print_page(g, slug):
   .p-final{break-before:page;page-break-before:always;font-size:10.5pt;margin:0;padding:0}
   .p-final .p-cols,.p-final .p-notes,.p-final .p-closing{break-inside:avoid;page-break-inside:avoid}
   .p-final .included-cols{margin-top:0;padding-top:0}
+  .p-final > * + *{margin-top:.35in}
+  .p-final .host-about{border-top:1px solid #ebe1d1;padding-top:.35in}
   .p-final li,.p-final p{font-size:10.5pt;line-height:1.4;color:#555a45}
   .p-final .p-eyebrow{margin-bottom:.3em}
   .p-final li{margin:.12em 0}

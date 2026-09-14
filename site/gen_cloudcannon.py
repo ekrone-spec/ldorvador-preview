@@ -25,6 +25,10 @@ GROUPTRIP_FIELD_LABEL = {
     'subtitle': 'Subtitle',
     'congregation': 'Congregation',
     'guides': 'Guides / leaders',
+    'host_name': 'Host name (PDF only; blank = Hannah Berkeley Cohen)',
+    'host_title': "Host title on the PDF cover and Hosts page (blank = site default)",
+    'host_image': 'Host photo (PDF only; blank = site photo)',
+    'host_bio': 'Host bio for this trip (PDF only; blank = website bio)',
     'about_company': "About L'Dor Vador Travel (PDF hosts page)",
     'dates': 'Dates',
     'duration': 'Duration',
@@ -52,8 +56,9 @@ GROUPTRIP_FIELD_LABEL = {
     'published': 'Published',
     'listed': 'Show in the public menu / Group Journeys list',
 }
-GROUPTRIP_TEXTAREA = {'intro', 'highlights', 'included', 'not_included', 'notes', 'form_intro', 'notify_note', 'about_company'}
+GROUPTRIP_TEXTAREA = {'intro', 'highlights', 'included', 'not_included', 'notes', 'form_intro', 'notify_note', 'about_company', 'host_bio'}
 GROUPTRIP_COMMENT = {
+    'host_bio': 'Blank line between paragraphs.',
     'highlights': 'One item per line',
     'included': 'One item per line',
     'not_included': 'One item per line',
@@ -213,13 +218,15 @@ collections_config:
       text:
         type: textarea
         label: 'Text'
-        comment: 'One item per line. A line with NO leading "- " becomes a bold sub-heading (e.g. "Mongui Maduro Historic House"); lines starting with "- " become bullet points under the heading above them. Leave a blank line between groups. Do not put "Overnight …" here — use the Overnight location / Meals fields below.'
+        comment: 'One item per line. A line with NO leading "- " becomes a bold sub-heading (e.g. "Mongui Maduro Historic House"); lines starting with "- " become bullet points under the heading above them. Leave a blank line between groups. Do not put "Overnight …" here — use the Overnight location / Meals fields below. Links: [text](https://example.com)'
       summary:
         type: textarea
         label: 'Short summary (used in the PDF)'
+        comment: 'Links: [text](https://example.com)'
       bio:
         type: textarea
         label: 'Bio (optional, shown on the PDF hosts page)'
+        comment: 'Links: [text](https://example.com)'
       intro:
         type: textarea
         label: 'Intro'
@@ -324,10 +331,11 @@ _structures:
           text:
             type: textarea
             label: 'Day description'
-            comment: 'One item per line. A line with NO leading "- " becomes a bold sub-heading (e.g. "Mongui Maduro Historic House"); lines starting with "- " become bullet points under the heading above them. Leave a blank line between groups. Do not put "Overnight …" here — use the Overnight location / Meals fields below.'
+            comment: 'One item per line. A line with NO leading "- " becomes a bold sub-heading (e.g. "Mongui Maduro Historic House"); lines starting with "- " become bullet points under the heading above them. Leave a blank line between groups. Do not put "Overnight …" here — use the Overnight location / Meals fields below. Links: [text](https://example.com)'
           summary:
             type: textarea
             label: 'Short summary (used in the PDF)'
+            comment: 'Links: [text](https://example.com)'
           image:
             type: image
             label: 'Day photo (optional)'
@@ -363,6 +371,7 @@ _structures:
           text:
             type: textarea
             label: 'Vignette copy'
+            comment: 'Links: [text](https://example.com)'
           image:
             type: image
             label: 'Vignette photo'
@@ -390,6 +399,7 @@ _structures:
           bio:
             type: textarea
             label: 'Bio (optional, shown on the PDF hosts page)'
+            comment: 'Links: [text](https://example.com)'
   partner_logo:
     values:
       - value:
@@ -435,6 +445,8 @@ for page, data in finputs:
             fc.append('        type: %s' % comp)
             fc.append('        label: %s' % yq(flabel(field)))
             c = fcomment(text)
+            if comp == 'textarea' and not field.startswith('text_alt'):
+                c = (c + ' Links: [text](https://example.com)') if c else 'Links: [text](https://example.com)'
             if c:
                 fc.append('        comment: %s' % yq(c))
 
@@ -445,7 +457,7 @@ fc.append('  - glob: content/groups/*.json')
 fc.append('    _inputs:')
 for field, label in GROUPTRIP_FIELD_LABEL.items():
     fc.append('      %s:' % field)
-    if field == 'hero_image':
+    if field in ('hero_image', 'host_image'):
         fc.append('        type: image')
     elif field == 'itinerary':
         fc.append('        type: array')
@@ -476,7 +488,11 @@ for field, label in GROUPTRIP_FIELD_LABEL.items():
     else:
         fc.append('        type: text')
     fc.append('        label: %s' % yq(label))
-    if field in GROUPTRIP_COMMENT:
+    if field in GROUPTRIP_TEXTAREA:
+        comment = GROUPTRIP_COMMENT.get(field)
+        comment = (comment + ' Links: [text](https://example.com)') if comment else 'Links: [text](https://example.com)'
+        fc.append('        comment: %s' % yq(comment))
+    elif field in GROUPTRIP_COMMENT:
         fc.append('        comment: %s' % yq(GROUPTRIP_COMMENT[field]))
 
 open(os.path.join(D, '..', 'cloudcannon.config.yml'), 'w', encoding='utf-8').write(

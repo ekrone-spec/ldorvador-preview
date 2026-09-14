@@ -103,13 +103,15 @@ collections_config:
       text:
         type: textarea
         label: 'Text'
-        comment: 'One item per line. A line with NO leading "- " becomes a bold sub-heading (e.g. "Mongui Maduro Historic House"); lines starting with "- " become bullet points under the heading above them. Leave a blank line between groups. Do not put "Overnight …" here — use the Overnight location / Meals fields below.'
+        comment: 'One item per line. A line with NO leading "- " becomes a bold sub-heading (e.g. "Mongui Maduro Historic House"); lines starting with "- " become bullet points under the heading above them. Leave a blank line between groups. Do not put "Overnight …" here — use the Overnight location / Meals fields below. Links: [text](https://example.com)'
       summary:
         type: textarea
         label: 'Short summary (used in the PDF)'
+        comment: 'Links: [text](https://example.com)'
       bio:
         type: textarea
         label: 'Bio (optional, shown on the PDF hosts page)'
+        comment: 'Links: [text](https://example.com)'
       intro:
         type: textarea
         label: 'Intro'
@@ -214,10 +216,11 @@ _structures:
           text:
             type: textarea
             label: 'Day description'
-            comment: 'One item per line. A line with NO leading "- " becomes a bold sub-heading (e.g. "Mongui Maduro Historic House"); lines starting with "- " become bullet points under the heading above them. Leave a blank line between groups. Do not put "Overnight …" here — use the Overnight location / Meals fields below.'
+            comment: 'One item per line. A line with NO leading "- " becomes a bold sub-heading (e.g. "Mongui Maduro Historic House"); lines starting with "- " become bullet points under the heading above them. Leave a blank line between groups. Do not put "Overnight …" here — use the Overnight location / Meals fields below. Links: [text](https://example.com)'
           summary:
             type: textarea
             label: 'Short summary (used in the PDF)'
+            comment: 'Links: [text](https://example.com)'
           image:
             type: image
             label: 'Day photo (optional)'
@@ -253,6 +256,7 @@ _structures:
           text:
             type: textarea
             label: 'Vignette copy'
+            comment: 'Links: [text](https://example.com)'
           image:
             type: image
             label: 'Vignette photo'
@@ -280,6 +284,7 @@ _structures:
           bio:
             type: textarea
             label: 'Bio (optional, shown on the PDF hosts page)'
+            comment: 'Links: [text](https://example.com)'
   partner_logo:
     values:
       - value:
@@ -321,7 +326,7 @@ file_config:
       discover.p_5:
         type: textarea
         label: "Paragraph 5"
-        comment: "Originally: “A UNESCO World Heritage city known for its colorful architecture, hist…”"
+        comment: "Originally: “A UNESCO World Heritage city known for its colorful architecture, hist…” Links: [text](https://example.com)"
       discover.span_1:
         type: text
         label: "Small text 1"
@@ -349,7 +354,7 @@ file_config:
       discover.p_10:
         type: textarea
         label: "Paragraph 10"
-        comment: "Originally: “The oldest synagogue in continuous use in the Americas, its sanctuary …”"
+        comment: "Originally: “The oldest synagogue in continuous use in the Americas, its sanctuary …” Links: [text](https://example.com)"
       discover.span_2:
         type: text
         label: "Small text 2"
@@ -377,7 +382,7 @@ file_config:
       discover.p_15:
         type: textarea
         label: "Paragraph 15"
-        comment: "Originally: “The oldest walled-in Jewish cemetery in the Americas, its carved stone…”"
+        comment: "Originally: “The oldest walled-in Jewish cemetery in the Americas, its carved stone…” Links: [text](https://example.com)"
       discover.span_3:
         type: text
         label: "Small text 3"
@@ -405,7 +410,7 @@ file_config:
       discover.p_20:
         type: textarea
         label: "Paragraph 20"
-        comment: "Originally: “A Jewish library and museum set in a landhuis beyond the old city, hol…”"
+        comment: "Originally: “A Jewish library and museum set in a landhuis beyond the old city, hol…” Links: [text](https://example.com)"
       discover.span_4:
         type: text
         label: "Small text 4"
@@ -433,7 +438,7 @@ file_config:
       discover.p_25:
         type: textarea
         label: "Paragraph 25"
-        comment: "Originally: “Clear waters, a dramatic coastline, and rugged natural landscapes, all…”"
+        comment: "Originally: “Clear waters, a dramatic coastline, and rugged natural landscapes, all…” Links: [text](https://example.com)"
       discover.span_5:
         type: text
         label: "Small text 5"
@@ -461,7 +466,7 @@ file_config:
       discover.p_30:
         type: textarea
         label: "Paragraph 30"
-        comment: "Originally: “Time with community members, scholars, and cultural trailblazers who b…”"
+        comment: "Originally: “Time with community members, scholars, and cultural trailblazers who b…” Links: [text](https://example.com)"
       discover.span_6:
         type: text
         label: "Small text 6"
@@ -489,7 +494,7 @@ file_config:
       discover.p_35:
         type: textarea
         label: "Paragraph 35"
-        comment: "Originally: “Street names, family lineages and merchant houses raised by Sephardic …”"
+        comment: "Originally: “Street names, family lineages and merchant houses raised by Sephardic …” Links: [text](https://example.com)"
       discover.span_7:
         type: text
         label: "Small text 7"
@@ -517,7 +522,7 @@ file_config:
       discover.p_40:
         type: textarea
         label: "Paragraph 40"
-        comment: "Originally: “A turquoise bay beneath the cliffs, and the gentler half of a week tha…”"
+        comment: "Originally: “A turquoise bay beneath the cliffs, and the gentler half of a week tha…” Links: [text](https://example.com)"
       discover.span_8:
         type: text
         label: "Small text 8"
@@ -550,7 +555,7 @@ file_config:
       footer.p_1:
         type: textarea
         label: "Paragraph 1"
-        comment: "Originally: “Heritage travel to Curaçao, from generation to generation. Willemstad,…”"
+        comment: "Originally: “Heritage travel to Curaçao, from generation to generation. Willemstad,…” Links: [text](https://example.com)"
       footer.h4_1:
         type: text
         label: "h4_1"
@@ -700,23 +705,23 @@ file_config:
       subhero.p_2:
         type: textarea
         label: "Paragraph 2"
-        comment: "Originally: “On a muggy afternoon in Curaçao’s city center, entering the courtyard …”"
+        comment: "Originally: “On a muggy afternoon in Curaçao’s city center, entering the courtyard …” Links: [text](https://example.com)"
       subhero.p_3:
         type: textarea
         label: "Paragraph 3"
-        comment: "Originally: “What begins as a brief visit into an historic building becomes somethi…”"
+        comment: "Originally: “What begins as a brief visit into an historic building becomes somethi…” Links: [text](https://example.com)"
       subhero.p_4:
         type: textarea
         label: "Paragraph 4"
-        comment: "Originally: “Jewish life here did not merely survive; it flourished while shaping t…”"
+        comment: "Originally: “Jewish life here did not merely survive; it flourished while shaping t…” Links: [text](https://example.com)"
       subhero.p_5:
         type: textarea
         label: "Paragraph 5"
-        comment: "Originally: “The island’s Jewish presence rarely appears in mainstream tourism narr…”"
+        comment: "Originally: “The island’s Jewish presence rarely appears in mainstream tourism narr…” Links: [text](https://example.com)"
       subhero.p_6:
         type: textarea
         label: "Paragraph 6"
-        comment: "Originally: “Yet this story cannot be told without first widening the lens to the w…”"
+        comment: "Originally: “Yet this story cannot be told without first widening the lens to the w…” Links: [text](https://example.com)"
       subhero.text_alt_1:
         type: text
         label: "Image description 1"
@@ -728,11 +733,11 @@ file_config:
       subhero.blockquote_1:
         type: textarea
         label: "Quote 1"
-        comment: "Originally: “They were farmers on paper, but merchants at heart, and the island was…”"
+        comment: "Originally: “They were farmers on paper, but merchants at heart, and the island was…” Links: [text](https://example.com)"
       subhero.p_7:
         type: textarea
         label: "Paragraph 7"
-        comment: "Originally: “The earliest chapters of this presence began in the mid-seventeenth ce…”"
+        comment: "Originally: “The earliest chapters of this presence began in the mid-seventeenth ce…” Links: [text](https://example.com)"
       subhero.p_8:
         type: text
         label: "Paragraph 8"
@@ -744,15 +749,15 @@ file_config:
       subhero.p_10:
         type: textarea
         label: "Paragraph 10"
-        comment: "Originally: “, who came to the island in 1634 with the Dutch West India Company fle…”"
+        comment: "Originally: “, who came to the island in 1634 with the Dutch West India Company fle…” Links: [text](https://example.com)"
       subhero.p_11:
         type: textarea
         label: "Paragraph 11"
-        comment: "Originally: “They were farmers on paper, but merchants at heart, and the island was…”"
+        comment: "Originally: “They were farmers on paper, but merchants at heart, and the island was…” Links: [text](https://example.com)"
       subhero.p_12:
         type: textarea
         label: "Paragraph 12"
-        comment: "Originally: “Just three years after Cohen arrived to Curaçao, the Portuguese retook…”"
+        comment: "Originally: “Just three years after Cohen arrived to Curaçao, the Portuguese retook…” Links: [text](https://example.com)"
       subhero.text_alt_2:
         type: text
         label: "Image description 2"
@@ -768,23 +773,23 @@ file_config:
       subhero.p_13:
         type: textarea
         label: "Paragraph 13"
-        comment: "Originally: “In 2026, Curaçao celebrates 375 years of Jewish life on the island; Co…”"
+        comment: "Originally: “In 2026, Curaçao celebrates 375 years of Jewish life on the island; Co…” Links: [text](https://example.com)"
       subhero.p_14:
         type: textarea
         label: "Paragraph 14"
-        comment: "Originally: “These sister-communities both began in Dutch colonies, sustained by th…”"
+        comment: "Originally: “These sister-communities both began in Dutch colonies, sustained by th…” Links: [text](https://example.com)"
       subhero.p_15:
         type: textarea
         label: "Paragraph 15"
-        comment: "Originally: “Each move was a calculated wager on the long game: that somewhere in t…”"
+        comment: "Originally: “Each move was a calculated wager on the long game: that somewhere in t…” Links: [text](https://example.com)"
       subhero.p_16:
         type: textarea
         label: "Paragraph 16"
-        comment: "Originally: “In Curaçao, later waves of Ashkenazi families added new layers to this…”"
+        comment: "Originally: “In Curaçao, later waves of Ashkenazi families added new layers to this…” Links: [text](https://example.com)"
       subhero.p_17:
         type: textarea
         label: "Paragraph 17"
-        comment: "Originally: “Shops, social clubs, and new congregations were established, including…”"
+        comment: "Originally: “Shops, social clubs, and new congregations were established, including…” Links: [text](https://example.com)"
       subhero.p_18:
         type: text
         label: "Paragraph 18"
@@ -796,11 +801,11 @@ file_config:
       subhero.p_20:
         type: textarea
         label: "Paragraph 20"
-        comment: "Originally: “offers perhaps the most comprehensive view of this heritage. Located b…”"
+        comment: "Originally: “offers perhaps the most comprehensive view of this heritage. Located b…” Links: [text](https://example.com)"
       subhero.p_21:
         type: textarea
         label: "Paragraph 21"
-        comment: "Originally: “For many, a visit to Curaçao reframes the narrative of the Jewish dias…”"
+        comment: "Originally: “For many, a visit to Curaçao reframes the narrative of the Jewish dias…” Links: [text](https://example.com)"
       subhero.text_alt_3:
         type: text
         label: "Image description 3"
@@ -816,7 +821,7 @@ file_config:
       subhero.p_22:
         type: textarea
         label: "Paragraph 22"
-        comment: "Originally: “The island’s Jewish community endures because of a long tradition of a…”"
+        comment: "Originally: “The island’s Jewish community endures because of a long tradition of a…” Links: [text](https://example.com)"
       subhero.text_alt_4:
         type: text
         label: "Image description 4"
@@ -828,11 +833,11 @@ file_config:
       subhero.p_23:
         type: textarea
         label: "Paragraph 23"
-        comment: "Originally: “In a region where many Jewish communities now exist mostly in memory, …”"
+        comment: "Originally: “In a region where many Jewish communities now exist mostly in memory, …” Links: [text](https://example.com)"
       subhero.p_24:
         type: textarea
         label: "Paragraph 24"
-        comment: "Originally: “This story that began with trade and opportunity, continues to write i…”"
+        comment: "Originally: “This story that began with trade and opportunity, continues to write i…” Links: [text](https://example.com)"
       subhero.a_2:
         type: text
         label: "Link text 2"
@@ -1026,7 +1031,7 @@ file_config:
       whatwedo.p_2:
         type: textarea
         label: "Paragraph 2"
-        comment: "Originally: “We take you on a journey through the compelling stories of Jewish Atla…”"
+        comment: "Originally: “We take you on a journey through the compelling stories of Jewish Atla…” Links: [text](https://example.com)"
       whatwedo.h1_aria_label_1:
         type: text
         label: "h1_aria_label_1"
@@ -1038,7 +1043,7 @@ file_config:
       beginband.p_1:
         type: textarea
         label: "Paragraph 1"
-        comment: "Originally: “We collaborate with Jewish institutions, community organizers, lay lea…”"
+        comment: "Originally: “We collaborate with Jewish institutions, community organizers, lay lea…” Links: [text](https://example.com)"
       beginband.a_1:
         type: text
         label: "Link text 1"
@@ -1062,11 +1067,11 @@ file_config:
       defines.p_2:
         type: textarea
         label: "Paragraph 2"
-        comment: "Originally: “L’Dor Vador’s approach is shaped by its founders’ backgrounds in journ…”"
+        comment: "Originally: “L’Dor Vador’s approach is shaped by its founders’ backgrounds in journ…” Links: [text](https://example.com)"
       defines.p_3:
         type: textarea
         label: "Paragraph 3"
-        comment: "Originally: “We share a passion for exploring historical and cultural complexities …”"
+        comment: "Originally: “We share a passion for exploring historical and cultural complexities …” Links: [text](https://example.com)"
       defines.a_1:
         type: text
         label: "Link text 1"
@@ -1082,11 +1087,11 @@ file_config:
       defines.p_4:
         type: textarea
         label: "Paragraph 4"
-        comment: "Originally: “The name L’Dor Vador translates from Hebrew as “from generation to gen…”"
+        comment: "Originally: “The name L’Dor Vador translates from Hebrew as “from generation to gen…” Links: [text](https://example.com)"
       defines.p_5:
         type: textarea
         label: "Paragraph 5"
-        comment: "Originally: “At L’Dor Vador Travel, this sentiment defines our mission: we create j…”"
+        comment: "Originally: “At L’Dor Vador Travel, this sentiment defines our mission: we create j…” Links: [text](https://example.com)"
       defines.a_2:
         type: text
         label: "Link text 2"
@@ -1102,7 +1107,7 @@ file_config:
       howweplan.p_2:
         type: textarea
         label: "Paragraph 2"
-        comment: "Originally: “We begin with three questions: What is the story? Where should it be t…”"
+        comment: "Originally: “We begin with three questions: What is the story? Where should it be t…” Links: [text](https://example.com)"
       howweplan.h3_2:
         type: text
         label: "h3_2"
@@ -1110,7 +1115,7 @@ file_config:
       howweplan.p_3:
         type: textarea
         label: "Paragraph 3"
-        comment: "Originally: “We translate the answers into a journey in which every element contrib…”"
+        comment: "Originally: “We translate the answers into a journey in which every element contrib…” Links: [text](https://example.com)"
       howweplan.h3_3:
         type: text
         label: "h3_3"
@@ -1118,7 +1123,7 @@ file_config:
       howweplan.p_4:
         type: textarea
         label: "Paragraph 4"
-        comment: "Originally: “From accommodation and transportation to expert-led encounters and din…”"
+        comment: "Originally: “From accommodation and transportation to expert-led encounters and din…” Links: [text](https://example.com)"
       howweplan.a_1:
         type: text
         label: "Link text 1"
@@ -1142,7 +1147,7 @@ file_config:
       discover.p_3:
         type: textarea
         label: "Paragraph 3"
-        comment: "Originally: “Nonstop flights connect the island with major US gateways including Mi…”"
+        comment: "Originally: “Nonstop flights connect the island with major US gateways including Mi…” Links: [text](https://example.com)"
       discover.h3_2:
         type: text
         label: "h3_2"
@@ -1150,11 +1155,11 @@ file_config:
       discover.p_4:
         type: textarea
         label: "Paragraph 4"
-        comment: "Originally: “Its capital, Willemstad, is a UNESCO World Heritage city known for its…”"
+        comment: "Originally: “Its capital, Willemstad, is a UNESCO World Heritage city known for its…” Links: [text](https://example.com)"
       discover.p_5:
         type: textarea
         label: "Paragraph 5"
-        comment: "Originally: “Together, these places reveal Curaçao as something many travelers neve…”"
+        comment: "Originally: “Together, these places reveal Curaçao as something many travelers neve…” Links: [text](https://example.com)"
       discover.a_1:
         type: text
         label: "Link text 1"
@@ -1202,7 +1207,7 @@ file_config:
       voices.blockquote_2:
         type: textarea
         label: "Quote 2"
-        comment: "Originally: “Standing on the sand floor where my ancestors stood, Hannah arranged e…”"
+        comment: "Originally: “Standing on the sand floor where my ancestors stood, Hannah arranged e…” Links: [text](https://example.com)"
       voices.cite_2:
         type: text
         label: "Attribution 2"
@@ -1214,7 +1219,7 @@ file_config:
       voices.blockquote_3:
         type: textarea
         label: "Quote 3"
-        comment: "Originally: “We brought a congregation of twenty-six, ages nine to eighty-eight. Ev…”"
+        comment: "Originally: “We brought a congregation of twenty-six, ages nine to eighty-eight. Ev…” Links: [text](https://example.com)"
       voices.cite_3:
         type: text
         label: "Attribution 3"
@@ -1226,7 +1231,7 @@ file_config:
       voices.blockquote_4:
         type: textarea
         label: "Quote 4"
-        comment: "Originally: “The people they introduced us to are the reason this trip mattered. We…”"
+        comment: "Originally: “The people they introduced us to are the reason this trip mattered. We…” Links: [text](https://example.com)"
       voices.cite_4:
         type: text
         label: "Attribution 4"
@@ -1238,7 +1243,7 @@ file_config:
       voices.blockquote_5:
         type: textarea
         label: "Quote 5"
-        comment: "Originally: “As an operator I have worked with many ground partners. Few know their…”"
+        comment: "Originally: “As an operator I have worked with many ground partners. Few know their…” Links: [text](https://example.com)"
       voices.cite_5:
         type: text
         label: "Attribution 5"
@@ -1262,7 +1267,7 @@ file_config:
       contact.p_2:
         type: textarea
         label: "Paragraph 2"
-        comment: "Originally: “Share a few details and we’ll reply personally, usually within two bus…”"
+        comment: "Originally: “Share a few details and we’ll reply personally, usually within two bus…” Links: [text](https://example.com)"
       contact.a_1:
         type: text
         label: "Link text 1"
@@ -1326,7 +1331,7 @@ file_config:
       lightbox.p_1:
         type: textarea
         label: "Paragraph 1"
-        comment: "Originally: “Heritage travel to Curaçao, from generation to generation. Willemstad,…”"
+        comment: "Originally: “Heritage travel to Curaçao, from generation to generation. Willemstad,…” Links: [text](https://example.com)"
       lightbox.h4_1:
         type: text
         label: "h4_1"
@@ -1395,7 +1400,7 @@ file_config:
       subhero.p_2:
         type: textarea
         label: "Paragraph 2"
-        comment: "Originally: “A sample of how a week unfolds. Every journey is shaped to your group,…”"
+        comment: "Originally: “A sample of how a week unfolds. Every journey is shaped to your group,…” Links: [text](https://example.com)"
       subhero.span_1:
         type: text
         label: "Small text 1"
@@ -1407,7 +1412,7 @@ file_config:
       subhero.p_3:
         type: textarea
         label: "Paragraph 3"
-        comment: "Originally: “Settle into Willemstad and enjoy a welcome dinner overlooking the hist…”"
+        comment: "Originally: “Settle into Willemstad and enjoy a welcome dinner overlooking the hist…” Links: [text](https://example.com)"
       subhero.span_2:
         type: text
         label: "Small text 2"
@@ -1419,7 +1424,7 @@ file_config:
       subhero.p_4:
         type: textarea
         label: "Paragraph 4"
-        comment: "Originally: “Walk across the floating Queen Emma Bridge into historic Punda. A spec…”"
+        comment: "Originally: “Walk across the floating Queen Emma Bridge into historic Punda. A spec…” Links: [text](https://example.com)"
       subhero.span_3:
         type: text
         label: "Small text 3"
@@ -1431,7 +1436,7 @@ file_config:
       subhero.p_5:
         type: textarea
         label: "Paragraph 5"
-        comment: "Originally: “Experience the oldest synagogue in continuous use in the Americas, whe…”"
+        comment: "Originally: “Experience the oldest synagogue in continuous use in the Americas, whe…” Links: [text](https://example.com)"
       subhero.text_alt_1:
         type: text
         label: "Image description 1"
@@ -1447,7 +1452,7 @@ file_config:
       subhero.p_6:
         type: textarea
         label: "Paragraph 6"
-        comment: "Originally: “Enter a landmark private library and family archive to examine rare ma…”"
+        comment: "Originally: “Enter a landmark private library and family archive to examine rare ma…” Links: [text](https://example.com)"
       subhero.text_alt_2:
         type: text
         label: "Image description 2"
@@ -1463,7 +1468,7 @@ file_config:
       subhero.p_7:
         type: textarea
         label: "Paragraph 7"
-        comment: "Originally: “After breakfast, transfer to the airport with a deeper understanding o…”"
+        comment: "Originally: “After breakfast, transfer to the airport with a deeper understanding o…” Links: [text](https://example.com)"
       subhero.text_alt_3:
         type: text
         label: "Image description 3"
@@ -1516,7 +1521,7 @@ file_config:
       subhero.p_2:
         type: textarea
         label: "Paragraph 2"
-        comment: "Originally: “\"We share a passion for exploring historical and cultural complexities…”"
+        comment: "Originally: “\"We share a passion for exploring historical and cultural complexities…” Links: [text](https://example.com)"
       subhero.p_3:
         type: text
         label: "Paragraph 3"
@@ -1527,7 +1532,7 @@ file_config:
       bio.p_1:
         type: text
         label: "Paragraph 1"
-        comment: "Originally: “Co-founder”"
+        comment: "Originally: “Co-founder, L'Dor Vador Travel”"
       bio.h2_1:
         type: text
         label: "h2_1"
@@ -1535,7 +1540,7 @@ file_config:
       bio.p_2:
         type: textarea
         label: "Paragraph 2"
-        comment: "Originally: “Hannah Berkeley Cohen is an Ohio native who has called the Caribbean h…”"
+        comment: "Originally: “Hannah Berkeley Cohen is an Ohio native who has called the Caribbean h…” Links: [text](https://example.com)"
       bio.a_1:
         type: text
         label: "Link text 1"
@@ -1543,27 +1548,22 @@ file_config:
       bio.p_3:
         type: textarea
         label: "Paragraph 3"
-        comment: "Originally: “based in Havana, reporting on American foreign policy toward Cuba, the…”"
+        comment: "Originally: “in Havana, reporting on American foreign policy toward Cuba, the death…” Links: [text](https://example.com)"
       bio.p_4:
-        type: textarea
+        type: text
         label: "Paragraph 4"
-        comment: "Originally: “Reporting for major media outlets gave Hannah rare access to Cuba’s la…”"
       bio.p_5:
         type: text
         label: "Paragraph 5"
-        comment: "Originally: “She founded”"
       bio.p_6:
         type: text
         label: "Paragraph 6"
-        comment: "Originally: “Cuba Rising”"
       bio.p_7:
-        type: textarea
+        type: text
         label: "Paragraph 7"
-        comment: "Originally: “, a bespoke travel company for Americans seeking to uncover the comple…”"
       bio.p_8:
-        type: textarea
+        type: text
         label: "Paragraph 8"
-        comment: "Originally: “Using her experience in Cuba, Hannah moved to Curaçao in 2024 to delve…”"
       bio.text_aria_label_1:
         type: text
         label: "Aria Label 1"
@@ -1575,7 +1575,7 @@ file_config:
       bio.p_9:
         type: text
         label: "Paragraph 9"
-        comment: "Originally: “Co-founder”"
+        comment: "Originally: “Co-founder, L'Dor Vador Travel”"
       bio.h2_2:
         type: text
         label: "h2_2"
@@ -1583,7 +1583,7 @@ file_config:
       bio.p_10:
         type: textarea
         label: "Paragraph 10"
-        comment: "Originally: “Born in the Netherlands and raised across Yugoslavia, Greece, and Cuba…”"
+        comment: "Originally: “Born in the Netherlands and raised across Yugoslavia, Greece, and Cuba…” Links: [text](https://example.com)"
       bio.p_11:
         type: text
         label: "Paragraph 11"
@@ -1628,10 +1628,23 @@ file_config:
         options:
           structures: guide
         label: "Guides / leaders"
+      host_name:
+        type: text
+        label: "Host name (PDF only; blank = Hannah Berkeley Cohen)"
+      host_title:
+        type: text
+        label: "Host title on the PDF cover and Hosts page (blank = site default)"
+      host_image:
+        type: image
+        label: "Host photo (PDF only; blank = site photo)"
+      host_bio:
+        type: textarea
+        label: "Host bio for this trip (PDF only; blank = website bio)"
+        comment: "Blank line between paragraphs. Links: [text](https://example.com)"
       about_company:
         type: textarea
         label: "About L'Dor Vador Travel (PDF hosts page)"
-        comment: "Shown on the PDF hosts page only when filled in"
+        comment: "Shown on the PDF hosts page only when filled in Links: [text](https://example.com)"
       dates:
         type: text
         label: "Dates"
@@ -1669,22 +1682,23 @@ file_config:
       intro:
         type: textarea
         label: "Intro"
+        comment: "Links: [text](https://example.com)"
       highlights:
         type: textarea
         label: "Highlights"
-        comment: "One item per line"
+        comment: "One item per line Links: [text](https://example.com)"
       included:
         type: textarea
         label: "What is included"
-        comment: "One item per line"
+        comment: "One item per line Links: [text](https://example.com)"
       not_included:
         type: textarea
         label: "What is not included"
-        comment: "One item per line"
+        comment: "One item per line Links: [text](https://example.com)"
       notes:
         type: textarea
         label: "Program notes"
-        comment: "One item per line, e.g. \"Flights: International airfare is not included.\""
+        comment: "One item per line, e.g. \"Flights: International airfare is not included.\" Links: [text](https://example.com)"
       vignettes:
         type: array
         options:
@@ -1703,9 +1717,11 @@ file_config:
       form_intro:
         type: textarea
         label: "Inquiry form intro"
+        comment: "Links: [text](https://example.com)"
       notify_note:
         type: textarea
         label: "Notify note"
+        comment: "Links: [text](https://example.com)"
       contact_email:
         type: text
         label: "Contact email (shown on the PDF)"
