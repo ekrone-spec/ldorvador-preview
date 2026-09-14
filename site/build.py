@@ -1172,12 +1172,12 @@ def print_page(g, slug):
     <div><p class="p-eyebrow">What&rsquo;s Included</p>%(included)s</div>
     <div><p class="p-eyebrow">Not Included</p>%(not_included)s</div>
   </div>
-  %(price_section)s
   %(notes)s
   %(about_company)s
   <div class="p-closing">
   <div class="p-contact">
     <p class="p-eyebrow">Questions or to Register Your Interest</p>
+    %(price_section)s
     %(contact_rows)s
   </div>
   %(compact_mark)s
@@ -1252,7 +1252,7 @@ def print_page(g, slug):
   .p-brand-compact,.p-brand-compact .brand{border:0!important}
   .sheet a{color:inherit;text-decoration:none}
 
-  .cover-text{position:absolute;left:0.6in;right:0.6in;bottom:2.05in;color:#fffdfa}
+  .cover-text{position:absolute;left:0.6in;right:0.6in;bottom:1.5in;color:#fffdfa}
   .cover-text .p-eyebrow.on-photo{color:rgba(255,253,250,.85)}
   .cover-text h1{font-size:40pt;color:#fffdfa;line-height:1.04;margin:.1em 0 .3em}
   .cover-congregation{margin:.25em 0 0}
@@ -1268,13 +1268,12 @@ def print_page(g, slug):
   .p-partner-logos{display:flex;align-items:center;gap:0.22in;flex:none}
   .p-partner-label{text-transform:uppercase;letter-spacing:.16em;font-size:7.5pt;font-weight:700;color:#7d9065;white-space:nowrap}
   .p-partner-row{display:flex;flex-direction:column;align-items:flex-start;gap:0.1in}
-  .p-partner-logo{display:block;height:.55in;width:auto;max-width:2.6in}
-  .p-partner-logo img{width:auto;height:100%%;display:block;filter:grayscale(1)}
+  .p-partner-logo{display:block;width:1.7in}
+  .p-partner-logo img{width:100%%;height:auto;display:block;filter:grayscale(1)}
   /* the TBE mark's glyph + type are visually lighter (thin serif, pale
      grey) than JCCPF's bold star + heavier type at the same box height,
      so it reads smaller even though the boxes match — bump just this
      logo's height to equalize visual mass without moving the strip. */
-  .p-partner-logo:first-child{height:.72in}
   .p-closing-photo{width:100%%;height:2.4in;overflow:hidden;margin:.35in 0 0;border-radius:2px;break-inside:avoid;page-break-inside:avoid}
   .p-closing-photo img{width:100%%;height:100%%;display:block;object-fit:cover}
 
