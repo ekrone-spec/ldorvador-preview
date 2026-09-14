@@ -78,6 +78,7 @@ HERO_WARM_JS = (
     "if(w<820)return;"
     "var c=navigator.connection||{};"
     "if(c.saveData||/(^|-)2g$/.test(c.effectiveType||''))return;"
+    "b.parentNode.classList.add('vid');"
     "v.dataset.loaded='1';v.preload='auto';v.src=v.getAttribute('data-src');v.load();"
     "})();"
 )

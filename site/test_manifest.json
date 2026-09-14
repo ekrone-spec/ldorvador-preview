@@ -27,7 +27,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -458,7 +458,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=fe0d3962b0"
 ],
 "history.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -488,7 +488,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -610,7 +610,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=fe0d3962b0"
 ],
 "story.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -640,7 +640,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -752,7 +752,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=fe0d3962b0"
 ],
 "itinerary.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -782,7 +782,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -904,7 +904,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=fe0d3962b0"
 ],
 "privacy.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -934,7 +934,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -1026,7 +1026,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=fe0d3962b0"
 ],
 "es/index.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -1056,7 +1056,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -1487,7 +1487,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=fe0d3962b0"
 ],
 "es/history.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -1517,7 +1517,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -1639,7 +1639,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=fe0d3962b0"
 ],
 "es/story.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -1669,7 +1669,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -1781,7 +1781,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=fe0d3962b0"
 ],
 "es/itinerary.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -1811,7 +1811,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -1933,7 +1933,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=fe0d3962b0"
 ],
 "es/privacy.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -1963,7 +1963,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -2055,7 +2055,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=fe0d3962b0"
 ],
 "nl/index.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -2085,7 +2085,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -2516,7 +2516,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=fe0d3962b0"
 ],
 "nl/history.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -2546,7 +2546,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -2668,7 +2668,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=fe0d3962b0"
 ],
 "nl/story.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -2698,7 +2698,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -2810,7 +2810,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=fe0d3962b0"
 ],
 "nl/itinerary.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -2840,7 +2840,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -2962,7 +2962,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=fe0d3962b0"
 ],
 "nl/privacy.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -2992,7 +2992,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -3084,7 +3084,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=fe0d3962b0"
 ],
 "he/index.html": [
 "0|html|id=|class=|attrs=dir,lang|refs=",
@@ -3114,7 +3114,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -3543,7 +3543,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=fe0d3962b0"
 ],
 "he/history.html": [
 "0|html|id=|class=|attrs=dir,lang|refs=",
@@ -3573,7 +3573,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -3695,7 +3695,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=fe0d3962b0"
 ],
 "he/story.html": [
 "0|html|id=|class=|attrs=dir,lang|refs=",
@@ -3725,7 +3725,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -3837,7 +3837,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=fe0d3962b0"
 ],
 "he/itinerary.html": [
 "0|html|id=|class=|attrs=dir,lang|refs=",
@@ -3867,7 +3867,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -3989,7 +3989,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=fe0d3962b0"
 ],
 "he/privacy.html": [
 "0|html|id=|class=|attrs=dir,lang|refs=",
@@ -4019,7 +4019,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -4111,7 +4111,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=fe0d3962b0"
 ],
 "groups/index.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -4121,7 +4121,7 @@
 "2|meta|id=|class=|attrs=content,name|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=fe0d3962b0",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
 "2|header|id=header|class=header-solid|attrs=class,id|refs=",
@@ -4196,7 +4196,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=fe0d3962b0"
 ],
 "groups/temple-beth-elohim/index.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -4207,7 +4207,7 @@
 "2|meta|id=|class=|attrs=content,name|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../../assets/app.css?v=bf1c22a2ca",
+"2|link|id=|class=|attrs=href,rel|refs=../../assets/app.css?v=fe0d3962b0",
 "2|script|id=|class=|attrs=async,defer,src|refs=https://challenges.cloudflare.com/turnstile/v0/api.js",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -4628,6 +4628,6 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../../assets/app.js?v=bf1c22a2ca"
+"2|script|id=|class=|attrs=defer,src|refs=../../assets/app.js?v=fe0d3962b0"
 ]
 }
