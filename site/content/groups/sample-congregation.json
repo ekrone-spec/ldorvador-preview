@@ -93,5 +93,6 @@
   "contact_phone": "+1 (000) 000-0000",
   "pdf": "assets/pdf/sample-congregation.pdf",
   "published": false,
-  "listed": false
+  "listed": false,
+  "pdf_show_partners": false
 }

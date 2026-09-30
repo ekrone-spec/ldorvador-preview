@@ -1080,7 +1080,7 @@ def print_page(g, slug):
     # ---- partner logos (cover strip, right side) ----
     def partner_logos_html():
         items = [p for p in (g.get('partner_logos') or []) if p.get('image')]
-        if not items:
+        if not items or not g.get('pdf_show_partners'):
             return ''
         tiles = ''.join(
             '<span class="p-partner-logo"><img src="%s" alt="%s"></span>'
@@ -1128,13 +1128,15 @@ def print_page(g, slug):
         return ('<div class="led-cell">%s<p class="led-names">%s<span class="led-role">%s</span></p></div>'
                 % (p, name, role))
 
-    led_cells = [led_cell(
-        '../../%s' % print_image(host_image_raw, 120, 120, top=True),
-        _cesc(host_name_raw), _cesc(host_cover_title_raw))]
+    # cover order: the trip's guides (in their editor order), then the host
+    led_cells = []
     for gd in guides:
         portrait = (pimg(print_image(gd['image'], 120, 120, top=True))
                     if gd.get('image') else '')
         led_cells.append(led_cell(portrait, _cesc(gd['name']), _cesc(gd['role'])))
+    led_cells.append(led_cell(
+        '../../%s' % print_image(host_image_raw, 120, 120, top=True),
+        _cesc(host_name_raw), _cesc(host_cover_title_raw)))
     led_row = '<div class="cover-led">%s</div>' % ''.join(led_cells)
 
     cover_contact_bits = [b for b in [contact_email, contact_phone, 'www.ldorvadortravel.com'] if b]

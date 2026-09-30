@@ -269,6 +269,9 @@ collections_config:
         type: checkbox
         label: 'Published (page is live)'
         comment: 'Untick to hide the page from the website'
+      pdf_show_partners:
+        type: checkbox
+        label: 'Show partner logos on the PDF cover'
       listed:
         type: checkbox
         label: 'Show on the Group Journeys list page'
