@@ -551,11 +551,13 @@ def build_groups():
                     % gimg(img))
 
         def facts_line():
-            bits = [gv(k) for k in ('dates', 'duration', 'group_size') if g.get(k)]
-            return ' · '.join(bits)
+            # one fact per line, directly above the registration note
+            bits = [gv(k) for k in ('dates', 'duration', 'price', 'group_size') if g.get(k)]
+            return '<br>'.join(bits)
 
         def facts_list():
-            rows = [('Dates', 'dates'), ('Duration', 'duration'), ('Group size', 'group_size'),
+            rows = [('Dates', 'dates'), ('Duration', 'duration'), ('Price', 'price'),
+                    ('Group size', 'group_size'),
                     ('Start / finish', 'start_finish'), ('Pace', 'pace'),
                     ('Accommodation', 'accommodation')]
             return ''.join('<li><span>%s</span><b>%s</b></li>' % (label, gv(key))
@@ -863,7 +865,8 @@ def print_page(g, slug):
     glance_items = ''.join(
         '<div class="glance-item"><span class="gl-label">%s</span><span class="gl-value">%s</span></div>'
         % (label, val) for label, val in [
-            ('Dates', dates), ('Duration', duration), ('Group size', group_size),
+            ('Dates', dates), ('Duration', duration), ('Price', pv('price')),
+            ('Group size', group_size),
             ('Start / finish', pv('start_finish')), ('Pace', pv('pace')),
             ('Accommodation', pv('accommodation')),
         ] if val)
@@ -1169,7 +1172,7 @@ def print_page(g, slug):
 </div>""" % dict(
         hero_img=('<img src="%s" alt="">' % hero) if hero else '',
         congregation=congregation, title=title,
-        facts=' &middot; '.join(b for b in [dates, duration, group_size] if b),
+        facts=' &middot; '.join(b for b in [dates, duration] if b),
         led_row=led_row, stack_mark=stack_mark,
         cover_contact=cover_contact,
         partner_logos=partner_logos_html(),
@@ -1192,10 +1195,10 @@ def print_page(g, slug):
     </div>
   </div>
 
-  <div class="day-flow-page">%(days_html)s%(closing_photo)s</div>
+  <div class="day-flow-page">%(days_html)s</div>
 
   <section class="p-hosts"><p class="p-eyebrow">Your Hosts</p>
-  <div class="hosts-full-list">%(hannah)s%(guides)s</div></section>
+  <div class="hosts-full-list">%(hannah)s%(guides)s</div>%(closing_photo)s</section>
 
   <section class="p-final">
   <div class="p-cols included-cols">
@@ -1282,7 +1285,7 @@ def print_page(g, slug):
   .p-brand-compact,.p-brand-compact .brand{border:0!important}
   .sheet a{color:inherit;text-decoration:none}
 
-  .cover-text{position:absolute;left:0.6in;right:0.6in;bottom:1.5in;color:#fffdfa}
+  .cover-text{position:absolute;left:0.6in;right:0.6in;top:6.95in;color:#fffdfa}
   .cover-text .p-eyebrow.on-photo{color:rgba(255,253,250,.85)}
   .cover-text h1{font-size:40pt;color:#fffdfa;line-height:1.04;margin:.1em 0 .3em}
   .cover-congregation{margin:.25em 0 0}
@@ -1316,7 +1319,7 @@ def print_page(g, slug):
      content fits within a page this reproduces the original side-by-side
      layout cleanly; only the day-1 feature below is left to paginate
      naturally onto the next page */
-  .p-cols.journey{display:grid;grid-template-columns:1fr 2.6in;gap:0 0.55in;align-items:start}
+  .p-cols.journey{display:grid;grid-template-columns:1fr 3.05in;gap:0 0.35in;align-items:start}
   .journey-glance{border-left:1px solid #ebe1d1;padding-left:0.55in;padding-top:0;margin-top:0;max-width:none}
   .glance-list{display:flex;flex-direction:column}
   .glance-item{padding:10px 0;border-bottom:1px solid #ebe1d1;break-inside:avoid;page-break-inside:avoid}
@@ -1367,9 +1370,12 @@ def print_page(g, slug):
   .day1-feature .p-day-photo,.day-card .p-day-photo,.day-card-solo .p-day-photo{height:2.2in}
   .day-flow-page h3,.day1-feature h3,.day-card h3,.day-card-solo h3{font-size:16.5pt;font-family:var(--display);font-weight:600;color:#282819;margin:0 0 .08em}
   .day1-feature .p-eyebrow-sm,.day-card .p-eyebrow-sm{font-size:9pt;letter-spacing:.18em;color:#7d9065;margin:0 0 .3em}
-  .p-hosts{break-before:page;page-break-before:always;break-after:avoid;margin:0;padding:0;font-size:10.5pt;height:9.5in;overflow:visible}
-  .hosts-full-list{display:grid;grid-template-columns:1fr 1fr;column-gap:.3in;height:9.3in}
-  .host-full{break-inside:auto}
+  /* Hosts flow as two columns, each bio kept whole. When the bios outgrow one
+     page the last one moves to the next page instead of spilling over it. */
+  .p-hosts{break-before:page;page-break-before:always;margin:0;padding:0;font-size:10.5pt}
+  .hosts-full-list{display:block;column-count:2;column-gap:.3in;column-fill:auto}
+  .p-guides-wrapper{display:contents}
+  .hosts-full-list .host-full{break-inside:avoid;page-break-inside:avoid;margin-bottom:.25in}
   .p-hosts p{font-size:10.5pt;line-height:1.4;color:#555a45;margin:.2em 0}
   .p-hosts .host-full-portrait{width:.9in;height:.9in;margin:0 .18in .08in 0}
   .hosts-full-list{margin-bottom:0}
@@ -1388,7 +1394,7 @@ def print_page(g, slug):
   /* ---- hosts: full bios, each never split (but the two hosts can) ---- */
   .hosts-full-list{margin-bottom:.3in}
   .p-guides-wrapper > * + *{margin-top:.25in}
-  .host-full{display:block;break-inside:auto}
+  .host-full{display:block}
   .host-full-portrait{float:left;margin:0 .35in .15in 0}
   .host-full::after{content:'';display:table;clear:both}
   .host-full-portrait{flex:0 0 auto;width:1.7in;height:1.7in;overflow:hidden;border-radius:2px}

@@ -54,6 +54,9 @@ collections_config:
       duration:
         type: text
         label: 'Duration'
+      price:
+        type: text
+        label: 'Price (shown under the dates on the page and in At a Glance on the PDF)'
       group_size:
         type: text
         label: 'Group size'
@@ -1654,6 +1657,9 @@ file_config:
       duration:
         type: text
         label: "Duration"
+      price:
+        type: text
+        label: "Price"
       group_size:
         type: text
         label: "Group size"

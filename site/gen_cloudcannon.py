@@ -32,6 +32,7 @@ GROUPTRIP_FIELD_LABEL = {
     'about_company': "About L'Dor Vador Travel (PDF hosts page)",
     'dates': 'Dates',
     'duration': 'Duration',
+    'price': 'Price',
     'group_size': 'Group size',
     'start_finish': 'Start / finish',
     'pace': 'Pace',
@@ -169,6 +170,9 @@ collections_config:
       duration:
         type: text
         label: 'Duration'
+      price:
+        type: text
+        label: 'Price (shown under the dates on the page and in At a Glance on the PDF)'
       group_size:
         type: text
         label: 'Group size'
