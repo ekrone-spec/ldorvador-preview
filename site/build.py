@@ -1195,10 +1195,10 @@ def print_page(g, slug):
     </div>
   </div>
 
-  <div class="day-flow-page">%(days_html)s</div>
+  <div class="day-flow-page">%(days_html)s%(closing_photo)s</div>
 
   <section class="p-hosts"><p class="p-eyebrow">Your Hosts</p>
-  <div class="hosts-full-list">%(hannah)s%(guides)s</div>%(closing_photo)s</section>
+  <div class="hosts-full-list">%(hannah)s%(guides)s</div></section>
 
   <section class="p-final">
   <div class="p-cols included-cols">
@@ -1402,7 +1402,8 @@ def print_page(g, slug):
   .host-full-copy{display:block;orphans:3;widows:3}
   .host-full-copy h3,.host-full-copy .p-eyebrow{break-after:avoid}
   .host-full-copy h3{font-size:16.5pt;margin:0 0 .02em;line-height:1.1}
-  .p-hosts .host-full-copy p{font-size:10.5pt;line-height:1.4;color:#555a45;margin:0 0 .25em}
+  .p-hosts .host-full-copy p{font-size:10.5pt;line-height:1.4;color:#555a45;margin:0 0 .7em}
+  .p-hosts .host-full-copy p.host-role{margin-bottom:.25em}
   .host-role{font-family:var(--body);text-transform:uppercase;letter-spacing:.2em;font-size:9pt;font-weight:700;color:#7d9065;margin-bottom:.35em}
 
   /* ---- closing: included / notes / contact ---- */
