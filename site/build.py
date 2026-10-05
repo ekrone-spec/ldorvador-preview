@@ -1172,7 +1172,7 @@ def print_page(g, slug):
 </div>""" % dict(
         hero_img=('<img src="%s" alt="">' % hero) if hero else '',
         congregation=congregation, title=title,
-        facts=' &middot; '.join(b for b in [dates, duration] if b),
+        facts='<br>'.join(b for b in [dates, duration] if b),
         led_row=led_row, stack_mark=stack_mark,
         cover_contact=cover_contact,
         partner_logos=partner_logos_html(),
