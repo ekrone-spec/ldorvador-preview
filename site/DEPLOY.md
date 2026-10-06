@@ -331,6 +331,15 @@ One-time setup (Erik):
    TURNSTILE_SECRET, RESEND_API_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET,
    BOOKING_TOKEN_SECRET.
 
+Scripts: `CLOUDFLARE_API_TOKEN=... ./staging-setup.sh` automates steps 1-4 plus
+the first staging deploy (creates D1 and applies migrations, creates the Access
+app with a "Reviewers" one-time-PIN policy from `STAGING_REVIEWERS`, adds the
+staging hostname to the Turnstile widget, writes the D1 id and Access aud into
+wrangler.jsonc, deploys, then rebuilds production assets). It is idempotent.
+`./staging-secrets.sh` (run in your own terminal) prompts silently for the
+secrets in step 6 and generates BOOKING_TOKEN_SECRET; `--prod` targets
+production after a confirmation. Neither script stores any secret.
+
 Deploy staging (from site/):
     PROD=0 SITE=https://staging.ldorvadortravel.com LDV_BOOKINGS_FORCE_OPEN=1 python3 build.py && npx wrangler deploy --env staging
 Then rebuild production normally before any production deploy
