@@ -63,8 +63,9 @@ done
 echo "b. D1 ldorvador-staging $D1_NOTE id=$D1_ID, migrations applied"
 
 # c. Access app
-OTP_ID=$(api GET "/accounts/$ACCOUNT_ID/access/identity_providers" | jq_ 'print(next((i["id"] for i in d["result"] if i["type"]=="onetimepin"),""))')
-[ -n "$OTP_ID" ] || { echo "FAIL: no one-time PIN identity provider in this account's Zero Trust" >&2; exit 1; }
+# Login method is whatever the Zero Trust org offers (one-time PIN here);
+# reading identity providers needs an extra token scope, so it is not pinned.
+OTP_ID=""
 INCLUDE=$(python3 -c 'import sys,json; print(json.dumps([{"email":{"email":e.strip()}} for e in sys.argv[1].split(",") if e.strip()]))' "$REVIEWERS")
 POLICY_ID=$(api GET "/accounts/$ACCOUNT_ID/access/policies" | jq_ 'print(next((p["id"] for p in d["result"] if p["name"]=="'"$POLICY_NAME"'"),""))')
 if [ -z "$POLICY_ID" ]; then
@@ -79,7 +80,7 @@ import sys,json
 name,host,pol,otp=sys.argv[1:5]
 print(json.dumps({"name":name,"type":"self_hosted","domain":host+"/admin","session_duration":"24h",
  "destinations":[{"type":"public","uri":host+p} for p in ("/admin","/api/admin","/api/interest")],
- "allowed_idps":[otp],"policies":[{"id":pol,"precedence":1}]}))
+ "policies":[{"id":pol,"precedence":1}]}))
 PY
 )
   AUD=$(api POST "/accounts/$ACCOUNT_ID/access/apps" "$BODY" | jq_ 'print(d["result"]["aud"])')

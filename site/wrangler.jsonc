@@ -51,7 +51,7 @@
         {
           "binding": "DB",
           "database_name": "ldorvador-staging",
-          "database_id": "REPLACE_WITH_STAGING_D1_ID"
+          "database_id": "867a14e2-e09e-4785-940e-a3b0f9de576a"
         }
       ],
       "browser": { "binding": "BROWSER" },
@@ -59,7 +59,7 @@
       "vars": {
         "NOTIFY_TO": "erik@tcstudio.io",
         "ACCESS_TEAM_DOMAIN": "tcstudio.cloudflareaccess.com",
-        "ACCESS_AUD": "REPLACE_WITH_STAGING_ACCESS_AUD"
+        "ACCESS_AUD": "9ec2ee98eed5eae382b67fb508c833e6c1da254eae60407ad5d6a9f94ae4fb9b"
       }
     }
   }
