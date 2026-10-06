@@ -15,13 +15,13 @@ Save and publish as usual. The button appears after the site rebuilds, usually w
 
 ## 2. What travelers see
 
-1. They press **Reserve Your Spot** and fill in the form: names, contact details, single or double room (a double asks for the roommate's name and bed type), any extra nights they want before or after, an emergency contact, dietary needs, and a tick to accept the Terms and Conditions.
+1. They press **Reserve Your Spot** and fill in the form: names, contact details, single or double room (a double asks for the roommate's name and bed type), how many extra nights they want before or after (0 to 7 each, a request at the same hotel), an emergency contact (who must be a different person from the traveler and roommate), phone numbers (US/Canada, or a full international number with +; stored in international format), dietary needs, and a tick to accept the Terms and Conditions.
 2. They go to a Stripe payment page and pay the deposit by card or US bank account.
 3. They land on a thank-you page showing their booking reference.
 4. Once the payment clears they get a confirmation email from us. Bank payments can take a few business days, and the email waits until then.
 5. The confirmation email includes a private link to a details form for passport information and flights. You are also emailed when a traveler sends their details.
 
-Extra nights are requests only. They are added to the balance after you confirm them (section 4).
+Extra nights are requests only. The traveler picks a number of nights; the form turns that into dates around the trip (for example 2 nights before a March 3 arrival is March 1 to March 3). They are added to the balance after you confirm them (section 4).
 
 ## 3. The admin page
 

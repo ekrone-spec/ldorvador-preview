@@ -25,8 +25,9 @@ __HEADER__
           <div class="field"><label for="bfn">First name <span class="req">*</span></label><input id="bfn" name="first_name" type="text" autocomplete="given-name" required></div>
           <div class="field"><label for="bln">Last name <span class="req">*</span></label><input id="bln" name="last_name" type="text" autocomplete="family-name" required></div>
         </div>
+        <div class="field"><label for="be">Email <span class="req">*</span></label><input id="be" name="email" type="email" autocomplete="email" required></div>
         <div class="two">
-          <div class="field"><label for="be">Email <span class="req">*</span></label><input id="be" name="email" type="email" autocomplete="email" required></div>
+          <div class="field"><label for="bpc">Phone country</label><select id="bpc" name="phone_country"><option value="US" selected>US (+1)</option><option value="CA">Canada (+1)</option><option value="OTHER">Other (enter full international number)</option></select></div>
           <div class="field"><label for="bp">Phone <span class="req">*</span></label><input id="bp" name="phone" type="tel" autocomplete="tel" required></div>
         </div>
       </fieldset>
@@ -61,22 +62,19 @@ __HEADER__
         </div>
       </fieldset>
       <fieldset>
-        <legend>Pre / post nights</legend>
+        <legend>Extra nights</legend>
         <div class="two">
-          <div class="field"><label for="prf">Extra nights before: from</label><input id="prf" name="pre_from" type="date"></div>
-          <div class="field"><label for="prt">Extra nights before: to</label><input id="prt" name="pre_to" type="date"></div>
+          <div class="field"><label for="prn">Extra nights before the trip</label><select id="prn" name="pre_nights"><option value="0" selected>None</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select></div>
+          <div class="field"><label for="pon">Extra nights after the trip</label><select id="pon" name="post_nights"><option value="0" selected>None</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select></div>
         </div>
-        <div class="two">
-          <div class="field"><label for="pof">Extra nights after: from</label><input id="pof" name="post_from" type="date"></div>
-          <div class="field"><label for="pot">Extra nights after: to</label><input id="pot" name="post_to" type="date"></div>
-        </div>
-        <p class="group-notify-note">Requests only; confirmed extensions are added to the balance.</p>
+        <p class="group-notify-note">Requests only; at the same hotel. Confirmed nights are added to your balance.</p>
       </fieldset>
       <fieldset>
         <legend>Emergency contact</legend>
         <div class="field"><label for="ecn">Name <span class="req">*</span></label><input id="ecn" name="ec_name" type="text" required></div>
+        <div class="field"><label for="ece">Email <span class="req">*</span></label><input id="ece" name="ec_email" type="email" required></div>
         <div class="two">
-          <div class="field"><label for="ece">Email <span class="req">*</span></label><input id="ece" name="ec_email" type="email" required></div>
+          <div class="field"><label for="ecpc">Phone country</label><select id="ecpc" name="ec_phone_country"><option value="US" selected>US (+1)</option><option value="CA">Canada (+1)</option><option value="OTHER">Other (enter full international number)</option></select></div>
           <div class="field"><label for="ecp">Phone <span class="req">*</span></label><input id="ecp" name="ec_phone" type="tel" required></div>
         </div>
       </fieldset>

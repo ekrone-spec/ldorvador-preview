@@ -294,8 +294,8 @@ def audit_layer():
         # booking pages: forms carry exactly what the Worker endpoints read
         need_by = {
             'reserve': {'first_name', 'last_name', 'email', 'phone', 'room', 'bed', 'rm_first_name',
-                        'rm_last_name', 'rm_email', 'rm_phone', 'pre_from', 'pre_to', 'post_from',
-                        'post_to', 'ec_name', 'ec_email', 'ec_phone', 'dietary', 'terms',
+                        'rm_last_name', 'rm_email', 'rm_phone', 'pre_nights', 'post_nights',
+                        'phone_country', 'ec_phone_country', 'ec_name', 'ec_email', 'ec_phone', 'dietary', 'terms',
                         'terms_version', 'group', 'trip_ref', 'botcheck'},
             'details': {'ref', 't', 'group', 'g1_dob', 'g1_passport_number', 'g1_passport_country',
                         'g1_passport_expiry', 'g1_flight_arrival', 'g1_flight_departure'},

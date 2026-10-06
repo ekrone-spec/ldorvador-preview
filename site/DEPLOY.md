@@ -296,6 +296,8 @@ then `npx wrangler dev --local --persist-to /tmp/ldv-state`.
 
 **Tables.** `bookings`, `booking_seq`, `stripe_events` (webhook idempotency), `rate_events` (details rate limit). `/api/book` rate limit is 5 per hour per IP hash, counted from `bookings`.
 
+**Reserve form fields** (`POST /api/book`): `first_name`, `last_name`, `email`, `phone`, `phone_country` (US|CA|OTHER), `room`, `bed`, `rm_first_name`, `rm_last_name`, `rm_email`, `rm_phone`, `pre_nights`, `post_nights` (0-7; server converts to `pre_from`/`pre_to`/`post_from`/`post_to` from trip `arrival_date`/`departure_date`; the old four date fields are still accepted when the nights fields are absent), `ec_name`, `ec_email`, `ec_phone`, `ec_phone_country`, `dietary`, `terms`, `terms_version`, `group`, `trip_ref`. Phones are stored as E.164; the emergency contact must differ from the traveler (email, phone) and roommate (email); the roommate must differ from the lead. `POST /api/details` checks passport expiry is after the trip's `departure_date` and dob is past and after 1900.
+
 **Env.** Secrets `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `BOOKING_TOKEN_SECRET` (plus existing `RESEND_API_KEY`, `TURNSTILE_SECRET`); local-only `TURNSTILE_SKIP=1`. Operator docs: `BOOKINGS-HANNAH.md`, `BOOKINGS-STRIPE-SETUP.md`.
 
 **Regression commands** (run with `bookings_open` true on a trip, then false):

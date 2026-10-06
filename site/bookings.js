@@ -58,7 +58,7 @@ const WEBHOOK_TOLERANCE_S = 300;
 const FROM = "L'Dor Vador Travel <connect@ldorvadortravel.com>";
 const REPLY_TO = 'connect@ldorvadortravel.com';
 const ISO_RE = /^\d{4}-\d{2}-\d{2}$/;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_RE = /^[^\s@]+@[^\s@.]+(\.[^\s@.]+)+$/;
 
 const UPDATABLE = new Set([
   'status', 'travelers', 'first_name', 'last_name', 'email', 'phone', 'room', 'bed',
@@ -442,6 +442,7 @@ function bookingSummaryRows(trip, b) {
     row('Dates', escapeHtml(trip.dates)),
     row('Travelers', travelerNames(b)),
     row('Room', escapeHtml(roomLabel(b))),
+    ...(extraNightsLine(b) ? [row('Extra nights requested', escapeHtml(extraNightsLine(b).replace('Extra nights requested: ', '')))] : []),
   ].join('');
 }
 
@@ -575,6 +576,48 @@ export async function sendBalanceEmail(env, origin, trip, booking, lines, url, r
 
 /* ---------------- POST /api/book ---------------- */
 
+/* Phone -> E.164. country: 'US' | 'CA' | 'OTHER'. Returns null when invalid. */
+export function normalizePhone(raw, country) {
+  const v = String(raw || '').trim();
+  const digits = v.replace(/\D/g, '');
+  if (String(country || 'US').toUpperCase() === 'OTHER') {
+    return v.startsWith('+') && digits.length >= 8 && digits.length <= 15 ? `+${digits}` : null;
+  }
+  if (digits.length === 10) return `+1${digits}`;
+  if (digits.length === 11 && digits[0] === '1') return `+${digits}`;
+  return null;
+}
+
+function addDaysIso(iso, n) {
+  return new Date(Date.parse(`${iso}T00:00:00Z`) + n * 86400000).toISOString().slice(0, 10);
+}
+
+function fmtMonDay(iso) {
+  const d = new Date(`${iso}T00:00:00Z`);
+  return `${d.toLocaleString('en-US', { month: 'short', timeZone: 'UTC' })} ${d.getUTCDate()}`;
+}
+
+function fmtRange(from, to) {
+  const a = new Date(`${from}T00:00:00Z`), b = new Date(`${to}T00:00:00Z`);
+  if (a.getUTCMonth() === b.getUTCMonth()) return `${fmtMonDay(from)}\u2013${b.getUTCDate()}`;
+  return `${fmtMonDay(from)}\u2013${fmtMonDay(to)}`;
+}
+
+export function extraNightsLine(b) {
+  const parts = [];
+  const pre = nightsBetween(b.pre_from, b.pre_to), post = nightsBetween(b.post_from, b.post_to);
+  if (pre > 0) parts.push(`${pre} before (${fmtRange(b.pre_from, b.pre_to)})`);
+  if (post > 0) parts.push(`${post} after (${fmtRange(b.post_from, b.post_to)})`);
+  return parts.length ? `Extra nights requested: ${parts.join(', ')}` : '';
+}
+
+function parseNights(v, name, errors) {
+  const s = clampStr(v, 3);
+  if (s === '') return 0;
+  if (!/^\d+$/.test(s) || Number(s) > 7) { errors.push(`${name} must be 0 to 7`); return 0; }
+  return Number(s);
+}
+
 function validatePair(fields, a, b, errors) {
   const from = clampStr(fields[a], 10);
   const to = clampStr(fields[b], 10);
@@ -599,7 +642,7 @@ export async function handleBookPost(request, env, url, ctx) {
   if (!skipCaptcha) {
     const ts = await verifyTurnstile(clampStr(f['cf-turnstile-response'], 3000), ip, env);
     if (ts.unavailable) return json({ ok: false, error: 'captcha_unavailable' }, 503);
-    if (!ts.ok) return json({ ok: false, error: 'captcha' }, 400);
+    if (!ts.ok) { console.log('book: captcha failed', slug, ts.codes || ''); return json({ ok: false, error: 'captcha' }, 400); }
   }
 
   const since = new Date(Date.now() - HOUR_MS).toISOString();
@@ -613,7 +656,7 @@ export async function handleBookPost(request, env, url, ctx) {
   const first_name = clampStr(f.first_name, 120);
   const last_name = clampStr(f.last_name, 120);
   const email = clampStr(f.email, 200);
-  const phone = clampStr(f.phone, 60);
+  let phone = clampStr(f.phone, 60);
   const room = clampStr(f.room, 10).toLowerCase();
   let bed = clampStr(f.bed, 10).toLowerCase() || null;
   if (!slug || !trip_ref_in || !first_name || !last_name || !email || !phone || !room) errors.push('missing required fields');
@@ -628,13 +671,41 @@ export async function handleBookPost(request, env, url, ctx) {
     rm.rm_phone = clampStr(f.rm_phone, 60) || null;
     if (!rm.rm_first_name || !rm.rm_last_name) errors.push('roommate name required');
     if (rm.rm_email && !EMAIL_RE.test(rm.rm_email)) errors.push('invalid roommate email');
+    if (rm.rm_first_name && rm.rm_last_name && first_name && last_name &&
+        `${rm.rm_first_name} ${rm.rm_last_name}`.trim().toLowerCase() === `${first_name} ${last_name}`.trim().toLowerCase()) {
+      errors.push('roommate must be a different person');
+    }
   } else bed = null;
   const ec_email = clampStr(f.ec_email, 200) || null;
   if (ec_email && !EMAIL_RE.test(ec_email)) errors.push('invalid emergency contact email');
+  if (ec_email && email && ec_email.toLowerCase() === email.toLowerCase()) errors.push("emergency contact email must be different from the traveler's");
+  if (ec_email && rm.rm_email && ec_email.toLowerCase() === rm.rm_email.toLowerCase()) errors.push("emergency contact email must be different from the roommate's");
+  // phones -> E.164
+  const phoneErr = 'invalid phone number (10 digits for US/Canada)';
+  const phoneN = phone ? normalizePhone(phone, f.phone_country) : null;
+  if (phone && !phoneN) errors.push(phoneErr); else if (phoneN) phone = phoneN;
+  let ec_phone = clampStr(f.ec_phone, 60) || null;
+  if (ec_phone) {
+    const n = normalizePhone(ec_phone, f.ec_phone_country);
+    if (!n) errors.push(phoneErr); else ec_phone = n;
+  }
+  if (rm.rm_phone) {
+    const n = normalizePhone(rm.rm_phone, f.phone_country);
+    if (!n) errors.push(phoneErr); else rm.rm_phone = n;
+  }
+  if (ec_phone && phoneN && ec_phone === phoneN) errors.push("emergency contact phone must be different from the traveler's");
   if (!truthy(f.terms)) errors.push('terms must be accepted');
-  const [pre_from, pre_to] = validatePair(f, 'pre_from', 'pre_to', errors);
-  const [post_from, post_to] = validatePair(f, 'post_from', 'post_to', errors);
-  if (errors.length) return json({ ok: false, error: 'validation', errors }, 400);
+  const nightsMode = f.pre_nights !== undefined || f.post_nights !== undefined;
+  let pre_from = null, pre_to = null, post_from = null, post_to = null;
+  let preN = 0, postN = 0;
+  if (nightsMode) {
+    preN = parseNights(f.pre_nights, 'pre_nights', errors);
+    postN = parseNights(f.post_nights, 'post_nights', errors);
+  } else {
+    [pre_from, pre_to] = validatePair(f, 'pre_from', 'pre_to', errors);
+    [post_from, post_to] = validatePair(f, 'post_from', 'post_to', errors);
+  }
+  if (errors.length) { console.log('book: validation', slug, errors.join('; ')); return json({ ok: false, error: 'validation', errors }, 400); }
 
   const trip = await getTrip(env, request, slug);
   if (!trip) return json({ ok: false, error: 'unknown trip' }, 404);
@@ -644,12 +715,19 @@ export async function handleBookPost(request, env, url, ctx) {
     console.error(`Trip ${slug} has no deposit_amount`);
     return json({ ok: false, error: 'bookings closed', message: 'Bookings for this trip are not open.' }, 409);
   }
+  if (nightsMode && (preN > 0 || postN > 0)) {
+    if (!trip.arrival_date || !trip.departure_date) {
+      return json({ ok: false, error: 'validation', errors: ['extra nights not available for this trip'] }, 400);
+    }
+    if (preN > 0) { pre_from = addDaysIso(trip.arrival_date, -preN); pre_to = trip.arrival_date; }
+    if (postN > 0) { post_from = trip.departure_date; post_to = addDaysIso(trip.departure_date, postN); }
+  }
 
   const travelers = room === 'double' ? 2 : 1;
   const record = {
     trip_ref: trip.trip_ref, slug: trip.slug, trip_title: trip.title, status: 'pending', source: 'web', travelers,
     first_name, last_name, email, phone, room, bed, ...rm, pre_from, pre_to, post_from, post_to,
-    ec_name: clampStr(f.ec_name, 200) || null, ec_email, ec_phone: clampStr(f.ec_phone, 60) || null,
+    ec_name: clampStr(f.ec_name, 200) || null, ec_email, ec_phone,
     dietary: clampStr(f.dietary, 2000) || null,
     terms_version: clampStr(f.terms_version, 60) || null, terms_accepted_at: nowIso(),
     deposit_amount_cents: trip.deposit_amount_cents * travelers, ip_hash,
@@ -856,11 +934,16 @@ export async function handleDetails(request, env, url, ctx) {
 
   const errors = [];
   const upd = {};
+  const tripEarly = await getTrip(env, request, b.slug);
+  const depIso = tripEarly && tripEarly.departure_date ? tripEarly.departure_date : '';
+  const todayIso = nowIso().slice(0, 10);
   const guests = b.travelers > 1 ? ['g1', 'g2'] : ['g1'];
   for (const g of guests) {
     for (const k of ['dob', 'passport_expiry']) {
       const v = clampStr(f[`${g}_${k}`], 10);
       if (v && !validIso(v)) errors.push(`${g}_${k} invalid date`);
+      else if (v && k === 'dob' && (v >= todayIso || v < '1900-01-01')) errors.push(`${g}_dob invalid date of birth`);
+      else if (v && k === 'passport_expiry' && depIso && v <= depIso) errors.push('passport expires before the trip ends');
       upd[`${g}_${k}`] = v || null;
     }
     upd[`${g}_passport_number`] = clampStr(f[`${g}_passport_number`], 40) || null;
@@ -868,7 +951,7 @@ export async function handleDetails(request, env, url, ctx) {
     upd[`${g}_flight_arrival`] = clampStr(f[`${g}_flight_arrival`], 300) || null;
     upd[`${g}_flight_departure`] = clampStr(f[`${g}_flight_departure`], 300) || null;
   }
-  if (errors.length) return json({ ok: false, error: 'validation', errors }, 400);
+  if (errors.length) { console.log('book: validation', slug, errors.join('; ')); return json({ ok: false, error: 'validation', errors }, 400); }
 
   const trip = await getTrip(env, request, b.slug);
   const allowed = new Set(trip ? trip.optionals.map((o) => o.name) : []);

@@ -667,6 +667,7 @@ document.querySelectorAll('details.group-day').forEach(function(d){
     }
     f.addEventListener('submit', function(e){
       e.preventDefault();
+      if (opts.check) { var bad = opts.check(serialize(f)); if (bad) { say(bad); return; } }
       var btn = f.querySelector('button[type=submit]');
       var tsInput = f.querySelector('[name="cf-turnstile-response"]');
       if (f.querySelector('.cf-turnstile') && window.turnstile && (!tsInput || !tsInput.value)) { say(MSG_CAPTCHA); return; }
@@ -682,6 +683,8 @@ document.querySelectorAll('details.group-day').forEach(function(d){
           } else if (res.status === 429) { say(MSG_RATE);
           } else if (res.status === 400 && res.body && res.body.error === 'captcha') { say(MSG_CAPTCHA); resetTurnstile();
           } else if (res.status === 503 && res.body && res.body.error === 'captcha_unavailable') { say(MSG_CAPTCHA_DOWN); resetTurnstile();
+          } else if (res.status === 400 && res.body && res.body.error === 'validation' && res.body.errors) {
+            say('Please check the form: ' + res.body.errors.join('; ') + '.'); resetTurnstile();
           } else { say(res.body && res.body.message ? res.body.message : MSG_ERR); resetTurnstile(); }
           btn.disabled = false;
         })
@@ -708,7 +711,24 @@ document.querySelectorAll('details.group-day').forEach(function(d){
     }
     [].slice.call(b.querySelectorAll('[name="room"]')).forEach(function(r){ r.addEventListener('change', sync); });
     sync();
-    wire(b, {onOk: function(body, say){
+    function digits(v){ return String(v || '').replace(/\D/g, ''); }
+    function phoneBad(v, c){
+      var n = digits(v);
+      if (c === 'OTHER') return String(v).trim().charAt(0) !== '+' || n.length < 8 || n.length > 15;
+      return !(n.length === 10 || (n.length === 11 && n.charAt(0) === '1'));
+    }
+    function lc(v){ return String(v || '').trim().toLowerCase(); }
+    wire(b, {check: function(v){
+      var pm = 'Please enter a valid phone number (10 digits for US/Canada).';
+      if (v.phone && phoneBad(v.phone, v.phone_country)) return pm;
+      if (v.ec_phone && phoneBad(v.ec_phone, v.ec_phone_country)) return pm;
+      if (v.rm_phone && v.room === 'double' && phoneBad(v.rm_phone, v.phone_country)) return pm;
+      if (lc(v.ec_email) && lc(v.ec_email) === lc(v.email)) return "Emergency contact email must be different from the traveler's.";
+      if (v.room === 'double' && lc(v.ec_email) && lc(v.ec_email) === lc(v.rm_email)) return "Emergency contact email must be different from the roommate's.";
+      if (v.ec_phone && v.phone && digits(v.ec_phone) === digits(v.phone)) return "Emergency contact phone must be different from the traveler's.";
+      if (v.room === 'double' && lc(v.rm_first_name + ' ' + v.rm_last_name) === lc(v.first_name + ' ' + v.last_name)) return 'Roommate must be a different person.';
+      return '';
+    }, onOk: function(body, say){
       if (body.checkout_url) { location.href = body.checkout_url; return true; }
       say('Something went wrong sending your message. Please email us directly at connect@ldorvadortravel.com.');
       return false;
