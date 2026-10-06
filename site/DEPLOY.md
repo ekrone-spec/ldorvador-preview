@@ -306,3 +306,32 @@ grep -rl '__[A-Z_]*__' groups terms.html     # must print nothing
 npx wrangler d1 migrations apply ldorvador-interest --local --persist-to /tmp/ldv-state
 npx wrangler dev --local --persist-to /tmp/ldv-state   # then curl /api/book, signed /api/stripe/webhook, /api/details, /admin/ (401)
 ```
+
+
+## Staging (staging.ldorvadortravel.com)
+
+A separate Worker (`ldorvador-staging`) with its own D1 and Access app, built
+from the same content with every trip's bookings forced open and robots
+noindex. Stripe stays in TEST mode on staging.
+
+One-time setup (Erik):
+1. `npx wrangler d1 create ldorvador-staging` → paste the id into
+   wrangler.jsonc `env.staging.d1_databases[0].database_id`.
+2. `npx wrangler d1 execute ldorvador-staging --remote --file=migrations/0001_interest.sql`
+   (whichever files exist in migrations/, in order, including 0004_bookings.sql).
+3. Cloudflare Zero Trust → Access → Applications → add a self-hosted app for
+   `staging.ldorvadortravel.com` paths `/admin`, `/api/admin`, `/api/interest`
+   with the same one-time-PIN policy (connect@, erik@, plus Hannah/Cornelis
+   if they review admin). Copy its Application Audience tag into
+   `env.staging.vars.ACCESS_AUD`.
+4. Turnstile → the site's widget → add hostname `staging.ldorvadortravel.com`.
+5. Stripe TEST mode: restricted key + a webhook on
+   `https://staging.ldorvadortravel.com/api/stripe/webhook` (same four events).
+6. Secrets for staging: `npx wrangler secret put NAME --env staging` for
+   TURNSTILE_SECRET, RESEND_API_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET,
+   BOOKING_TOKEN_SECRET.
+
+Deploy staging (from site/):
+    PROD=0 SITE=https://staging.ldorvadortravel.com LDV_BOOKINGS_FORCE_OPEN=1 python3 build.py && npx wrangler deploy --env staging
+Then rebuild production normally before any production deploy
+(`python3 build.py`), or let the Cloudflare git build do it on push.

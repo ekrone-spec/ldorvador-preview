@@ -38,5 +38,29 @@
     // means the export endpoint fails closed (always 404).
     "ACCESS_TEAM_DOMAIN": "tcstudio.cloudflareaccess.com",
     "ACCESS_AUD": "f4d00354389fef8f3283be0cfb5fc7b18efe41c73f54581ebce7a8be4c86d7c3"
+  },
+  // Staging: its own Worker, D1 and Access app on staging.ldorvadortravel.com.
+  // Build with PROD=0 SITE=https://staging.ldorvadortravel.com LDV_BOOKINGS_FORCE_OPEN=1
+  // then `npx wrangler deploy --env staging`. Secrets are per environment:
+  // `npx wrangler secret put <NAME> --env staging`. See DEPLOY.md.
+  "env": {
+    "staging": {
+      "name": "ldorvador-staging",
+      "routes": [{ "pattern": "staging.ldorvadortravel.com", "custom_domain": true }],
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "ldorvador-staging",
+          "database_id": "REPLACE_WITH_STAGING_D1_ID"
+        }
+      ],
+      "browser": { "binding": "BROWSER" },
+      "kv_namespaces": [{ "binding": "PDF_CACHE", "id": "4d7655bd229b46de895a35756bd52148" }],
+      "vars": {
+        "NOTIFY_TO": "erik@tcstudio.io",
+        "ACCESS_TEAM_DOMAIN": "tcstudio.cloudflareaccess.com",
+        "ACCESS_AUD": "REPLACE_WITH_STAGING_ACCESS_AUD"
+      }
+    }
   }
 }

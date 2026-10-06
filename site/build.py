@@ -436,7 +436,10 @@ def money(v):
         return '$0'
 
 def trip_booking_open(g):
-    return bool(g.get('bookings_open')) and bool((g.get('trip_ref') or '').strip())
+    # LDV_BOOKINGS_FORCE_OPEN=1 (staging builds) opens every trip that has a
+    # trip reference, so reviewers can walk the booking flow before launch.
+    forced = os.environ.get('LDV_BOOKINGS_FORCE_OPEN') == '1'
+    return (forced or bool(g.get('bookings_open'))) and bool((g.get('trip_ref') or '').strip())
 
 def write_trip_json(g, slug):
     keys = ['title', 'dates', 'trip_ref', 'bookings_open', 'price_package',
@@ -445,7 +448,7 @@ def write_trip_json(g, slug):
     out = {'slug': slug}
     for k in keys:
         out[k] = g.get(k)
-    out['bookings_open'] = bool(out['bookings_open'])
+    out['bookings_open'] = bool(out['bookings_open']) or os.environ.get('LDV_BOOKINGS_FORCE_OPEN') == '1'
     out['optionals'] = [o for o in (out['optionals'] or []) if (o.get('name') or '').strip()]
     # arrival/departure as ISO dates from the first and last itinerary day
     # (day dates are either ISO from CloudCannon or 'Saturday, March 6, 2027')
