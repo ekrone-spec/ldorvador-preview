@@ -37,7 +37,7 @@ def group_pages():
     """Group landing pages: groups/<slug>/index.html for every published,
     non-dot content/groups/<slug>.json, plus the /groups/ index itself.
     English only — not part of LOCALES."""
-    out = ['groups/index.html']
+    out = ['groups/index.html', 'terms.html']
     gdir = os.path.join(D, 'content', 'groups')
     if not os.path.isdir(gdir):
         return out
@@ -52,6 +52,10 @@ def group_pages():
             continue
         slug = data.get('slug') or fn[:-5]
         out.append('groups/%s/index.html' % slug)
+        # booking pages exist only while bookings are open (see build.py)
+        for sub in ('reserve', 'reserved', 'details'):
+            if os.path.exists(os.path.join(D, 'groups', slug, sub, 'index.html')):
+                out.append('groups/%s/%s/index.html' % (slug, sub))
     return out
 
 
@@ -156,8 +160,8 @@ def golden_layer(update=False):
         return
     golden = json.load(open(MANIFEST))
     for page in sorted(set(golden) | set(current)):
-        if page != 'groups/index.html' and re.match(r'^groups/[^/]+/index\.html$', page):
-            continue  # group trip pages: DOM is content-driven, covered by the audit layer instead
+        if page != 'groups/index.html' and re.match(r'^groups/[^/]+(/(reserve|reserved|details))?/index\.html$', page):
+            continue  # group trip + booking pages: DOM is content-driven, covered by the audit layer instead
         g, c = golden.get(page, []), current.get(page, [])
         if g == c:
             continue
@@ -223,7 +227,7 @@ def audit_layer():
     for path, p in pages.items():
         base = os.path.dirname(path)
         is_group = path in GROUP_PAGES
-        is_group_trip = is_group and path != 'groups/index.html'
+        is_group_trip = bool(re.match(r'^groups/[^/]+/index\.html$', path))
 
         # every asset reference resolves to a real file
         for ref in sorted(p.assets):
@@ -286,6 +290,20 @@ def audit_layer():
                     'comments', 'group', 'group_title', 'botcheck'}
             ok = any(need <= form for form in p.forms)
             check(ok, '%s: group interest form is missing required fields' % path)
+
+        # booking pages: forms carry exactly what the Worker endpoints read
+        need_by = {
+            'reserve': {'first_name', 'last_name', 'email', 'phone', 'room', 'bed', 'rm_first_name',
+                        'rm_last_name', 'rm_email', 'rm_phone', 'pre_from', 'pre_to', 'post_from',
+                        'post_to', 'ec_name', 'ec_email', 'ec_phone', 'dietary', 'terms',
+                        'terms_version', 'group', 'trip_ref', 'botcheck'},
+            'details': {'ref', 't', 'group', 'g1_dob', 'g1_passport_number', 'g1_passport_country',
+                        'g1_passport_expiry', 'g1_flight_arrival', 'g1_flight_departure'},
+        }
+        m = re.match(r'^groups/[^/]+/(reserve|details)/index\.html$', path)
+        if m:
+            check(any(need_by[m.group(1)] <= form for form in p.forms),
+                  '%s: booking form is missing required fields' % path)
 
     # sitemap <-> built pages. /groups/ is always indexable and in the
     # sitemap; a trip page joins it only when its `listed` flag opts in —

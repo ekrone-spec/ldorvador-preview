@@ -1,0 +1,57 @@
+<!--
+  Traveler details page (per trip), opened from an emailed link ?ref=..&t=..
+  (&pax=2 reveals guest 2). __G_OPTIONALS_BLOCK__ is built in Python from
+  the trip's "optionals" and is empty when there are none.
+-->
+__HEADER__
+<main id="main">
+<div class="gcurtain gsolo">
+<div class="page-wrap">
+  <section class="contact group-register" id="details-form">
+    <div class="sec-head" data-origin="left">
+      <p class="eyebrow">__G_CONGREGATION__</p>
+      <h2>Traveler Details</h2>
+    </div>
+    <p class="sub">__G_TITLE__ &middot; __G_DATES__</p>
+
+    <form id="detailsform" class="group-form-card" method="POST" action="/api/details">
+      <input type="hidden" name="ref" value="">
+      <input type="hidden" name="t" value="">
+      <input type="hidden" name="group" value="__G_SLUG__">
+      <fieldset>
+        <legend>Guest 1</legend>
+        <div class="two">
+          <div class="field"><label for="g1d">Date of birth <span class="req">*</span></label><input id="g1d" name="g1_dob" type="date" autocomplete="bday" required></div>
+          <div class="field"><label for="g1n">Passport number <span class="req">*</span></label><input id="g1n" name="g1_passport_number" type="text" autocomplete="off" required></div>
+        </div>
+        <div class="two">
+          <div class="field"><label for="g1c">Passport country <span class="req">*</span></label><input id="g1c" name="g1_passport_country" type="text" required></div>
+          <div class="field"><label for="g1x">Passport expiry <span class="req">*</span></label><input id="g1x" name="g1_passport_expiry" type="date" required></div>
+        </div>
+        <div class="field"><label for="g1a">Arrival flight <span class="req">*</span></label><input id="g1a" name="g1_flight_arrival" type="text" placeholder="Flight number, date, arrival time" required></div>
+        <div class="field"><label for="g1g">Departure flight <span class="req">*</span></label><input id="g1g" name="g1_flight_departure" type="text" placeholder="Flight number, date, departure time" required></div>
+      </fieldset>
+      <fieldset id="guest2" hidden>
+        <legend>Guest 2</legend>
+        <div class="two">
+          <div class="field"><label for="g2d">Date of birth <span class="req">*</span></label><input id="g2d" name="g2_dob" type="date"></div>
+          <div class="field"><label for="g2n">Passport number <span class="req">*</span></label><input id="g2n" name="g2_passport_number" type="text" autocomplete="off"></div>
+        </div>
+        <div class="two">
+          <div class="field"><label for="g2c">Passport country <span class="req">*</span></label><input id="g2c" name="g2_passport_country" type="text"></div>
+          <div class="field"><label for="g2x">Passport expiry <span class="req">*</span></label><input id="g2x" name="g2_passport_expiry" type="date"></div>
+        </div>
+        <div class="field"><label for="g2a">Arrival flight <span class="req">*</span></label><input id="g2a" name="g2_flight_arrival" type="text" placeholder="Flight number, date, arrival time"></div>
+        <div class="field"><label for="g2g">Departure flight <span class="req">*</span></label><input id="g2g" name="g2_flight_departure" type="text" placeholder="Flight number, date, departure time"></div>
+      </fieldset>
+      __G_OPTIONALS_BLOCK__
+      <div class="group-form-actions">
+        <button class="btn btn-solid" type="submit">Send Details</button>
+      </div>
+      <p class="formnote" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+</div>
+</div>
+</main>
+__FOOTER__

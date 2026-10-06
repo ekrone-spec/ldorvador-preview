@@ -209,6 +209,18 @@ bytes as-is instead of rasterizing a full-resolution PNG per cropped photo.
 - To push either secret: `npx wrangler versions secret put NAME` if there are
   undeployed Worker versions, otherwise `npx wrangler secret put NAME`.
 
+- `STRIPE_SECRET_KEY` — Stripe **restricted** key (Developers -> API keys ->
+  Create restricted key). Permissions: Checkout Sessions **Write**, Payment
+  Links **Write**, Prices **Write**, Products **Write**; everything else None.
+- `STRIPE_WEBHOOK_SECRET` — the endpoint's signing secret (`whsec_...`) from
+  Developers -> Webhooks -> the endpoint below -> Signing secret.
+- `BOOKING_TOKEN_SECRET` — any long random string (e.g. `openssl rand -base64 48`);
+  signs the traveler-details links. Rotating it invalidates links already emailed.
+- Push: `npx wrangler versions secret put STRIPE_SECRET_KEY`,
+  `npx wrangler versions secret put STRIPE_WEBHOOK_SECRET`,
+  `npx wrangler versions secret put BOOKING_TOKEN_SECRET`
+  (or `npx wrangler secret put NAME` when there are no undeployed versions).
+
 **Local testing.** `.dev.vars` (gitignored) holds local values for
 `WEB3FORMS_KEY`, `TURNSTILE_SECRET`, `RESEND_API_KEY`, `ACCESS_TEAM_DOMAIN`,
 `ACCESS_AUD`. `TURNSTILE_SECRET=1x0000000000000000000000000000000AA` is
@@ -228,4 +240,69 @@ npx wrangler d1 execute ldorvador-interest --remote --json --command \
   "SELECT created_at, group_slug, full_name, email FROM interest ORDER BY created_at DESC LIMIT 20"
 ```
 
+## Bookings & payments (Stripe)
+
+Code: `bookings.js` (exported interface documented at its top), `shared.js`
+(helpers shared with `worker.js`), routes in `worker.js`. Schema:
+`migrations/0004_bookings.sql` (tables `bookings`, `booking_seq`,
+`stripe_events`, `rate_events`). Apply in production with either
+
+```
+npx wrangler d1 migrations apply ldorvador-interest --remote
+# or, one-off:
+npx wrangler d1 execute ldorvador-interest --remote --file=migrations/0004_bookings.sql
+```
+
+**Endpoints.** `POST /api/book` (reserve form -> D1 row `pending` with
+reference `<trip_ref>-0001`, then a Stripe Checkout Session for the deposit);
+`GET|POST /api/details` (traveler details, token-protected link from the
+confirmation email); `POST /api/stripe/webhook` (Stripe only, signature
+verified). `/admin*` and `/api/admin*` require a valid Cloudflare Access JWT
+(401 otherwise) and are handled by `admin.js`. Add `/admin*` and
+`/api/admin*` to the Access application's paths.
+
+**Stripe dashboard setup (Erik):**
+1. Settings -> Payment methods: enable Cards and ACH Direct Debit (US bank account).
+2. Create the restricted key above; push as `STRIPE_SECRET_KEY`.
+3. Developers -> Webhooks -> Add endpoint
+   `https://www.ldorvadortravel.com/api/stripe/webhook`, events:
+   `checkout.session.completed`, `checkout.session.async_payment_succeeded`,
+   `checkout.session.async_payment_failed`, `payment_intent.succeeded`.
+   Push its signing secret as `STRIPE_WEBHOOK_SECRET`.
+4. Push `BOOKING_TOKEN_SECRET`.
+5. Test end to end in test mode first (test key + test webhook secret).
+
+**trip.json** (emitted by the build at `/groups/<slug>/trip.json`) must carry
+`trip_ref`, `bookings_open`, `deposit_amount`, `price_package`,
+`price_single_supplement`, `optionals`, plus `arrival_date` / `departure_date`
+(ISO, for the rooming list) and optionally `extension_price_per_night`.
+
+**Local testing of bookings.** Add to `.dev.vars` DUMMY values for
+`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `BOOKING_TOKEN_SECRET`, and
+`TURNSTILE_SKIP=1`. `TURNSTILE_SKIP` is honoured only when it equals `1` AND
+the request host is localhost/127.0.0.1 — never set it in production. Because
+the assets directory is `.`, keep the local D1 state outside it or wrangler
+reloads in a loop:
+`npx wrangler d1 migrations apply ldorvador-interest --local --persist-to /tmp/ldv-state`
+then `npx wrangler dev --local --persist-to /tmp/ldv-state`.
+
 <!-- build settings last updated 2026-09-05: build command "cd site 2>/dev/null || true; npm ci && pip3 install pillow && python3 build.py" (root-agnostic), root directory "site" -->
+
+## Booking system
+
+**Files.** `build.py` (emits `/groups/<slug>/trip.json`; `reserve/`, `reserved/`, `details/` only while `bookings_open` is true and `trip_ref` is set, and removes them when closed; builds `terms.html`), templates `reserve.body.html`, `reserved.body.html`, `details.body.html`, `terms.body.html`, `css.tmpl`, `js.tmpl`; content `content/terms.json` and the trip booking fields; `gen_cloudcannon.py` (CloudCannon fields); Worker `worker.js` (routing), `shared.js` (helpers), `bookings.js` (API, Stripe, emails), `admin.js` (admin pages and exports); `migrations/0004_bookings.sql`.
+
+**Routes.** Public: `POST /api/book`, `GET|POST /api/details`, `POST /api/stripe/webhook`. Behind Cloudflare Access (401 otherwise): `/admin/`, `/admin/<slug>[/<ref>[/balance]]`, `/api/admin/...` incl. `/api/admin/<slug>/export.csv` and `rooming.csv`.
+
+**Tables.** `bookings`, `booking_seq`, `stripe_events` (webhook idempotency), `rate_events` (details rate limit). `/api/book` rate limit is 5 per hour per IP hash, counted from `bookings`.
+
+**Env.** Secrets `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `BOOKING_TOKEN_SECRET` (plus existing `RESEND_API_KEY`, `TURNSTILE_SECRET`); local-only `TURNSTILE_SKIP=1`. Operator docs: `BOOKINGS-HANNAH.md`, `BOOKINGS-STRIPE-SETUP.md`.
+
+**Regression commands** (run with `bookings_open` true on a trip, then false):
+
+```
+python3 build.py && python3 smoke_test.py && python3 full_test.py
+grep -rl '__[A-Z_]*__' groups terms.html     # must print nothing
+npx wrangler d1 migrations apply ldorvador-interest --local --persist-to /tmp/ldv-state
+npx wrangler dev --local --persist-to /tmp/ldv-state   # then curl /api/book, signed /api/stripe/webhook, /api/details, /admin/ (401)
+```

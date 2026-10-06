@@ -34,6 +34,12 @@ GROUPTRIP_FIELD_LABEL = {
     'duration': 'Duration',
     'price': 'Price',
     'group_size': 'Group size',
+    'trip_ref': 'Trip reference (e.g. 20270303TBE01 — arrival date + organizer code + trip number). Bookings cannot open without it',
+    'bookings_open': 'Open bookings (shows the Reserve Your Spot button)',
+    'price_package': 'Trip package price per traveler (USD)',
+    'price_single_supplement': 'Single supplement (USD)',
+    'deposit_amount': 'Deposit per traveler (USD)',
+    'optionals': 'Optional tours (offered after confirmation)',
     'start_finish': 'Start / finish',
     'pace': 'Pace',
     'accommodation': 'Accommodation',
@@ -420,6 +426,23 @@ _structures:
             type: image
             label: 'Logo image'
 
+  optional_tour:
+    values:
+      - value:
+          name: ''
+          price: 0
+          description: ''
+        _inputs:
+          name:
+            type: text
+            label: 'Tour name'
+          price:
+            type: number
+            label: 'Price per traveler (USD)'
+          description:
+            type: textarea
+            label: 'Description'
+
 paths:
   uploads: assets/img
 ''']
@@ -430,6 +453,8 @@ for fn in sorted(os.listdir(os.path.join(D, 'content'))):
     if not fn.endswith('.json'):
         continue
     page = fn[:-5]
+    if page == 'terms':
+        continue  # flat shape; has its own file_config block below
     data = json.load(open(os.path.join(D, 'content', fn), encoding='utf-8'))
     finputs.append((page, data))
 
@@ -456,6 +481,20 @@ for page, data in finputs:
                 c = (c + ' Links: [text](https://example.com)') if c else 'Links: [text](https://example.com)'
             if c:
                 fc.append('        comment: %s' % yq(c))
+
+# Terms and Conditions: flat {version,title,intro,body}
+fc.append('  - glob: content/terms.json')
+fc.append('    _inputs:')
+for _f, _l, _t, _c in [
+        ('version', 'Version (date of this wording, e.g. 2026-10-06; bump it whenever the terms change)', 'text', None),
+        ('title', 'Page title', 'text', None),
+        ('intro', 'Intro (optional)', 'textarea', 'Blank line between paragraphs. Links: [text](https://example.com)'),
+        ('body', 'Terms text', 'textarea', 'Blank line between paragraphs. Links: [text](https://example.com)')]:
+    fc.append('      %s:' % _f)
+    fc.append('        type: %s' % _t)
+    fc.append('        label: %s' % yq(_l))
+    if _c:
+        fc.append('        comment: %s' % yq(_c))
 
 # group-trip landing pages: one uniform schema, so a single file_config
 # block (rather than one per file, as content/*.json needs) covers every
@@ -488,7 +527,13 @@ for field, label in GROUPTRIP_FIELD_LABEL.items():
         fc.append('          structures: partner_logo')
     elif field == 'closing_image':
         fc.append('        type: image')
-    elif field in ('published', 'listed'):
+    elif field == 'optionals':
+        fc.append('        type: array')
+        fc.append('        options:')
+        fc.append('          structures: optional_tour')
+    elif field in ('price_package', 'price_single_supplement', 'deposit_amount'):
+        fc.append('        type: number')
+    elif field in ('published', 'listed', 'bookings_open'):
         fc.append('        type: checkbox')
     elif field in GROUPTRIP_TEXTAREA:
         fc.append('        type: textarea')

@@ -27,7 +27,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -458,7 +458,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=533cb11edc"
 ],
 "history.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -488,7 +488,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -610,7 +610,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=533cb11edc"
 ],
 "story.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -640,7 +640,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -752,7 +752,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=533cb11edc"
 ],
 "itinerary.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -782,7 +782,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -904,7 +904,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=533cb11edc"
 ],
 "privacy.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -934,7 +934,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -1026,7 +1026,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=533cb11edc"
 ],
 "es/index.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -1056,7 +1056,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -1487,7 +1487,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=533cb11edc"
 ],
 "es/history.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -1517,7 +1517,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -1639,7 +1639,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=533cb11edc"
 ],
 "es/story.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -1669,7 +1669,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -1781,7 +1781,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=533cb11edc"
 ],
 "es/itinerary.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -1811,7 +1811,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -1933,7 +1933,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=533cb11edc"
 ],
 "es/privacy.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -1963,7 +1963,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -2055,7 +2055,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=533cb11edc"
 ],
 "nl/index.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -2085,7 +2085,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -2516,7 +2516,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=533cb11edc"
 ],
 "nl/history.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -2546,7 +2546,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -2668,7 +2668,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=533cb11edc"
 ],
 "nl/story.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -2698,7 +2698,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -2810,7 +2810,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=533cb11edc"
 ],
 "nl/itinerary.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -2840,7 +2840,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -2962,7 +2962,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=533cb11edc"
 ],
 "nl/privacy.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -2992,7 +2992,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -3084,7 +3084,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=533cb11edc"
 ],
 "he/index.html": [
 "0|html|id=|class=|attrs=dir,lang|refs=",
@@ -3114,7 +3114,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -3543,7 +3543,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=533cb11edc"
 ],
 "he/history.html": [
 "0|html|id=|class=|attrs=dir,lang|refs=",
@@ -3573,7 +3573,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -3695,7 +3695,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=533cb11edc"
 ],
 "he/story.html": [
 "0|html|id=|class=|attrs=dir,lang|refs=",
@@ -3725,7 +3725,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -3837,7 +3837,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=533cb11edc"
 ],
 "he/itinerary.html": [
 "0|html|id=|class=|attrs=dir,lang|refs=",
@@ -3867,7 +3867,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -3989,7 +3989,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=533cb11edc"
 ],
 "he/privacy.html": [
 "0|html|id=|class=|attrs=dir,lang|refs=",
@@ -4019,7 +4019,7 @@
 "2|link|id=|class=|attrs=href,hreflang,rel|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=type|refs=",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -4111,7 +4111,7 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=533cb11edc"
 ],
 "groups/index.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -4121,7 +4121,7 @@
 "2|meta|id=|class=|attrs=content,name|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=../assets/app.css?v=533cb11edc",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
 "2|header|id=header|class=header-solid|attrs=class,id|refs=",
@@ -4196,7 +4196,92 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=../assets/app.js?v=533cb11edc"
+],
+"terms.html": [
+"0|html|id=|class=|attrs=lang|refs=",
+"1|head|id=|class=|attrs=|refs=",
+"2|meta|id=|class=|attrs=charset|refs=",
+"2|meta|id=|class=|attrs=content,name|refs=",
+"2|meta|id=|class=|attrs=content,name|refs=",
+"2|title|id=|class=|attrs=|refs=",
+"2|link|id=|class=|attrs=href,rel|refs=assets/app.css?v=533cb11edc",
+"1|body|id=|class=|attrs=|refs=",
+"2|a|id=|class=skip|attrs=class,href|refs=",
+"2|header|id=header|class=header-solid|attrs=class,id|refs=",
+"3|div|id=|class=bar wrap|attrs=class|refs=",
+"4|a|id=|class=brand|attrs=aria-label,class,href|refs=",
+"5|span|id=|class=brand-stack|attrs=class|refs=",
+"6|span|id=|class=brand-word|attrs=class|refs=",
+"6|span|id=|class=brand-word|attrs=class|refs=",
+"5|span|id=|class=brand-tx|attrs=class|refs=",
+"4|nav|id=|class=main|attrs=aria-label,class|refs=",
+"5|span|id=|class=has-sub navitem|attrs=class|refs=",
+"6|a|id=|class=|attrs=aria-expanded,aria-haspopup,href|refs=",
+"6|span|id=|class=submenu|attrs=class,role|refs=",
+"7|a|id=|class=|attrs=href,role|refs=",
+"7|a|id=|class=|attrs=href,role|refs=",
+"5|a|id=|class=|attrs=href|refs=",
+"5|a|id=|class=|attrs=href|refs=",
+"5|span|id=|class=has-sub navitem|attrs=class|refs=",
+"6|a|id=|class=|attrs=aria-expanded,aria-haspopup,href|refs=",
+"6|span|id=|class=submenu|attrs=class,role|refs=",
+"7|a|id=|class=|attrs=href,role|refs=",
+"7|a|id=|class=|attrs=href,role|refs=",
+"7|a|id=|class=|attrs=href,role|refs=",
+"7|a|id=|class=|attrs=href,role|refs=",
+"5|a|id=|class=|attrs=href|refs=",
+"4|button|id=|class=navtoggle|attrs=aria-controls,aria-expanded,aria-label,class,type|refs=",
+"5|span|id=|class=|attrs=|refs=",
+"5|span|id=|class=|attrs=|refs=",
+"5|span|id=|class=|attrs=|refs=",
+"4|div|id=|class=header-cta|attrs=class|refs=",
+"5|a|id=|class=btn btn-solid|attrs=class,href|refs=",
+"3|div|id=mobilenav|class=mobilenav|attrs=class,hidden,id|refs=",
+"2|main|id=main|class=|attrs=id|refs=",
+"3|section|id=|class=subhero|attrs=class|refs=",
+"4|div|id=|class=bg|attrs=class,style|refs=assets/img/subhero-history.jpg",
+"4|div|id=|class=inner wrap|attrs=class|refs=",
+"5|p|id=|class=eyebrow|attrs=class|refs=",
+"5|h1|id=|class=|attrs=|refs=",
+"3|div|id=|class=page-wrap|attrs=class|refs=",
+"4|a|id=|class=backlink|attrs=class,href|refs=",
+"4|div|id=|class=hist-prose|attrs=class,style|refs=",
+"5|p|id=|class=eyebrow|attrs=class|refs=",
+"5|p|id=|class=|attrs=style|refs=",
+"2|footer|id=|class=|attrs=|refs=",
+"3|div|id=|class=flagrule|attrs=aria-hidden,class|refs=",
+"4|i|id=|class=|attrs=|refs=",
+"4|i|id=|class=|attrs=|refs=",
+"4|i|id=|class=|attrs=|refs=",
+"3|div|id=|class=wrap|attrs=class|refs=",
+"4|div|id=|class=foot-grid|attrs=class|refs=",
+"5|div|id=|class=foot-brand|attrs=class|refs=",
+"6|a|id=|class=brand foot-logo|attrs=aria-label,class,href|refs=",
+"7|span|id=|class=brand-stack|attrs=class|refs=",
+"8|span|id=|class=brand-word|attrs=class|refs=",
+"8|span|id=|class=brand-word|attrs=class|refs=",
+"7|span|id=|class=brand-tx|attrs=class|refs=",
+"6|p|id=|class=|attrs=|refs=",
+"5|div|id=|class=|attrs=|refs=",
+"6|h4|id=|class=|attrs=|refs=",
+"6|a|id=|class=|attrs=href|refs=",
+"6|a|id=|class=|attrs=href|refs=",
+"6|a|id=|class=|attrs=href|refs=",
+"6|a|id=|class=|attrs=href|refs=",
+"6|a|id=|class=|attrs=href|refs=",
+"5|div|id=|class=|attrs=|refs=",
+"6|h4|id=|class=|attrs=|refs=",
+"6|a|id=|class=|attrs=href|refs=",
+"6|a|id=|class=|attrs=href|refs=",
+"6|a|id=|class=|attrs=href|refs=",
+"6|a|id=|class=|attrs=href|refs=",
+"4|div|id=|class=colophon|attrs=class|refs=",
+"5|span|id=|class=|attrs=|refs=",
+"6|span|id=yr|class=|attrs=id|refs=",
+"6|a|id=|class=|attrs=href|refs=",
+"5|span|id=|class=|attrs=|refs=",
+"2|script|id=|class=|attrs=defer,src|refs=assets/app.js?v=533cb11edc"
 ],
 "groups/temple-beth-elohim/index.html": [
 "0|html|id=|class=|attrs=lang|refs=",
@@ -4207,7 +4292,7 @@
 "2|meta|id=|class=|attrs=content,name|refs=",
 "2|link|id=|class=|attrs=href,rel|refs=",
 "2|title|id=|class=|attrs=|refs=",
-"2|link|id=|class=|attrs=href,rel|refs=../../assets/app.css?v=b39ee07365",
+"2|link|id=|class=|attrs=href,rel|refs=../../assets/app.css?v=533cb11edc",
 "2|script|id=|class=|attrs=async,defer,src|refs=https://challenges.cloudflare.com/turnstile/v0/api.js",
 "1|body|id=|class=|attrs=|refs=",
 "2|a|id=|class=skip|attrs=class,href|refs=",
@@ -4619,6 +4704,6 @@
 "6|span|id=yr|class=|attrs=id|refs=",
 "6|a|id=|class=|attrs=href|refs=",
 "5|span|id=|class=|attrs=|refs=",
-"2|script|id=|class=|attrs=defer,src|refs=../../assets/app.js?v=b39ee07365"
+"2|script|id=|class=|attrs=defer,src|refs=../../assets/app.js?v=533cb11edc"
 ]
 }

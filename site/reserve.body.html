@@ -1,0 +1,104 @@
+<!--
+  Reserve page (per trip). Built by build_group_subpages() only when the trip
+  has bookings_open and a trip_ref. Tokens: __G_SLUG__ __G_TITLE__ __G_DATES__
+  __G_CONGREGATION__ __G_TRIP_REF__ __G_TERMS_VERSION__ __G_DEPOSIT__ (number)
+  __G_DEPOSIT_FMT__ ($1,000) __G_PRICE_NOTE__ __TURNSTILE_SITEKEY__
+-->
+__HEADER__
+<main id="main">
+<div class="gcurtain gsolo">
+<div class="page-wrap">
+  <section class="contact group-register" id="reserve">
+    <div class="sec-head" data-origin="left">
+      <p class="eyebrow">__G_CONGREGATION__</p>
+      <h2>Reserve Your Spot</h2>
+    </div>
+    <p class="sub">__G_TITLE__ &middot; __G_DATES__</p>
+
+    <form id="bookingform" class="group-form-card" method="POST" action="/api/book">
+      <input type="hidden" name="group" value="__G_SLUG__">
+      <input type="hidden" name="trip_ref" value="__G_TRIP_REF__">
+      <input type="hidden" name="terms_version" value="__G_TERMS_VERSION__">
+      <fieldset>
+        <legend>Lead traveler</legend>
+        <div class="two">
+          <div class="field"><label for="bfn">First name <span class="req">*</span></label><input id="bfn" name="first_name" type="text" autocomplete="given-name" required></div>
+          <div class="field"><label for="bln">Last name <span class="req">*</span></label><input id="bln" name="last_name" type="text" autocomplete="family-name" required></div>
+        </div>
+        <div class="two">
+          <div class="field"><label for="be">Email <span class="req">*</span></label><input id="be" name="email" type="email" autocomplete="email" required></div>
+          <div class="field"><label for="bp">Phone <span class="req">*</span></label><input id="bp" name="phone" type="tel" autocomplete="tel" required></div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Room</legend>
+        <div class="field room-field">
+          <label>Room type <span class="req">*</span></label>
+          <div class="room-options">
+            <label class="room-opt"><input type="radio" name="room" value="single" required><span>Single</span></label>
+            <label class="room-opt"><input type="radio" name="room" value="double" required><span>Double</span></label>
+          </div>
+        </div>
+        <div id="roomdouble">
+          <div class="field room-field">
+            <label>Bed type (double rooms) <span class="req">*</span></label>
+            <div class="room-options">
+              <label class="room-opt"><input type="radio" name="bed" value="king"><span>1 King</span></label>
+              <label class="room-opt"><input type="radio" name="bed" value="queens"><span>2 Queen beds</span></label>
+            </div>
+          </div>
+          <fieldset id="roommate">
+            <legend>Roommate</legend>
+            <div class="two">
+              <div class="field"><label for="rfn">First name</label><input id="rfn" name="rm_first_name" type="text"></div>
+              <div class="field"><label for="rln">Last name</label><input id="rln" name="rm_last_name" type="text"></div>
+            </div>
+            <div class="two">
+              <div class="field"><label for="re">Email</label><input id="re" name="rm_email" type="email"></div>
+              <div class="field"><label for="rp">Phone</label><input id="rp" name="rm_phone" type="tel"></div>
+            </div>
+          </fieldset>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Pre / post nights</legend>
+        <div class="two">
+          <div class="field"><label for="prf">Extra nights before: from</label><input id="prf" name="pre_from" type="date"></div>
+          <div class="field"><label for="prt">Extra nights before: to</label><input id="prt" name="pre_to" type="date"></div>
+        </div>
+        <div class="two">
+          <div class="field"><label for="pof">Extra nights after: from</label><input id="pof" name="post_from" type="date"></div>
+          <div class="field"><label for="pot">Extra nights after: to</label><input id="pot" name="post_to" type="date"></div>
+        </div>
+        <p class="group-notify-note">Requests only; confirmed extensions are added to the balance.</p>
+      </fieldset>
+      <fieldset>
+        <legend>Emergency contact</legend>
+        <div class="field"><label for="ecn">Name <span class="req">*</span></label><input id="ecn" name="ec_name" type="text" required></div>
+        <div class="two">
+          <div class="field"><label for="ece">Email <span class="req">*</span></label><input id="ece" name="ec_email" type="email" required></div>
+          <div class="field"><label for="ecp">Phone <span class="req">*</span></label><input id="ecp" name="ec_phone" type="tel" required></div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Dietary requirements / special requests</legend>
+        <div class="field"><textarea id="bd" name="dietary" aria-label="Dietary requirements / special requests"></textarea></div>
+      </fieldset>
+      <fieldset>
+        <legend>Terms</legend>
+        <label class="group-check"><input type="checkbox" name="terms" value="yes" required><span>I accept the <a href="/terms.html" target="_blank" rel="noopener">Terms and Conditions</a></span></label>
+      </fieldset>
+      <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+      <div class="cf-turnstile" data-sitekey="__TURNSTILE_SITEKEY__" data-theme="light" data-size="flexible" data-appearance="interaction-only"></div>
+      <p class="group-summary" id="depositsum" data-deposit="__G_DEPOSIT__">Deposit due now: <strong>__G_DEPOSIT_FMT__</strong> per traveler</p>
+      <div class="group-form-actions">
+        <button class="btn btn-solid" type="submit">Continue to Payment</button>
+      </div>
+      <p class="group-price-note">__G_PRICE_NOTE__</p>
+      <p class="formnote" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+</div>
+</div>
+</main>
+__FOOTER__

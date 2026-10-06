@@ -304,6 +304,23 @@ _structures:
             type: image
             label: 'Logo image'
 
+  optional_tour:
+    values:
+      - value:
+          name: ''
+          price: 0
+          description: ''
+        _inputs:
+          name:
+            type: text
+            label: 'Tour name'
+          price:
+            type: number
+            label: 'Price per traveler (USD)'
+          description:
+            type: textarea
+            label: 'Description'
+
 paths:
   uploads: assets/img
 
@@ -1615,6 +1632,22 @@ file_config:
         type: text
         label: "Link text 2"
         comment: "Originally: “Begin a Conversation”"
+  - glob: content/terms.json
+    _inputs:
+      version:
+        type: text
+        label: "Version (date of this wording, e.g. 2026-10-06; bump it whenever the terms change)"
+      title:
+        type: text
+        label: "Page title"
+      intro:
+        type: textarea
+        label: "Intro (optional)"
+        comment: "Blank line between paragraphs. Links: [text](https://example.com)"
+      body:
+        type: textarea
+        label: "Terms text"
+        comment: "Blank line between paragraphs. Links: [text](https://example.com)"
   - glob: content/groups/*.json
     _inputs:
       slug:
@@ -1663,6 +1696,26 @@ file_config:
       group_size:
         type: text
         label: "Group size"
+      trip_ref:
+        type: text
+        label: "Trip reference (e.g. 20270303TBE01 — arrival date + organizer code + trip number). Bookings cannot open without it"
+      bookings_open:
+        type: checkbox
+        label: "Open bookings (shows the Reserve Your Spot button)"
+      price_package:
+        type: number
+        label: "Trip package price per traveler (USD)"
+      price_single_supplement:
+        type: number
+        label: "Single supplement (USD)"
+      deposit_amount:
+        type: number
+        label: "Deposit per traveler (USD)"
+      optionals:
+        type: array
+        options:
+          structures: optional_tour
+        label: "Optional tours (offered after confirmation)"
       start_finish:
         type: text
         label: "Start / finish"

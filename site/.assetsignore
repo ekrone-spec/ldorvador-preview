@@ -16,3 +16,6 @@ migrations/
 node_modules/
 package.json
 package-lock.json
+bookings.js
+shared.js
+admin.js

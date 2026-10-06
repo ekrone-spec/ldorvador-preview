@@ -160,6 +160,8 @@ for fn in sorted(os.listdir(cdir)):
     if not fn.endswith('.json'):
         continue
     page = fn[:-5]
+    if page == 'terms':
+        continue  # flat {version,title,intro,body}; rendered by build_terms()
     data = json.load(open(os.path.join(cdir, fn), encoding='utf-8'))
     for group, fields in data.items():
         for field, text in fields.items():
@@ -425,6 +427,130 @@ def render_day_text(text):
     return ''.join(out)
 
 
+# ---- booking support: trip.json for the Worker, reserve / reserved / details
+# pages, and the English-only Terms page ----
+def money(v):
+    try:
+        return '${:,.0f}'.format(float(v or 0))
+    except (TypeError, ValueError):
+        return '$0'
+
+def trip_booking_open(g):
+    return bool(g.get('bookings_open')) and bool((g.get('trip_ref') or '').strip())
+
+def write_trip_json(g, slug):
+    keys = ['title', 'dates', 'trip_ref', 'bookings_open', 'price_package',
+            'price_single_supplement', 'deposit_amount', 'optionals',
+            'contact_email', 'contact_phone', 'congregation']
+    out = {'slug': slug}
+    for k in keys:
+        out[k] = g.get(k)
+    out['bookings_open'] = bool(out['bookings_open'])
+    out['optionals'] = [o for o in (out['optionals'] or []) if (o.get('name') or '').strip()]
+    # arrival/departure as ISO dates from the first and last itinerary day
+    # (day dates are either ISO from CloudCannon or 'Saturday, March 6, 2027')
+    def _iso(s):
+        s = str(s or '').strip()
+        if not s:
+            return None
+        m = re.match(r'^(\d{4}-\d{2}-\d{2})', s)
+        if m:
+            return m.group(1)
+        for fmt in ('%A, %B %d, %Y', '%B %d, %Y', '%a, %B %d, %Y'):
+            try:
+                return datetime.datetime.strptime(s, fmt).strftime('%Y-%m-%d')
+            except ValueError:
+                pass
+        return None
+    days = [d for d in (g.get('itinerary') or []) if d.get('date')]
+    out['arrival_date'] = _iso(days[0]['date']) if days else None
+    out['departure_date'] = _iso(days[-1]['date']) if days else None
+    out['extension_price_per_night'] = g.get('extension_price_per_night') or 0
+    W('groups/%s/trip.json' % slug, json.dumps(out, ensure_ascii=False, indent=1) + '\n')
+
+def _page_head(title, prefix, turnstile=False):
+    return ('<!doctype html>\n<html lang="en"><head><meta charset="utf-8">'
+            '<meta name="viewport" content="width=device-width, initial-scale=1">'
+            '<meta name="robots" content="noindex,nofollow">'
+            '<title>%s</title>'
+            '<link rel="stylesheet" href="%sassets/app.css?v=' + VER + '">'
+            + ('<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>' if turnstile else '')
+            + '</head><body>\n') % (_cesc(title), prefix)
+
+def _terms_data():
+    p = os.path.join(D, 'content', 'terms.json')
+    t = json.load(open(p, encoding='utf-8')) if os.path.exists(p) else {}
+    return {'version': str(t.get('version') or ''), 'title': t.get('title') or 'Terms and Conditions',
+            'intro': t.get('intro') or '', 'body': t.get('body') or ''}
+
+def _paras(text):
+    paras = [x.strip() for x in re.split(r'\n\s*\n', str(text or '')) if x.strip()]
+    return ''.join('<p style="margin-top:20px">%s</p>' % md_links(_cesc(x)) for x in paras)
+
+def build_terms():
+    t = _terms_data()
+    body = R('terms.body.html').replace('__HEADER__', header).replace('__FOOTER__', footer)
+    body = fill_content(body).replace('__LANGNAV__', '')
+    body = (body.replace('__T_TITLE__', _cesc(t['title'])).replace('__T_VERSION__', _cesc(t['version']))
+                .replace('__T_INTRO__', _paras(t['intro'])).replace('__T_BODY__', _paras(t['body'])))
+    for k, v in imgmap.items():
+        body = body.replace(k, v)
+    tail = '\n<script src="assets/app.js?v=' + VER + '" defer></script></body></html>'
+    W('terms.html', entesc(_page_head('%s | L\u2019Dor Vador Travel' % t['title'], '') + _drop_empties(body) + tail))
+
+def build_group_subpages(g, slug, gv):
+    if not trip_booking_open(g):
+        # bookings closed: remove booking pages left over from an earlier open build
+        import shutil
+        for sub in ('reserve', 'reserved', 'details'):
+            shutil.rmtree(os.path.join(os.environ.get('LDV_OUT_DIR') or D, 'groups', slug, sub), ignore_errors=True)
+        return
+    terms = _terms_data()
+    deposit = g.get('deposit_amount') or 0
+
+    def optionals_block():
+        opts = [o for o in (g.get('optionals') or []) if (o.get('name') or '').strip()]
+        if not opts:
+            return ''
+        rows = ''
+        for o in opts:
+            price = ' &mdash; %s' % money(o.get('price')) if o.get('price') else ''
+            desc = ('<small class="group-notify-note">%s</small>' % _cesc(o.get('description'))
+                    if o.get('description') else '')
+            rows += ('<div class="field"><label class="group-check"><input type="checkbox" name="optional[]" value="%s">'
+                     '<span>%s%s%s</span></label></div>'
+                     % (_cesc(o['name']), _cesc(o['name']), price, desc))
+        return '<fieldset><legend>Optional tours</legend>%s</fieldset>' % rows
+
+    subs = {
+        '__G_SLUG__': _cesc(slug), '__G_TITLE__': gv('title'), '__G_DATES__': gv('dates'),
+        '__G_CONGREGATION__': gv('congregation'),
+        '__G_TRIP_REF__': _cesc(g.get('trip_ref')),
+        '__G_TERMS_VERSION__': _cesc(terms['version']),
+        '__G_DEPOSIT__': _cesc(str(deposit)), '__G_DEPOSIT_FMT__': money(deposit),
+        '__G_PRICE_NOTE__': md_links(gv('price_note')),
+        '__G_OPTIONALS_BLOCK__': optionals_block(),
+        '__TURNSTILE_SITEKEY__': _cesc(TURNSTILE_SITEKEY),
+    }
+    for tmpl_name, sub, ts in [('reserve.body.html', 'reserve', True),
+                               ('reserved.body.html', 'reserved', False),
+                               ('details.body.html', 'details', False)]:
+        tmpl = re.sub(r'^\s*<!--.*?-->\s*', '', R(tmpl_name), count=1, flags=re.S)
+        body = tmpl.replace('__HEADER__', header).replace('__FOOTER__', footer)
+        body = fill_content(body).replace('__LANGNAV__', '')
+        body = re.sub(r'href="(?!https?:|mailto:|#|\.\./)([a-z][\w.-]*\.html)', r'href="../../../\1', body)
+        for tok, val in subs.items():
+            body = body.replace(tok, val)
+        body = _drop_empties(body)
+        for k, v in imgmap.items():
+            body = body.replace(k, '../../../' + v)
+        title = '%s | %s | L\u2019Dor Vador Travel' % (
+            {'reserve': 'Reserve Your Spot', 'reserved': 'Reservation received', 'details': 'Traveler Details'}[sub],
+            g.get('title') or slug)
+        tail = '\n<script src="../../../assets/app.js?v=' + VER + '" defer></script></body></html>'
+        W('groups/%s/%s/index.html' % (slug, sub), entesc(_page_head(title, '../../../', ts) + body + tail))
+
+
 def build_groups():
     gdir = os.path.join(D, 'content', 'groups')
     if not os.path.isdir(gdir):
@@ -589,6 +715,7 @@ def build_groups():
             return ('<a class="btn btn-line on-photo grouphero-pdf" href="%s" download>'
                     'Download trip details (PDF)</a>' % pdf_href())
 
+        booking_open = trip_booking_open(g)
         body = (tmpl.replace('__HEADER__', header)
                     .replace('__FOOTER__', footer))
         body = fill_content(body)
@@ -631,6 +758,12 @@ def build_groups():
             '__G_PARTNER_LOGOS__':     partner_logos(),
             '__G_CLOSING_IMAGE__':     closing_image(),
             '__TURNSTILE_SITEKEY__':   _cesc(TURNSTILE_SITEKEY),
+            '__G_RESERVE_HERO__':      ('<a class="btn btn-solid grouphero-cta" href="reserve/">Reserve Your Spot</a>'
+                                         if booking_open else ''),
+            '__G_REGISTER_CLASS__':    ('btn-line on-photo' if booking_open else 'btn-solid'),
+            '__G_RESERVE_LINE__':      ('<div class="group-reserve-line"><p>Ready to book? Reserve your spot with a %s '
+                                         'deposit per traveler.</p><a class="btn btn-solid" href="reserve/">Reserve Your Spot</a></div>'
+                                         % money(g.get('deposit_amount')) if booking_open else ''),
         }
         for tok, val in subs.items():
             body = body.replace(tok, val)
@@ -656,6 +789,8 @@ def build_groups():
         tail = '\n<script src="../../assets/app.js?v=' + VER + '" defer></script></body></html>'
         W('groups/%s/index.html' % slug, entesc(head + body + tail))
         W('groups/%s/print.html' % slug, entesc(print_page(g, slug)))
+        write_trip_json(g, slug)
+        build_group_subpages(g, slug, gv)
         n += 1
     build_groups_index(listed_trips)
     return n
@@ -1429,6 +1564,7 @@ def print_page(g, slug):
     return html
 
 groups_built = build_groups()
+build_terms()
 
 # ---- self-contained English homepage for the artifact ----
 def datauri(path):

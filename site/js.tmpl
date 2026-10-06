@@ -637,3 +637,106 @@ document.querySelectorAll('details.group-day').forEach(function(d){
   var s = d.querySelector(':scope > summary');
   if (s) s.addEventListener('click', function(e){ e.preventDefault(); });
 });
+
+/* Group booking forms (reserve + traveler details). Posts JSON to the Worker:
+   named fields, checked boxes/radios only, optional[] collected as the array
+   "optional". Reserve success returns {ok:true, checkout_url}. */
+(function(){
+  function serialize(f){
+    var out = {}, opt = [];
+    [].slice.call(f.elements).forEach(function(el){
+      if (!el.name || el.disabled) return;
+      if ((el.type === 'checkbox' || el.type === 'radio') && !el.checked) return;
+      if (el.name === 'optional[]') { opt.push(el.value); return; }
+      out[el.name] = el.value;
+    });
+    if (opt.length) out.optional = opt;
+    return out;
+  }
+  function wire(f, opts){
+    var note = f.querySelector('.formnote');
+    var MSG_RATE = 'Too many submissions from this connection. Please try again in an hour or email us.';
+    var MSG_ERR = 'Something went wrong sending your message. Please email us directly at connect@ldorvadortravel.com.';
+    var MSG_CAPTCHA = 'Please complete the verification and try again.';
+    var MSG_CAPTCHA_DOWN = 'Verification is temporarily unavailable. Please try again in a minute.';
+    function say(msg){ if(note){ note.textContent = msg; } else { alert(msg); } }
+    function resetTurnstile(){
+      if (window.turnstile && typeof window.turnstile.reset === 'function') {
+        try { window.turnstile.reset(); } catch (e) {}
+      }
+    }
+    f.addEventListener('submit', function(e){
+      e.preventDefault();
+      var btn = f.querySelector('button[type=submit]');
+      var tsInput = f.querySelector('[name="cf-turnstile-response"]');
+      if (f.querySelector('.cf-turnstile') && window.turnstile && (!tsInput || !tsInput.value)) { say(MSG_CAPTCHA); return; }
+      btn.disabled = true;
+      fetch(f.action, {method:'POST', body:JSON.stringify(serialize(f)),
+                       headers:{'Content-Type':'application/json','Accept':'application/json'}})
+        .then(function(r){
+          return r.json().catch(function(){ return {}; }).then(function(j){ return {status:r.status, ok:r.ok, body:j}; });
+        })
+        .then(function(res){
+          if (res.ok && res.body && res.body.ok) {
+            if (opts.onOk(res.body, say, f, note)) return;
+          } else if (res.status === 429) { say(MSG_RATE);
+          } else if (res.status === 400 && res.body && res.body.error === 'captcha') { say(MSG_CAPTCHA); resetTurnstile();
+          } else if (res.status === 503 && res.body && res.body.error === 'captcha_unavailable') { say(MSG_CAPTCHA_DOWN); resetTurnstile();
+          } else { say(res.body && res.body.message ? res.body.message : MSG_ERR); resetTurnstile(); }
+          btn.disabled = false;
+        })
+        .catch(function(){ say(MSG_ERR); btn.disabled = false; });
+    });
+  }
+  function show(el, on){ if (!el) return; if (on) el.removeAttribute('hidden'); else el.setAttribute('hidden', ''); }
+
+  var b = document.getElementById('bookingform');
+  if (b) {
+    var dbl = document.getElementById('roomdouble');
+    var sum = document.getElementById('depositsum');
+    var dep = sum ? parseFloat(sum.getAttribute('data-deposit')) || 0 : 0;
+    var fmt = function(n){ return '$' + Math.round(n).toLocaleString('en-US'); };
+    function sync(){
+      var room = b.querySelector('[name="room"]:checked');
+      var two = !!room && room.value === 'double';
+      show(dbl, two);
+      [].slice.call(b.querySelectorAll('[name="bed"]')).forEach(function(r){ r.required = two; });
+      if (sum && room) {
+        sum.innerHTML = 'Deposit due now: <strong>' + fmt(dep * (two ? 2 : 1)) + '</strong> total (' +
+          (two ? '2 travelers' : '1 traveler') + ' &times; ' + fmt(dep) + ')';
+      }
+    }
+    [].slice.call(b.querySelectorAll('[name="room"]')).forEach(function(r){ r.addEventListener('change', sync); });
+    sync();
+    wire(b, {onOk: function(body, say){
+      if (body.checkout_url) { location.href = body.checkout_url; return true; }
+      say('Something went wrong sending your message. Please email us directly at connect@ldorvadortravel.com.');
+      return false;
+    }});
+  }
+
+  var br = document.getElementById('bref');
+  if (br) {
+    var rf = (new URLSearchParams(location.search)).get('ref');
+    if (rf) br.textContent = rf;  /* textContent: never parsed as HTML */
+  }
+
+  var d = document.getElementById('detailsform');
+  if (d) {
+    var q = new URLSearchParams(location.search);
+    d.querySelector('[name="ref"]').value = q.get('ref') || '';
+    d.querySelector('[name="t"]').value = q.get('t') || '';
+    var g2 = document.getElementById('guest2');
+    if (q.get('pax') === '2' && g2) {
+      show(g2, true);
+      [].slice.call(g2.querySelectorAll('input')).forEach(function(i){ i.required = true; });
+    }
+    wire(d, {onOk: function(body, say, f, note){
+      say('Thank you, your details are saved.');
+      f.style.minHeight = f.offsetHeight + 'px';
+      f.reset(); f.classList.add('sent');
+      if (note && note.scrollIntoView) note.scrollIntoView({block:'center', behavior:'smooth'});
+      return true;
+    }});
+  }
+})();
