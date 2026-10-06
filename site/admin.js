@@ -5,7 +5,7 @@ import {
 } from './shared.js';
 import {
   getTrip, getBooking, listBookings, insertBooking, updateBooking, bookingToken, detailsUrl,
-  bookingToExportRow, EXPORT_COLUMNS, roomingRow, ROOMING_COLUMNS, computeBalance, createBalancePaymentLink,
+  bookingToExportRow, EXPORT_COLUMNS, roomingRows, ROOMING_COLUMNS, resolvePartnerRef, linkPartner, computeBalance, createBalancePaymentLink,
   sendBalanceEmail, sendManualConfirmation, formatUsd,
 } from './bookings.js';
 
@@ -176,6 +176,15 @@ function parseBookingForm(F, trip, { edit }) {
   if (email && !EMAIL_RE.test(email)) errors.push('Invalid email');
   if (!['single', 'double'].includes(room)) errors.push('Room must be single or double');
   const rm = { rm_first_name: null, rm_last_name: null, rm_email: null, rm_phone: null };
+  const separate = room === 'double' && F.get('roommate_separate') === '1';
+  let partner_booking_ref = null;
+  if (separate) {
+    const ref = clampStr(F.get('partner_booking_ref'), 40).toUpperCase();
+    if (ref) {
+      if (!/^[0-9]{8}[A-Z]{3}[0-9]{2}-[0-9]{4}$/.test(ref)) errors.push('Roommate booking reference not found');
+      else partner_booking_ref = ref;
+    }
+  }
   if (room === 'double') {
     if (!['king', 'queens'].includes(bed || '')) errors.push('Bed must be king or queens for a double room');
     rm.rm_first_name = clampStr(F.get('rm_first_name'), 120) || null;
@@ -193,7 +202,8 @@ function parseBookingForm(F, trip, { edit }) {
   if (!STATUSES.includes(status)) errors.push('Invalid status');
   const fields = {
     first_name, last_name, email, phone: clampStr(F.get('phone'), 60) || null, room, bed, ...rm,
-    travelers: room === 'double' ? 2 : 1,
+    travelers: room === 'double' && !separate ? 2 : 1,
+    roommate_separate: separate ? 1 : 0, partner_booking_ref,
     pre_from, pre_to, post_from, post_to,
     ec_name: clampStr(F.get('ec_name'), 200) || null, ec_email, ec_phone: clampStr(F.get('ec_phone'), 60) || null,
     dietary: clampStr(F.get('dietary'), 2000) || null,
@@ -236,7 +246,8 @@ ${select('room', 'Room', roomOpts, b.room || 'double')}${select('bed', 'Bed (dou
 <div class="wide"><label class="chk"><input type="checkbox" name="is_tour_leader" value="1"${Number(b.is_tour_leader) ? ' checked' : ''}> Tour leader (included in the rooming list, flagged in the table)</label></div></div>
 <div class="adm-sec">Roommate (double rooms)</div><div class="adm-grid">
 ${field('rm_first_name', 'First name', b.rm_first_name)}${field('rm_last_name', 'Last name', b.rm_last_name)}
-${field('rm_email', 'Email', b.rm_email, { type: 'email' })}${field('rm_phone', 'Phone', b.rm_phone, { type: 'tel' })}</div>
+${field('rm_email', 'Email', b.rm_email, { type: 'email' })}${field('rm_phone', 'Phone', b.rm_phone, { type: 'tel' })}
+${select('roommate_separate', 'Who pays for the roommate', [['0', 'Lead books and pays for both'], ['1', 'Roommate books and pays separately']], Number(b.roommate_separate) ? '1' : '0')}${field('partner_booking_ref', 'Roommate booking reference', b.partner_booking_ref, { hint: 'Only when the roommate books separately and has already booked.' })}</div>
 <div class="adm-sec">Requested extensions</div><div class="adm-grid">
 ${field('pre_from', 'Pre-trip from', b.pre_from, { type: 'date' })}${field('pre_to', 'Pre-trip to', b.pre_to, { type: 'date' })}
 ${field('post_from', 'Post-trip from', b.post_from, { type: 'date' })}${field('post_to', 'Post-trip to', b.post_to, { type: 'date' })}</div>
@@ -436,7 +447,12 @@ async function apiCreate(env, request, url, email, slug) {
     deposit_paid_at: fields.status === 'deposit_paid' ? nowIso() : null,
     notes: fields.notes,
   };
+  if (fields.partner_booking_ref) {
+    const pr = await resolvePartnerRef(env, fields.partner_booking_ref, trip.trip_ref, null);
+    if (pr.error) return errBack(page, 'Roommate booking reference not found');
+  }
   const ref = await insertBooking(env, rec);
+  if (fields.partner_booking_ref) await linkPartner(env, fields.partner_booking_ref, ref);
   console.log('admin', email, 'create_booking', ref);
   let msg = `Booking ${ref} created.`;
   if (truthy(F.get('send_confirmation'))) {
@@ -466,9 +482,14 @@ async function apiEdit(env, request, url, email, slug, ref) {
   }
   const { errors, fields } = parseBookingForm(F, trip, { edit: true });
   if (errors.length) return errBack(page, errors.join('. '));
+  if (fields.partner_booking_ref) {
+    const pr = await resolvePartnerRef(env, fields.partner_booking_ref, b.trip_ref, ref);
+    if (pr.error) return errBack(page, 'Roommate booking reference not found');
+  }
   if (fields.status === 'deposit_paid' && !b.deposit_paid_at) fields.deposit_paid_at = nowIso();
   if (fields.status === 'balance_paid' && !b.balance_paid_at) fields.balance_paid_at = nowIso();
   await updateBooking(env, ref, fields);
+  if (fields.partner_booking_ref && fields.partner_booking_ref !== b.partner_booking_ref) await linkPartner(env, fields.partner_booking_ref, ref);
   console.log('admin', email, 'edit_booking', ref);
   return back(page, { saved: 1, msg: 'Changes saved.' });
 }
@@ -559,12 +580,13 @@ async function exportCsv(env, request, url, slug, kind) {
     return csvResponse(`${tripRef}-travelers.csv`, EXPORT_COLUMNS, rows.map(bookingToExportRow));
   }
   rows = rows.filter((b) => b.status !== 'cancelled');
-  rows.sort((a, b) => {
-    const ra = a.room_number || '', rb = b.room_number || '';
+  const out = roomingRows(rows, trip);
+  out.sort((a, b) => {
+    const ra = a['room number'], rb = b['room number'];
     if (!ra !== !rb) return ra ? -1 : 1;
-    return ra.localeCompare(rb, 'en', { numeric: true }) || a.booking_ref.localeCompare(b.booking_ref);
+    return ra.localeCompare(rb, 'en', { numeric: true }) || a['booking reference'].localeCompare(b['booking reference']);
   });
-  return csvResponse(`${tripRef}-rooming-list.csv`, ROOMING_COLUMNS, rows.map((b) => roomingRow(b, trip)));
+  return csvResponse(`${tripRef}-rooming-list.csv`, ROOMING_COLUMNS, out);
 }
 
 /* ---------------- router ---------------- */

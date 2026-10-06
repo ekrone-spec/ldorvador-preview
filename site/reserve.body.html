@@ -50,6 +50,13 @@ __HEADER__
           </div>
           <fieldset id="roommate">
             <legend>Roommate</legend>
+            <div class="field room-field">
+              <label>Who is paying for the roommate? <span class="req">*</span></label>
+              <div class="room-options">
+                <label class="room-opt"><input type="radio" name="roommate_booking" value="together"><span>I&rsquo;m booking and paying for both of us</span></label>
+                <label class="room-opt"><input type="radio" name="roommate_booking" value="separate"><span>My roommate will book and pay separately</span></label>
+              </div>
+            </div>
             <div class="two">
               <div class="field"><label for="rfn">First name</label><input id="rfn" name="rm_first_name" type="text"></div>
               <div class="field"><label for="rln">Last name</label><input id="rln" name="rm_last_name" type="text"></div>
@@ -58,17 +65,11 @@ __HEADER__
               <div class="field"><label for="re">Email</label><input id="re" name="rm_email" type="email"></div>
               <div class="field"><label for="rp">Phone</label><input id="rp" name="rm_phone" type="tel"></div>
             </div>
+            <div class="field" id="partnerref" hidden><label for="pbr">Your roommate&rsquo;s booking reference, if they already booked</label><input id="pbr" name="partner_booking_ref" type="text" autocomplete="off"></div>
           </fieldset>
         </div>
       </fieldset>
-      <fieldset>
-        <legend>Extra nights</legend>
-        <div class="two">
-          <div class="field"><label for="prn">Extra nights before the trip</label><select id="prn" name="pre_nights"><option value="0" selected>None</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select></div>
-          <div class="field"><label for="pon">Extra nights after the trip</label><select id="pon" name="post_nights"><option value="0" selected>None</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option></select></div>
-        </div>
-        <p class="group-notify-note">Requests only; at the same hotel. Confirmed nights are added to your balance.</p>
-      </fieldset>
+      __G_EXTRA_NIGHTS_BLOCK__
       <fieldset>
         <legend>Emergency contact</legend>
         <div class="field"><label for="ecn">Name <span class="req">*</span></label><input id="ecn" name="ec_name" type="text" required></div>

@@ -245,12 +245,14 @@ npx wrangler d1 execute ldorvador-interest --remote --json --command \
 Code: `bookings.js` (exported interface documented at its top), `shared.js`
 (helpers shared with `worker.js`), routes in `worker.js`. Schema:
 `migrations/0004_bookings.sql` (tables `bookings`, `booking_seq`,
-`stripe_events`, `rate_events`). Apply in production with either
+`stripe_events`, `rate_events`) and `migrations/0005_roommate_separate.sql`
+(adds `bookings.roommate_separate INTEGER DEFAULT 0` and `bookings.partner_booking_ref TEXT`). Apply in production with either
 
 ```
 npx wrangler d1 migrations apply ldorvador-interest --remote
 # or, one-off:
 npx wrangler d1 execute ldorvador-interest --remote --file=migrations/0004_bookings.sql
+npx wrangler d1 execute ldorvador-interest --remote --file=migrations/0005_roommate_separate.sql
 ```
 
 **Endpoints.** `POST /api/book` (reserve form -> D1 row `pending` with
@@ -275,7 +277,8 @@ verified). `/admin*` and `/api/admin*` require a valid Cloudflare Access JWT
 **trip.json** (emitted by the build at `/groups/<slug>/trip.json`) must carry
 `trip_ref`, `bookings_open`, `deposit_amount`, `price_package`,
 `price_single_supplement`, `optionals`, plus `arrival_date` / `departure_date`
-(ISO, for the rooming list) and optionally `extension_price_per_night`.
+(ISO, for the rooming list), `max_extension_nights` (integer; the reserve form lists 0 to this number of extra nights before and after, and the fieldset is hidden when it is 0; the server rejects more) and optionally `extension_price_per_night`.
+The passport expiry on the details form must be at least six months after `departure_date` (server-checked).
 
 **Local testing of bookings.** Add to `.dev.vars` DUMMY values for
 `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `BOOKING_TOKEN_SECRET`, and
@@ -290,13 +293,13 @@ then `npx wrangler dev --local --persist-to /tmp/ldv-state`.
 
 ## Booking system
 
-**Files.** `build.py` (emits `/groups/<slug>/trip.json`; `reserve/`, `reserved/`, `details/` only while `bookings_open` is true and `trip_ref` is set, and removes them when closed; builds `terms.html`), templates `reserve.body.html`, `reserved.body.html`, `details.body.html`, `terms.body.html`, `css.tmpl`, `js.tmpl`; content `content/terms.json` and the trip booking fields; `gen_cloudcannon.py` (CloudCannon fields); Worker `worker.js` (routing), `shared.js` (helpers), `bookings.js` (API, Stripe, emails), `admin.js` (admin pages and exports); `migrations/0004_bookings.sql`.
+**Files.** `build.py` (emits `/groups/<slug>/trip.json`; `reserve/`, `reserved/`, `details/` only while `bookings_open` is true and `trip_ref` is set, and removes them when closed; builds `terms.html`), templates `reserve.body.html`, `reserved.body.html`, `details.body.html`, `terms.body.html`, `css.tmpl`, `js.tmpl`; content `content/terms.json` and the trip booking fields; `gen_cloudcannon.py` (CloudCannon fields); Worker `worker.js` (routing), `shared.js` (helpers), `bookings.js` (API, Stripe, emails), `admin.js` (admin pages and exports); `migrations/0004_bookings.sql`, `migrations/0005_roommate_separate.sql`.
 
 **Routes.** Public: `POST /api/book`, `GET|POST /api/details`, `POST /api/stripe/webhook`. Behind Cloudflare Access (401 otherwise): `/admin/`, `/admin/<slug>[/<ref>[/balance]]`, `/api/admin/...` incl. `/api/admin/<slug>/export.csv` and `rooming.csv`.
 
 **Tables.** `bookings`, `booking_seq`, `stripe_events` (webhook idempotency), `rate_events` (details rate limit). `/api/book` rate limit is 5 per hour per IP hash, counted from `bookings`.
 
-**Reserve form fields** (`POST /api/book`): `first_name`, `last_name`, `email`, `phone`, `phone_country` (US|CA|OTHER), `room`, `bed`, `rm_first_name`, `rm_last_name`, `rm_email`, `rm_phone`, `pre_nights`, `post_nights` (0-7; server converts to `pre_from`/`pre_to`/`post_from`/`post_to` from trip `arrival_date`/`departure_date`; the old four date fields are still accepted when the nights fields are absent), `ec_name`, `ec_email`, `ec_phone`, `ec_phone_country`, `dietary`, `terms`, `terms_version`, `group`, `trip_ref`. Phones are stored as E.164; the emergency contact must differ from the traveler (email, phone) and roommate (email); the roommate must differ from the lead. `POST /api/details` checks passport expiry is after the trip's `departure_date` and dob is past and after 1900.
+**Reserve form fields** (`POST /api/book`): `first_name`, `last_name`, `email`, `phone`, `phone_country` (US|CA|OTHER), `room`, `bed`, `rm_first_name`, `rm_last_name`, `rm_email`, `rm_phone`, `roommate_booking` (`together`|`separate`, required for doubles; `separate` = 1 traveler, 1 deposit, no single supplement), `partner_booking_ref` (optional, only with `separate`; must be an existing booking on the same trip, else `roommate booking reference not found`; links both bookings), `pre_nights`, `post_nights` (0 to the trip's `max_extension_nights`, else `extra nights exceed the maximum for this trip`; server converts to `pre_from`/`pre_to`/`post_from`/`post_to` from trip `arrival_date`/`departure_date`; the old four date fields are still accepted when the nights fields are absent), `ec_name`, `ec_email`, `ec_phone`, `ec_phone_country`, `dietary`, `terms`, `terms_version`, `group`, `trip_ref`. Phones are stored as E.164; the emergency contact must differ from the traveler (email, phone) and roommate (email); the roommate must differ from the lead. `POST /api/details` checks passport expiry is at least six months after the trip's `departure_date` (`passport must be valid for six months after the trip ends`) and dob is past and after 1900.
 
 **Env.** Secrets `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `BOOKING_TOKEN_SECRET` (plus existing `RESEND_API_KEY`, `TURNSTILE_SECRET`); local-only `TURNSTILE_SKIP=1`. Operator docs: `BOOKINGS-HANNAH.md`, `BOOKINGS-STRIPE-SETUP.md`.
 
@@ -320,7 +323,7 @@ One-time setup (Erik):
 1. `npx wrangler d1 create ldorvador-staging` → paste the id into
    wrangler.jsonc `env.staging.d1_databases[0].database_id`.
 2. `npx wrangler d1 execute ldorvador-staging --remote --file=migrations/0001_interest.sql`
-   (whichever files exist in migrations/, in order, including 0004_bookings.sql).
+   (whichever files exist in migrations/, in order, including 0004_bookings.sql and 0005_roommate_separate.sql).
 3. Cloudflare Zero Trust → Access → Applications → add a self-hosted app for
    `staging.ldorvadortravel.com` paths `/admin`, `/api/admin`, `/api/interest`
    with the same one-time-PIN policy (connect@, erik@, plus Hannah/Cornelis

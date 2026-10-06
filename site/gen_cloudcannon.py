@@ -39,6 +39,7 @@ GROUPTRIP_FIELD_LABEL = {
     'price_package': 'Trip package price per traveler (USD)',
     'price_single_supplement': 'Single supplement (USD)',
     'deposit_amount': 'Deposit per traveler (USD)',
+    'max_extension_nights': 'Maximum extra nights a traveler may request (before or after)',
     'optionals': 'Optional tours (offered after confirmation)',
     'start_finish': 'Start / finish',
     'pace': 'Pace',
@@ -531,7 +532,7 @@ for field, label in GROUPTRIP_FIELD_LABEL.items():
         fc.append('        type: array')
         fc.append('        options:')
         fc.append('          structures: optional_tour')
-    elif field in ('price_package', 'price_single_supplement', 'deposit_amount'):
+    elif field in ('price_package', 'price_single_supplement', 'deposit_amount', 'max_extension_nights'):
         fc.append('        type: number')
     elif field in ('published', 'listed', 'bookings_open'):
         fc.append('        type: checkbox')

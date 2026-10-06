@@ -15,11 +15,15 @@ Save and publish as usual. The button appears after the site rebuilds, usually w
 
 ## 2. What travelers see
 
-1. They press **Reserve Your Spot** and fill in the form: names, contact details, single or double room (a double asks for the roommate's name and bed type), how many extra nights they want before or after (0 to 7 each, a request at the same hotel), an emergency contact (who must be a different person from the traveler and roommate), phone numbers (US/Canada, or a full international number with +; stored in international format), dietary needs, and a tick to accept the Terms and Conditions.
+1. They press **Reserve Your Spot** and fill in the form: names, contact details, single or double room (a double asks for the roommate's name, bed type, and whether the traveler is paying for both or the roommate will book and pay separately), how many extra nights they want before or after (0 up to the trip's maximum, a request at the same hotel; the maximum is set per trip in CloudCannon and the question is hidden when it is 0), an emergency contact (who must be a different person from the traveler and roommate), phone numbers (US/Canada, or a full international number with +; stored in international format), dietary needs, and a tick to accept the Terms and Conditions.
 2. They go to a Stripe payment page and pay the deposit by card or US bank account.
 3. They land on a thank-you page showing their booking reference.
 4. Once the payment clears they get a confirmation email from us. Bank payments can take a few business days, and the email waits until then.
 5. The confirmation email includes a private link to a details form for passport information and flights. You are also emailed when a traveler sends their details.
+
+**Roommate booking separately.** If the traveler picks "My roommate will book and pay separately", the booking counts as 1 traveler, one deposit, and no single supplement (the two share a double). The roommate's name is still required; their email and their booking reference are optional. When the second person books and enters the first person's reference, the two bookings are linked both ways and share one line on the rooming list (both references, joined by +). Unlinked, the rooming list shows the roommate's name followed by (books separately). In the admin edit form you can set or change these two fields. The traveler export has the columns roommate_separate and partner_booking_ref.
+
+**Passports.** On the details form, passport expiry must be at least six months after the trip ends; otherwise the form shows an error.
 
 Extra nights are requests only. The traveler picks a number of nights; the form turns that into dates around the trip (for example 2 nights before a March 3 arrival is March 1 to March 3). They are added to the balance after you confirm them (section 4).
 
@@ -57,4 +61,4 @@ Refunds are done in the Stripe dashboard (Payments, find the payment, Refund). L
 
 ## 8. If a bank debit fails
 
-The booking shows **Deposit failed** and you get an email. Contact the traveler, tell them the debit did not go through, and ask them to try again with a card or a different account by submitting a new reservation. Then cancel the failed booking in the admin so it does not clutter the list. For a failed balance payment, the booking keeps its status and a note is added; resend the balance email once they have sorted it out.
+The booking shows **Deposit failed** and you get an email. Contact the traveler, tell them the debit did not go through, and ask them to try again with a card or a different account by submitting a new reservation. A failed deposit stays on hold: nothing is cancelled automatically, so the booking keeps its place and its reference until you cancel it in the admin yourself. Cancel it manually when you are sure it will not be paid, so it does not clutter the list. For a failed balance payment, the booking keeps its status and a note is added; resend the balance email once they have sorted it out.

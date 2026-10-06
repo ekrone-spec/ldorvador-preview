@@ -704,12 +704,18 @@ document.querySelectorAll('details.group-day').forEach(function(d){
       var two = !!room && room.value === 'double';
       show(dbl, two);
       [].slice.call(b.querySelectorAll('[name="bed"]')).forEach(function(r){ r.required = two; });
+      [].slice.call(b.querySelectorAll('[name="roommate_booking"]')).forEach(function(r){ r.required = two; });
+      var rb = b.querySelector('[name="roommate_booking"]:checked');
+      var sep = two && !!rb && rb.value === 'separate';
+      show(document.getElementById('partnerref'), sep);
       if (sum && room) {
-        sum.innerHTML = 'Deposit due now: <strong>' + fmt(dep * (two ? 2 : 1)) + '</strong> total (' +
-          (two ? '2 travelers' : '1 traveler') + ' &times; ' + fmt(dep) + ')';
+        var pax = (two && !sep) ? 2 : 1;
+        sum.innerHTML = 'Deposit due now: <strong>' + fmt(dep * pax) + '</strong> total (' +
+          (pax === 2 ? '2 travelers' : '1 traveler') + ' &times; ' + fmt(dep) + ')';
       }
     }
     [].slice.call(b.querySelectorAll('[name="room"]')).forEach(function(r){ r.addEventListener('change', sync); });
+    [].slice.call(b.querySelectorAll('[name="roommate_booking"]')).forEach(function(r){ r.addEventListener('change', sync); });
     sync();
     function digits(v){ return String(v || '').replace(/\D/g, ''); }
     function phoneBad(v, c){

@@ -18,6 +18,7 @@
   "price_package": 0,
   "price_single_supplement": 0,
   "deposit_amount": 0,
+  "max_extension_nights": 0,
   "optionals": [],
   "start_finish": "SAMPLE: Willemstad → Willemstad",
   "pace": "SAMPLE: Relaxed, one guided outing per day",

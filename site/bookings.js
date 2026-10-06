@@ -70,6 +70,7 @@ const UPDATABLE = new Set([
   'details_submitted_at', 'optionals_selected', 'deposit_amount_cents', 'stripe_checkout_id', 'stripe_payment_intent',
   'deposit_paid_at', 'balance_amount_cents', 'balance_breakdown', 'stripe_payment_link_id', 'stripe_payment_link_url',
   'balance_sent_at', 'balance_paid_at', 'room_number', 'is_tour_leader', 'notes', 'trip_title',
+  'roommate_separate', 'partner_booking_ref',
 ]);
 
 /* ---------------- small utils ---------------- */
@@ -169,6 +170,7 @@ export async function getTrip(env, request, slug) {
     price_single_supplement_cents: toCents(raw.price_single_supplement) || 0,
     deposit_amount_cents: toCents(raw.deposit_amount) || 0,
     extension_price_per_night_cents: toCents(raw.extension_price_per_night),
+    max_extension_nights: Math.max(0, parseInt(raw.max_extension_nights, 10) || 0),
     optionals: (Array.isArray(raw.optionals) ? raw.optionals : [])
       .filter((o) => o && o.name)
       .map((o) => ({ name: String(o.name), price_cents: toCents(o.price) || 0, description: String(o.description || '') })),
@@ -248,7 +250,7 @@ export const EXPORT_COLUMNS = [
   'ec_name', 'ec_email', 'ec_phone', 'dietary',
   'g1_dob', 'g1_passport_number', 'g1_passport_country', 'g1_passport_expiry', 'g1_flight_arrival', 'g1_flight_departure',
   'g2_dob', 'g2_passport_number', 'g2_passport_country', 'g2_passport_expiry', 'g2_flight_arrival', 'g2_flight_departure',
-  'optionals_selected', 'deposit_amount', 'deposit_paid_at', 'balance_amount', 'balance_sent_at', 'balance_paid_at',
+  'roommate_separate', 'partner_booking_ref', 'optionals_selected', 'deposit_amount', 'deposit_paid_at', 'balance_amount', 'balance_sent_at', 'balance_paid_at',
   'stripe_payment_link_url', 'room_number', 'is_tour_leader', 'terms_version', 'terms_accepted_at',
   'details_submitted_at', 'notes', 'created_at', 'updated_at',
 ];
@@ -272,22 +274,67 @@ export const ROOMING_COLUMNS = [
   'arrival', 'departure', 'dietary requirements/special requests',
 ];
 
+function leadName(b) { return `${b.first_name || ''} ${b.last_name || ''}`.trim(); }
+function bedLabel(b) { return b.room === 'double' ? (b.bed === 'queens' ? 'Two queens' : b.bed === 'king' ? 'King' : '') : 'King'; }
+
 export function roomingRow(b, trip) {
   const ext = Number(b.extensions_confirmed) === 1;
   const arrival = (ext && b.pre_confirmed_from) || (trip && trip.arrival_date) || '';
   const departure = (ext && b.post_confirmed_to) || (trip && trip.departure_date) || '';
-  const g2 = b.room === 'double' ? `${b.rm_first_name || ''} ${b.rm_last_name || ''}`.trim() : '';
+  const rmName = `${b.rm_first_name || ''} ${b.rm_last_name || ''}`.trim();
+  const g2 = b.room === 'double' ? (Number(b.roommate_separate) ? `${rmName} (books separately)` : rmName) : '';
   return {
     'booking reference': b.booking_ref,
-    'guest 1': `${b.first_name || ''} ${b.last_name || ''}`.trim(),
+    'guest 1': leadName(b),
     'guest 2': g2,
     'room number': b.room_number || '',
     'room type': b.room === 'double' ? 'Double' : 'Single',
-    'bed type': b.room === 'double' ? (b.bed === 'queens' ? 'Two queens' : b.bed === 'king' ? 'King' : '') : 'King',
+    'bed type': bedLabel(b),
     arrival,
     departure,
     'dietary requirements/special requests': b.dietary || '',
   };
+}
+
+/* Rooming rows for a list of (non-cancelled) bookings. Two bookings that are linked as
+   separately-booking roommates share one row: guest 1 = the lower ref's lead, guest 2 = the other's. */
+export function roomingRows(bookings, trip) {
+  const byRef = new Map(bookings.map((b) => [b.booking_ref, b]));
+  const done = new Set();
+  const rows = [];
+  for (const b of bookings) {
+    if (done.has(b.booking_ref)) continue;
+    done.add(b.booking_ref);
+    const p = Number(b.roommate_separate) && b.partner_booking_ref ? byRef.get(b.partner_booking_ref) : null;
+    if (!p || done.has(p.booking_ref) || !Number(p.roommate_separate)) { rows.push(roomingRow(b, trip)); continue; }
+    done.add(p.booking_ref);
+    const [a, c] = b.booking_ref <= p.booking_ref ? [b, p] : [p, b];
+    const row = roomingRow(a, trip);
+    row['booking reference'] = `${a.booking_ref} + ${c.booking_ref}`;
+    row['guest 2'] = leadName(c);
+    row['room type'] = 'Double';
+    row['bed type'] = bedLabel(a);
+    row['room number'] = a.room_number || c.room_number || '';
+    row['dietary requirements/special requests'] = [a.dietary, c.dietary].filter(Boolean).join('; ');
+    rows.push(row);
+  }
+  return rows;
+}
+
+const PARTNER_REF_RE = /^[0-9]{8}[A-Z]{3}[0-9]{2}-[0-9]{4}$/;
+
+/* Returns {error} or {ref, partner} (ref null when blank). */
+export async function resolvePartnerRef(env, input, trip_ref, ownRef) {
+  const ref = clampStr(input, 40).toUpperCase();
+  if (!ref) return { ref: null, partner: null };
+  if (!PARTNER_REF_RE.test(ref) || ref === ownRef) return { error: 'roommate booking reference not found' };
+  const partner = await getBooking(env, ref);
+  if (!partner || partner.trip_ref !== trip_ref) return { error: 'roommate booking reference not found' };
+  return { ref, partner };
+}
+
+export async function linkPartner(env, partnerRef, ownRef) {
+  await updateBooking(env, partnerRef, { partner_booking_ref: ownRef });
 }
 
 /* ---------------- balance ---------------- */
@@ -303,7 +350,7 @@ export function computeBalance(trip, booking) {
   const n = Number(booking.travelers) || 1;
   const lines = [];
   lines.push({ label: `Tour package × ${n}`, cents: trip.price_package_cents * n });
-  if (booking.room === 'single' && trip.price_single_supplement_cents) {
+  if (booking.room === 'single' && !Number(booking.roommate_separate) && trip.price_single_supplement_cents) {
     lines.push({ label: 'Single supplement', cents: trip.price_single_supplement_cents });
   }
   if (Number(booking.extensions_confirmed) === 1) {
@@ -428,6 +475,11 @@ function travelerNames(b) {
   const lead = `${b.first_name} ${b.last_name}`.trim();
   return b.travelers > 1 ? `${lead} &amp; ${escapeHtml(`${b.rm_first_name || ''} ${b.rm_last_name || ''}`.trim())}` : escapeHtml(lead);
 }
+function roommateSeparateSentence(b) {
+  if (!Number(b.roommate_separate)) return '';
+  const nm = `${b.rm_first_name || ''} ${b.rm_last_name || ''}`.trim();
+  return `Your roommate ${nm} is booking separately; their deposit is paid on their own booking.`;
+}
 function contactSentence(trip) {
   const phone = trip.contact_phone ? ` or call ${escapeHtml(trip.contact_phone)}` : '';
   return `Questions? Reply to this email${phone}.`;
@@ -504,6 +556,7 @@ async function sendGuestConfirmation(env, origin, trip, b, request, manual) {
       <p style="margin:0 0 16px;">Hi ${first},</p>
       <p style="margin:0 0 16px;">${manual ? 'Your place is reserved' : 'Thank you &mdash; we have received your deposit and your place is reserved'} on <strong>${escapeHtml(trip.title)}</strong>.</p>
       ${table(bookingSummaryRows(trip, b) + depositRow)}
+      ${roommateSeparateSentence(b) ? `<p style="margin:0 0 16px;">${escapeHtml(roommateSeparateSentence(b))}</p>` : ''}
       <p style="margin:0 0 8px;"><strong>What happens next</strong></p>
       <p style="margin:0 0 16px;">Once the trip is confirmed, we will email you a secure link to pay the balance.${manual ? '' : ' If the minimum number of travelers is not reached, your deposit is fully refunded.'}</p>
       <p style="margin:0 0 22px;">Please take a moment to complete your traveler details (passport and flight information) so we can finalize your arrangements.</p>
@@ -516,7 +569,7 @@ async function sendGuestConfirmation(env, origin, trip, b, request, manual) {
   const text =
     `Hi ${b.first_name},\n\n` +
     `${manual ? 'Your place is reserved' : 'Thank you - we have received your deposit and your place is reserved'} on ${trip.title}.\n\n` +
-    `Booking reference: ${b.booking_ref}\nTrip: ${trip.title}\nDates: ${trip.dates}\nTravelers: ${b.travelers}\nRoom: ${roomLabel(b)}\n${depositText}\n` +
+    `Booking reference: ${b.booking_ref}\nTrip: ${trip.title}\nDates: ${trip.dates}\nTravelers: ${b.travelers}\nRoom: ${roomLabel(b)}\n${depositText}${roommateSeparateSentence(b) ? roommateSeparateSentence(b) + '\n' : ''}\n` +
     `What happens next: once the trip is confirmed, we will email you a secure link to pay the balance.` +
     `${manual ? '' : ' If the minimum number of travelers is not reached, your deposit is fully refunded.'}\n\n` +
     `Complete your traveler details: ${link}\n\n` +
@@ -592,6 +645,16 @@ function addDaysIso(iso, n) {
   return new Date(Date.parse(`${iso}T00:00:00Z`) + n * 86400000).toISOString().slice(0, 10);
 }
 
+function addMonthsIso(iso, n) {
+  const d = new Date(`${iso}T00:00:00Z`);
+  const day = d.getUTCDate();
+  d.setUTCDate(1);
+  d.setUTCMonth(d.getUTCMonth() + n);
+  const last = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
+  d.setUTCDate(Math.min(day, last));
+  return d.toISOString().slice(0, 10);
+}
+
 function fmtMonDay(iso) {
   const d = new Date(`${iso}T00:00:00Z`);
   return `${d.toLocaleString('en-US', { month: 'short', timeZone: 'UTC' })} ${d.getUTCDate()}`;
@@ -663,7 +726,11 @@ export async function handleBookPost(request, env, url, ctx) {
   if (email && !EMAIL_RE.test(email)) errors.push('invalid email');
   if (room && !['single', 'double'].includes(room)) errors.push('invalid room');
   const rm = { rm_first_name: null, rm_last_name: null, rm_email: null, rm_phone: null };
+  let separate = false;
   if (room === 'double') {
+    const rb = clampStr(f.roommate_booking, 12).toLowerCase();
+    if (!['together', 'separate'].includes(rb)) errors.push('roommate booking choice required');
+    separate = rb === 'separate';
     if (!['king', 'queens'].includes(bed || '')) errors.push('invalid bed');
     rm.rm_first_name = clampStr(f.rm_first_name, 120) || null;
     rm.rm_last_name = clampStr(f.rm_last_name, 120) || null;
@@ -723,8 +790,18 @@ export async function handleBookPost(request, env, url, ctx) {
     if (postN > 0) { post_from = trip.departure_date; post_to = addDaysIso(trip.departure_date, postN); }
   }
 
-  const travelers = room === 'double' ? 2 : 1;
+  if (nightsMode && (preN > trip.max_extension_nights || postN > trip.max_extension_nights)) {
+    return json({ ok: false, error: 'validation', errors: ['extra nights exceed the maximum for this trip'] }, 400);
+  }
+  let partnerRef = null;
+  if (separate) {
+    const pr = await resolvePartnerRef(env, f.partner_booking_ref, trip.trip_ref, null);
+    if (pr.error) return json({ ok: false, error: 'validation', errors: [pr.error] }, 400);
+    partnerRef = pr.ref;
+  }
+  const travelers = room === 'double' && !separate ? 2 : 1;
   const record = {
+    roommate_separate: separate ? 1 : 0, partner_booking_ref: partnerRef,
     trip_ref: trip.trip_ref, slug: trip.slug, trip_title: trip.title, status: 'pending', source: 'web', travelers,
     first_name, last_name, email, phone, room, bed, ...rm, pre_from, pre_to, post_from, post_to,
     ec_name: clampStr(f.ec_name, 200) || null, ec_email, ec_phone,
@@ -736,6 +813,7 @@ export async function handleBookPost(request, env, url, ctx) {
   let booking_ref;
   try {
     booking_ref = await insertBooking(env, record);
+    if (partnerRef) await linkPartner(env, partnerRef, booking_ref);
   } catch (err) {
     console.error(`Booking insert failed for trip ${trip.trip_ref}`, err);
     return json({ ok: false, error: 'server', message: 'We could not save your booking. Please try again.' }, 500);
@@ -937,13 +1015,14 @@ export async function handleDetails(request, env, url, ctx) {
   const tripEarly = await getTrip(env, request, b.slug);
   const depIso = tripEarly && tripEarly.departure_date ? tripEarly.departure_date : '';
   const todayIso = nowIso().slice(0, 10);
+  const minPassIso = depIso ? addMonthsIso(depIso, 6) : '';
   const guests = b.travelers > 1 ? ['g1', 'g2'] : ['g1'];
   for (const g of guests) {
     for (const k of ['dob', 'passport_expiry']) {
       const v = clampStr(f[`${g}_${k}`], 10);
       if (v && !validIso(v)) errors.push(`${g}_${k} invalid date`);
       else if (v && k === 'dob' && (v >= todayIso || v < '1900-01-01')) errors.push(`${g}_dob invalid date of birth`);
-      else if (v && k === 'passport_expiry' && depIso && v <= depIso) errors.push('passport expires before the trip ends');
+      else if (v && k === 'passport_expiry' && minPassIso && v < minPassIso) errors.push('passport must be valid for six months after the trip ends');
       upd[`${g}_${k}`] = v || null;
     }
     upd[`${g}_passport_number`] = clampStr(f[`${g}_passport_number`], 40) || null;
@@ -951,7 +1030,7 @@ export async function handleDetails(request, env, url, ctx) {
     upd[`${g}_flight_arrival`] = clampStr(f[`${g}_flight_arrival`], 300) || null;
     upd[`${g}_flight_departure`] = clampStr(f[`${g}_flight_departure`], 300) || null;
   }
-  if (errors.length) { console.log('book: validation', slug, errors.join('; ')); return json({ ok: false, error: 'validation', errors }, 400); }
+  if (errors.length) { console.log('details: validation', b.slug, errors.join('; ')); return json({ ok: false, error: 'validation', errors }, 400); }
 
   const trip = await getTrip(env, request, b.slug);
   const allowed = new Set(trip ? trip.optionals.map((o) => o.name) : []);

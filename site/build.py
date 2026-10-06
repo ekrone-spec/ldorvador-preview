@@ -468,6 +468,10 @@ def write_trip_json(g, slug):
     days = [d for d in (g.get('itinerary') or []) if d.get('date')]
     out['arrival_date'] = _iso(days[0]['date']) if days else None
     out['departure_date'] = _iso(days[-1]['date']) if days else None
+    try:
+        out['max_extension_nights'] = max(0, int(g.get('max_extension_nights') or 0))
+    except (TypeError, ValueError):
+        out['max_extension_nights'] = 0
     out['extension_price_per_night'] = g.get('extension_price_per_night') or 0
     W('groups/%s/trip.json' % slug, json.dumps(out, ensure_ascii=False, indent=1) + '\n')
 
@@ -525,7 +529,21 @@ def build_group_subpages(g, slug, gv):
                      % (_cesc(o['name']), _cesc(o['name']), price, desc))
         return '<fieldset><legend>Optional tours</legend>%s</fieldset>' % rows
 
+    try:
+        max_ext = max(0, int(g.get('max_extension_nights') or 0))
+    except (TypeError, ValueError):
+        max_ext = 0
+    nights_opts = '<option value="0" selected>None</option>' + ''.join(
+        '<option value="%d">%d</option>' % (i, i) for i in range(1, max_ext + 1))
+    ext_block = ''
+    if max_ext > 0:
+        ext_block = ('<fieldset>\n        <legend>Extra nights</legend>\n        <div class="two">\n'
+          '          <div class="field"><label for="prn">Extra nights before the trip</label><select id="prn" name="pre_nights">' + nights_opts + '</select></div>\n'
+          '          <div class="field"><label for="pon">Extra nights after the trip</label><select id="pon" name="post_nights">' + nights_opts + '</select></div>\n'
+          '        </div>\n        <p class="group-notify-note">Requests only; at the same hotel. Confirmed nights are added to your balance.</p>\n      </fieldset>')
+
     subs = {
+        '__G_EXTRA_NIGHTS_BLOCK__': ext_block,
         '__G_SLUG__': _cesc(slug), '__G_TITLE__': gv('title'), '__G_DATES__': gv('dates'),
         '__G_CONGREGATION__': gv('congregation'),
         '__G_TRIP_REF__': _cesc(g.get('trip_ref')),
