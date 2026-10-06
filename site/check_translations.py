@@ -30,6 +30,8 @@ def load_content():
             continue
         data = json.load(open(os.path.join(cdir, fn), encoding='utf-8'))
         for group, fields in data.items():
+            if not isinstance(fields, dict):   # flat files (terms.json) are English-only
+                continue
             for key, val in fields.items():
                 if not (val and val.strip()):
                     continue
