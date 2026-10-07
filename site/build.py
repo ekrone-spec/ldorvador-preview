@@ -782,6 +782,8 @@ def build_groups():
             '__G_RESERVE_HERO__':      ('<a class="btn btn-solid grouphero-cta" href="reserve/">Reserve Your Spot</a>'
                                          if booking_open else ''),
             '__G_REGISTER_CLASS__':    ('btn-line on-photo' if booking_open else 'btn-solid'),
+            '__G_TRAY_CTA__':          ('<a class="btn btn-solid" href="reserve/">Reserve Your Spot</a>' if booking_open
+                                         else '<a class="btn btn-solid" href="#register">Register Your Interest</a>'),
             '__G_RESERVE_LINE__':      ('<div class="group-reserve-line"><p>Ready to book? Reserve your spot with a %s '
                                          'deposit per traveler.</p><a class="btn btn-solid" href="reserve/">Reserve Your Spot</a></div>'
                                          % money(g.get('deposit_amount')) if booking_open else ''),
