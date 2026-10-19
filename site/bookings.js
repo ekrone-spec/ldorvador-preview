@@ -36,7 +36,7 @@
  *       extension_price_per_night x travelers (0 + 'to be confirmed' line if no price) +
  *       selected optionals x travelers - deposit paid.
  *   balanceUrl(origin, booking, token) -> `${origin}/groups/<slug>/balance/?ref=..&t=..` (hosted balance page)
- *   cardFeeCents(cents) -> round(cents x 3%)  (card processing fee; ACH has none)
+ *   cardFeeCents(cents) -> round(cents x 3%)  (credit card convenience fee; ACH has none)
  *   createTestCheckout(env, origin, trip) -> Stripe session ($1.00 card, metadata kind 'test', no booking row)
  *   sendBalanceEmail(env, origin, trip, booking, lines, url, request?) -> true
  *       Branded email with breakdown + button to the hosted balance page; sets status 'balance_sent', balance_sent_at.
@@ -63,7 +63,7 @@ const ISO_RE = /^\d{4}-\d{2}-\d{2}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@.]+(\.[^\s@.]+)+$/;
 const CARD_FEE_RATE = 0.03;
 const PAY_METHODS = { card: 'card', ach: 'us_bank_account' };
-export const CARD_FEE_LABEL = 'Card processing fee (3%)';
+export const CARD_FEE_LABEL = 'Credit card convenience fee (3%)';
 
 export function cardFeeCents(cents) { return Math.round((Number(cents) || 0) * CARD_FEE_RATE); }
 
@@ -648,7 +648,7 @@ export async function sendBalanceEmail(env, origin, trip, booking, lines, url, r
       <p style="margin:0 0 16px;">Good news &mdash; <strong>${escapeHtml(trip.title)}</strong> (${escapeHtml(trip.dates)}) is confirmed. Here is the balance for booking <strong>${escapeHtml(booking.booking_ref)}</strong>:</p>
       ${table(linesHtml)}
       ${emailButton(url, 'Pay the balance')}
-      <p style="margin:26px 0 16px;">On the payment page you can choose to pay from a US bank account (ACH debit, no added fee; takes a few business days to clear) or by credit or debit card, which adds a 3% card processing fee. ${contactSentence(trip)}</p>
+      <p style="margin:26px 0 16px;">On the payment page you can choose to pay from a US bank account (ACH debit, no added fee; takes a few business days to clear) or by credit or debit card, which adds a 3% credit card convenience fee. ${contactSentence(trip)}</p>
       ${SIGNOFF}`,
     footerNote: 'L&rsquo;Dor Vador Travel',
     origin: request ? emailAssetOrigin(request) : undefined,
@@ -657,7 +657,7 @@ export async function sendBalanceEmail(env, origin, trip, booking, lines, url, r
     `Hi ${booking.first_name},\n\n${trip.title} (${trip.dates}) is confirmed. Balance for booking ${booking.booking_ref}:\n\n` +
     (lines || []).map((l) => `${l.label}: ${formatUsd(l.cents)}`).join('\n') +
     `\nBalance due: ${formatUsd(total)}\n\nPay the balance: ${url}\n` +
-    `You can pay from a US bank account (ACH debit, no added fee) or by card (a 3% card processing fee is added).\n\n` +
+    `You can pay from a US bank account (ACH debit, no added fee) or by card (a 3% credit card convenience fee is added).\n\n` +
     `Questions? Reply to this email${trip.contact_phone ? ` or call ${trip.contact_phone}` : ''}.\n\n${SIGNOFF_TEXT}`;
   await sendResendEmail(env, {
     from: FROM, to: guestRecipients(booking), reply_to: REPLY_TO,

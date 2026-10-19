@@ -715,7 +715,7 @@ document.querySelectorAll('details.group-day').forEach(function(d){
         var depC = Math.round(dep * 100) * pax;
         var feeC = (pm && pm.value === 'card') ? Math.round(depC * 0.03) : 0;
         sum.innerHTML = 'Deposit ' + fmt(dep) + ' &times; ' + (pax === 2 ? '2 travelers' : '1 traveler') + ': <strong>' + fmtc(depC) + '</strong>' +
-          (feeC ? '<br>Card processing fee (3%): <strong>' + fmtc(feeC) + '</strong>' : '') +
+          (feeC ? '<br>Credit card convenience fee (3%): <strong>' + fmtc(feeC) + '</strong>' : '') +
           '<br>Total due now: <strong>' + fmtc(depC + feeC) + '</strong>';
       }
     }
