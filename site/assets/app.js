@@ -699,6 +699,7 @@ document.querySelectorAll('details.group-day').forEach(function(d){
     var sum = document.getElementById('depositsum');
     var dep = sum ? parseFloat(sum.getAttribute('data-deposit')) || 0 : 0;
     var fmt = function(n){ return '$' + Math.round(n).toLocaleString('en-US'); };
+    var fmtc = function(c){ return (c / 100).toLocaleString('en-US', {style:'currency', currency:'USD'}); };
     function sync(){
       var room = b.querySelector('[name="room"]:checked');
       var two = !!room && room.value === 'double';
@@ -710,12 +711,17 @@ document.querySelectorAll('details.group-day').forEach(function(d){
       show(document.getElementById('partnerref'), sep);
       if (sum && room) {
         var pax = (two && !sep) ? 2 : 1;
-        sum.innerHTML = 'Deposit due now: <strong>' + fmt(dep * pax) + '</strong> total (' +
-          (pax === 2 ? '2 travelers' : '1 traveler') + ' &times; ' + fmt(dep) + ')';
+        var pm = b.querySelector('[name="pay_method"]:checked');
+        var depC = Math.round(dep * 100) * pax;
+        var feeC = (pm && pm.value === 'card') ? Math.round(depC * 0.03) : 0;
+        sum.innerHTML = 'Deposit ' + fmt(dep) + ' &times; ' + (pax === 2 ? '2 travelers' : '1 traveler') + ': <strong>' + fmtc(depC) + '</strong>' +
+          (feeC ? '<br>Card processing fee (3%): <strong>' + fmtc(feeC) + '</strong>' : '') +
+          '<br>Total due now: <strong>' + fmtc(depC + feeC) + '</strong>';
       }
     }
     [].slice.call(b.querySelectorAll('[name="room"]')).forEach(function(r){ r.addEventListener('change', sync); });
     [].slice.call(b.querySelectorAll('[name="roommate_booking"]')).forEach(function(r){ r.addEventListener('change', sync); });
+    [].slice.call(b.querySelectorAll('[name="pay_method"]')).forEach(function(r){ r.addEventListener('change', sync); });
     sync();
     function digits(v){ return String(v || '').replace(/\D/g, ''); }
     function phoneBad(v, c){
@@ -743,8 +749,64 @@ document.querySelectorAll('details.group-day').forEach(function(d){
 
   var br = document.getElementById('bref');
   if (br) {
-    var rf = (new URLSearchParams(location.search)).get('ref');
-    if (rf) br.textContent = rf;  /* textContent: never parsed as HTML */
+    var rq = new URLSearchParams(location.search);
+    var rf = rq.get('ref');
+    [].slice.call(document.querySelectorAll('.bref')).forEach(function(el){ if (rf) el.textContent = rf; });  /* textContent: never parsed as HTML */
+    var which = rq.get('test') === '1' ? 'test' : rq.get('balance') === '1' ? 'balance' : rq.get('pm') === 'card' ? 'card' : 'ach';
+    [].slice.call(document.querySelectorAll('[data-msg]')).forEach(function(el){ show(el, el.getAttribute('data-msg') === which); });
+    var rt = document.getElementById('rtitle');
+    if (rt && which === 'balance') rt.textContent = 'Thank you \u2014 your balance payment is in';
+    if (rt && which === 'test') rt.textContent = 'Test payment received';
+  }
+
+  var bal = document.getElementById('balancepage');
+  if (bal) {
+    var bq = new URLSearchParams(location.search);
+    var bref = bq.get('ref') || '', btok = bq.get('t') || '';
+    var bnote = bal.querySelector('.formnote');
+    var bsay = function(m){ if (bnote) bnote.textContent = m; };
+    var money = function(c){ return (c / 100).toLocaleString('en-US', {style:'currency', currency:'USD'}); };
+    var bmsg = document.getElementById('balmsg');
+    var bbody = document.getElementById('balbody');
+    var BERR = 'We could not load your balance. Please use the link in your email, or contact us at connect@ldorvadortravel.com.';
+    fetch('/api/balance?ref=' + encodeURIComponent(bref) + '&t=' + encodeURIComponent(btok), {headers:{'Accept':'application/json'}})
+      .then(function(r){ return r.json().catch(function(){ return {}; }); })
+      .then(function(j){
+        if (!bmsg) return;
+        if (!j || !j.ok) { bmsg.textContent = BERR; return; }
+        [].slice.call(bal.querySelectorAll('.bref')).forEach(function(el){ el.textContent = j.booking_ref; });
+        if (j.status === 'balance_paid') { bmsg.textContent = 'Your balance for booking ' + j.booking_ref + ' has been paid. Thank you.'; return; }
+        if (!j.payable) { bmsg.textContent = 'Your balance is not ready to pay yet. We will email you when it is.'; return; }
+        var tb = document.getElementById('ballines');
+        j.lines.forEach(function(l){
+          var tr = document.createElement('tr');
+          var a = document.createElement('td'); a.textContent = l.label;
+          var c = document.createElement('td'); c.textContent = money(l.cents); c.className = 'num';
+          tr.appendChild(a); tr.appendChild(c); tb.appendChild(tr);
+        });
+        var setT = function(id, v){ var el = document.getElementById(id); if (el) el.textContent = v; };
+        setT('baltotal', money(j.total_cents));
+        setT('balfee', money(j.card_fee_cents));
+        setT('balcardtotal', money(j.total_cents + j.card_fee_cents));
+        if (bmsg) { bmsg.textContent = ''; show(bmsg, false); } show(bbody, true);
+      })
+      .catch(function(){ if (bmsg) bmsg.textContent = BERR; });
+    [].slice.call(bal.querySelectorAll('[data-pay]')).forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var all = bal.querySelectorAll('[data-pay]');
+        [].forEach.call(all, function(x){ x.disabled = true; });
+        bsay('Opening the secure payment page\u2026');
+        fetch('/api/balance/checkout', {method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},
+          body: JSON.stringify({ref: bref, t: btok, pay_method: btn.getAttribute('data-pay')})})
+          .then(function(r){ return r.json().catch(function(){ return {}; }); })
+          .then(function(j){
+            if (j && j.ok && j.checkout_url) { location.href = j.checkout_url; return; }
+            bsay((j && j.message) || BERR);
+            [].forEach.call(all, function(x){ x.disabled = false; });
+          })
+          .catch(function(){ bsay(BERR); [].forEach.call(all, function(x){ x.disabled = false; }); });
+      });
+    });
   }
 
   var d = document.getElementById('detailsform');

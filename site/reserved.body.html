@@ -5,10 +5,21 @@ __HEADER__
   <section class="contact group-register" id="reserved">
     <div class="sec-head" data-origin="left">
       <p class="eyebrow">__G_CONGREGATION__</p>
-      <h2>Thank you &mdash; your reservation is in</h2>
+      <h2 id="rtitle">Thank you &mdash; your reservation is in</h2>
     </div>
-    <p class="sub">We've received your reservation and your deposit is being processed. Your booking reference is <strong id="bref">&hellip;</strong>. A confirmation email will follow once the payment clears.</p>
+    <div data-msg="ach">
+    <p class="sub">We've received your reservation and your deposit is being processed. Your booking reference is <strong class="bref" id="bref">&hellip;</strong>. A confirmation email will follow once the payment clears.</p>
     <p class="sub">Bank debit payments can take a few business days to clear; your confirmation is sent when they do.</p>
+    </div>
+    <div data-msg="card" hidden>
+    <p class="sub">Your deposit has been received and a confirmation email is on its way. Your booking reference is <strong class="bref">&hellip;</strong>.</p>
+    </div>
+    <div data-msg="balance" hidden>
+    <p class="sub">Thank you &mdash; your balance payment is being processed for booking <strong class="bref">&hellip;</strong>. Card payments are usually confirmed within minutes; bank debit payments can take a few business days to clear.</p>
+    </div>
+    <div data-msg="test" hidden>
+    <p class="sub">Test payment received &mdash; this was not a booking. Remember to refund the $1.00 in Stripe.</p>
+    </div>
     <p class="sub"><a class="backlink" href="../">&larr; Back to __G_TITLE__</a></p>
   </section>
 </div>

@@ -87,6 +87,14 @@ __HEADER__
         <legend>Terms</legend>
         <label class="group-check"><input type="checkbox" name="terms" value="yes" required><span>I accept the <a href="/terms.html" target="_blank" rel="noopener">Terms and Conditions</a></span></label>
       </fieldset>
+      <fieldset>
+        <legend>Payment method</legend>
+        <div class="field">
+          <label class="group-check"><input type="radio" name="pay_method" value="card" required><span>Credit or debit card &mdash; a 3% card processing fee is added</span></label>
+          <label class="group-check"><input type="radio" name="pay_method" value="ach" required><span>US bank account (ACH debit) &mdash; no added fee; takes a few business days to clear</span></label>
+          <p class="group-notify-note">The card processing fee is the cost charged to us by the card networks; it is not applied to bank debit payments.</p>
+        </div>
+      </fieldset>
       <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
       <div class="cf-turnstile" data-sitekey="__TURNSTILE_SITEKEY__" data-theme="light" data-size="flexible" data-appearance="interaction-only"></div>
       <p class="group-summary" id="depositsum" data-deposit="__G_DEPOSIT__">Deposit due now: <strong>__G_DEPOSIT_FMT__</strong> per traveler</p>

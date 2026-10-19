@@ -5,7 +5,7 @@ import {
 } from './shared.js';
 import {
   getTrip, getBooking, listBookings, insertBooking, updateBooking, bookingToken, detailsUrl,
-  bookingToExportRow, EXPORT_COLUMNS, roomingRows, ROOMING_COLUMNS, resolvePartnerRef, linkPartner, computeBalance, createBalancePaymentLink,
+  bookingToExportRow, EXPORT_COLUMNS, roomingRows, ROOMING_COLUMNS, resolvePartnerRef, linkPartner, computeBalance, balanceUrl, createTestCheckout,
   sendBalanceEmail, sendManualConfirmation, formatUsd,
 } from './bookings.js';
 
@@ -323,6 +323,8 @@ async function pageTrip(env, request, url, email, slug) {
   const pax = live.reduce((s, b) => s + (Number(b.travelers) || 0), 0);
   const deposits = live.filter((b) => b.deposit_paid_at).length;
   const base = `/admin/${esc(slug)}`;
+  const tl = url.searchParams.get('test') || '';
+  const testLink = /^https:\/\/checkout\.stripe\.com\//.test(tl) ? tl : '';
   const filters = [['', 'All']].concat(STATUSES.map((s) => [s, STATUS_LABEL[s]]))
     .map(([s, l]) => `<a href="${base}${s ? `?status=${s}` : ''}"${(status || '') === s ? ' class="on"' : ''}>${esc(l)}</a>`).join('');
   const trs = rows.map((b) => {
@@ -343,10 +345,14 @@ async function pageTrip(env, request, url, email, slug) {
 <div class="adm-stats"><div><b>${live.length}</b><span>Bookings</span></div><div><b>${pax}</b><span>Travelers</span></div><div><b>${deposits}</b><span>Deposits paid</span></div></div>
 <div class="adm-actions"><a class="btn btn-solid" href="${base}/new">Add booking</a>
 <a class="btn btn-line" href="/api/admin/${esc(slug)}/export.csv">Export travelers (CSV)</a>
-<a class="btn btn-line" href="/api/admin/${esc(slug)}/rooming.csv">Export rooming list (CSV)</a></div>
+<a class="btn btn-line" href="/api/admin/${esc(slug)}/rooming.csv">Export rooming list (CSV)</a>
+<form method="post" action="/api/admin/${esc(slug)}/test-checkout" data-confirm="Create a $1.00 live card payment page? Pay it with a real card, then refund it in Stripe."><button class="btn btn-line" type="submit">Create a $1 live test payment</button></form></div>
+${testLink ? `<div class="adm-card"><h2>$1 live test payment</h2><p>Open this Stripe page, pay $1.00 with a real card, then refund the payment in the Stripe dashboard. It does not create a booking.</p>
+<p><a class="btn btn-solid" href="${esc(testLink)}" target="_blank" rel="noopener">Open the $1 test payment</a></p><div class="adm-linkbox">${esc(testLink)}</div></div>` : ''}
 <div class="adm-filter">${filters}</div>
 <div class="adm-card adm-scroll"><table class="adm-t"><thead><tr><th>Booking</th><th>Lead / roommate</th><th class="num">Trav.</th><th>Room / bed</th><th>Status</th><th>Deposit paid</th><th class="num">Balance</th><th>Details</th><th>Room no.</th><th>Created</th><th></th></tr></thead>
-<tbody>${trs || '<tr><td colspan="11" style="color:var(--ink-soft)">No bookings.</td></tr>'}</tbody></table></div>`,
+<tbody>${trs || '<tr><td colspan="11" style="color:var(--ink-soft)">No bookings.</td></tr>'}</tbody></table></div>
+<script>document.querySelectorAll('form[data-confirm]').forEach(function(f){f.addEventListener('submit',function(e){if(!confirm(f.dataset.confirm))e.preventDefault();});});</script>`,
   });
 }
 
@@ -368,7 +374,6 @@ async function pageEdit(env, request, url, email, slug, ref) {
   const b = await getBooking(env, ref);
   if (!trip || !b || b.slug !== slug) return layout({ title: 'Not found', email, banner: { text: 'Booking not found.', err: true }, body: `<a class="adm-crumb" href="/admin/${esc(slug)}">Back</a>` });
   const fact = (k, v) => `<li><span>${esc(k)}</span>${v ? esc(v) : '<i style="color:var(--ink-soft)">none</i>'}</li>`;
-  const link = b.stripe_payment_link_url ? `<a href="${esc(b.stripe_payment_link_url)}" rel="noopener" style="word-break:break-all">${esc(b.stripe_payment_link_url)}</a>` : '';
   return layout({
     title: ref, email, banner: bannerFrom(url),
     body: `<a class="adm-crumb" href="/admin/${esc(slug)}">${esc(trip.title)}</a><h1>${esc(ref)}</h1>
@@ -381,7 +386,9 @@ async function pageEdit(env, request, url, email, slug, ref) {
 <div class="adm-actions" style="margin:28px 0 0"><button class="btn btn-solid" type="submit">Save changes</button><a class="btn btn-line" href="/admin/${esc(slug)}">Back to bookings</a></div></form>
 <div class="adm-card"><div class="adm-sec">Stripe and payment (read-only)</div><ul class="adm-facts">
 ${fact('Deposit amount', formatUsd(b.deposit_amount_cents))}${fact('Deposit paid at', b.deposit_paid_at)}${fact('Stripe checkout id', b.stripe_checkout_id)}
-${fact('Stripe payment intent', b.stripe_payment_intent)}<li><span>Payment link</span>${link || '<i style="color:var(--ink-soft)">none</i>'}</li>
+${fact('Stripe payment intent', b.stripe_payment_intent)}${fact('Deposit payment method', b.pay_method === 'card' ? 'Card' : b.pay_method === 'ach' ? 'US bank account (ACH)' : '')}
+${fact('Card processing fee', Number(b.fee_cents) ? formatUsd(b.fee_cents) : '')}${fact('Deposit charged', b.deposit_charged_cents != null ? formatUsd(b.deposit_charged_cents) : '')}
+${b.stripe_payment_link_url ? fact('Old payment link', b.stripe_payment_link_url) : ''}${fact('Balance charged', b.balance_charged_cents != null ? formatUsd(b.balance_charged_cents) : '')}
 ${fact('Balance amount', b.balance_amount_cents != null ? formatUsd(b.balance_amount_cents) : '')}${fact('Balance sent at', b.balance_sent_at)}${fact('Balance paid at', b.balance_paid_at)}
 ${fact('Details submitted at', b.details_submitted_at)}${fact('Terms accepted', b.terms_accepted_at ? `${b.terms_version || ''} ${b.terms_accepted_at}` : '')}</ul></div>
 <script>document.querySelectorAll('form[data-confirm]').forEach(function(f){f.addEventListener('submit',function(e){if(!confirm(f.dataset.confirm))e.preventDefault();});});</script>`,
@@ -403,13 +410,15 @@ async function pageBalance(env, request, url, email, slug, ref) {
   const b = await getBooking(env, ref);
   if (!trip || !b || b.slug !== slug) return layout({ title: 'Not found', email, banner: { text: 'Booking not found.', err: true }, body: '' });
   const calc = computeBalance(trip, b);
-  const lines = b.stripe_payment_link_url ? linesFor(b, trip) : calc.lines;
+  const sent = b.balance_amount_cents != null && !!b.balance_breakdown;
+  const lines = sent ? linesFor(b, trip) : calc.lines;
+  const payUrl = balanceUrl(url.origin, b, await bookingToken(env, ref));
   const row = (l) => `<tr class="bl-row"><td><input type="text" name="label" value="${esc(l.label)}" aria-label="Line label"></td><td style="width:160px"><input type="number" step="0.01" name="amount" value="${(l.cents / 100).toFixed(2)}" aria-label="Amount in USD" class="bl-amt"></td></tr>`;
-  const existing = b.stripe_payment_link_url ? `<div class="adm-card"><h2>Balance link</h2>
+  const existing = sent ? `<div class="adm-card"><h2>Balance request</h2>
 <p>${b.balance_amount_cents != null ? `<span class="adm-total">${esc(formatUsd(b.balance_amount_cents))}</span>` : ''} ${b.balance_sent_at ? `&middot; email sent ${fmtDate(b.balance_sent_at)}` : '&middot; email not sent yet'}</p>
-<div class="adm-linkbox">${esc(b.stripe_payment_link_url)}</div>
+<div class="adm-linkbox">${esc(payUrl)}</div>
 <form method="post" action="/api/admin/${esc(slug)}/${esc(ref)}/balance"><input type="hidden" name="action" value="resend"><button class="btn btn-line" type="submit">Resend email</button></form>
-<p class="adm-sub" style="margin:18px 0 0">To change the amount, edit the lines below and create a new link. The old link is not deactivated automatically.</p></div>` : '';
+<p class="adm-sub" style="margin:18px 0 0">To change the amount, edit the lines below and send again; the same balance page shows the new amount.</p></div>` : '';
   return layout({
     title: `Balance ${ref}`, email, banner: bannerFrom(url),
     body: `<a class="adm-crumb" href="/admin/${esc(slug)}/${esc(ref)}">${esc(ref)}</a><h1>Balance</h1>
@@ -418,11 +427,11 @@ async function pageBalance(env, request, url, email, slug, ref) {
 <table class="adm-t"><thead><tr><th>Line</th><th>Amount (USD)</th></tr></thead><tbody id="bl">${lines.map(row).join('')}</tbody></table>
 <p style="margin:14px 0 0"><button class="btn btn-line" type="button" id="addline">Add a line</button></p>
 <p style="margin:22px 0 0"><span class="lab" style="display:inline">Total</span> <span class="adm-total" id="total"></span></p>
-<div class="hint">A discount or the deposit credit is a negative amount. The guest sees every line in the email.</div>
-<div class="adm-actions" style="margin:24px 0 0"><button class="btn btn-solid" type="submit">${b.stripe_payment_link_url ? 'Create new link and send' : 'Create and send balance link'}</button></div></form>
+<div class="hint">A discount or the deposit credit is a negative amount. The guest sees every line in the email and on the balance page, and chooses card (a 3% card processing fee is added) or US bank account (no added fee).</div>
+<div class="adm-actions" style="margin:24px 0 0"><button class="btn btn-solid" type="submit">${sent ? 'Update and resend balance request' : 'Send balance request'}</button></div></form>
 <script>(function(){var bl=document.getElementById('bl');function tot(){var s=0;bl.querySelectorAll('.bl-amt').forEach(function(i){s+=Math.round((parseFloat(i.value)||0)*100)});document.getElementById('total').textContent=(s/100).toLocaleString('en-US',{style:'currency',currency:'USD'});}
 bl.addEventListener('input',tot);document.getElementById('addline').addEventListener('click',function(){var t=document.createElement('tbody');t.innerHTML='<tr class="bl-row"><td><input type="text" name="label" aria-label="Line label"></td><td style="width:160px"><input type="number" step="0.01" name="amount" value="0.00" class="bl-amt" aria-label="Amount in USD"></td></tr>';bl.appendChild(t.firstChild);});
-document.getElementById('balform').addEventListener('submit',function(e){if(!confirm('Create the payment link and email it to the guest?'))e.preventDefault();});tot();})();</script>`,
+document.getElementById('balform').addEventListener('submit',function(e){if(!confirm('Email the balance request to the guest?'))e.preventDefault();});tot();})();</script>`,
   });
 }
 
@@ -535,8 +544,8 @@ async function apiBalance(env, request, url, email, slug, ref) {
   const F = await readForm(request);
   try {
     if (F.get('action') === 'resend') {
-      if (!b.stripe_payment_link_url) return errBack(page, 'No balance link exists yet');
-      await sendBalanceEmail(env, url.origin, trip, b, linesFor(b, trip), b.stripe_payment_link_url, request);
+      if (b.balance_amount_cents == null || !b.balance_breakdown) return errBack(page, 'No balance request has been sent yet');
+      await sendBalanceEmail(env, url.origin, trip, b, linesFor(b, trip), balanceUrl(url.origin, b, await bookingToken(env, ref)), request);
       console.log('admin', email, 'resend_balance_email', ref);
       return back(page, { saved: 1, msg: 'Balance email resent.' });
     }
@@ -553,20 +562,36 @@ async function apiBalance(env, request, url, email, slug, ref) {
     }
     const total = lines.reduce((s, l) => s + l.cents, 0);
     if (!lines.length || total <= 0) return errBack(page, 'The total must be greater than zero');
-    const link = await createBalancePaymentLink(env, trip, b, total, lines, url.origin);
-    console.log('admin', email, 'create_balance_link', ref);
+    if (b.status === 'balance_paid') return errBack(page, 'The balance is already paid');
+    if (total < 50) return errBack(page, 'The total must be at least $0.50');
+    await updateBooking(env, ref, { balance_amount_cents: total, balance_breakdown: JSON.stringify(lines) });
+    const payUrl = balanceUrl(url.origin, b, await bookingToken(env, ref));
+    console.log('admin', email, 'store_balance', ref, total);
     const fresh = await getBooking(env, ref);
     try {
-      await sendBalanceEmail(env, url.origin, trip, fresh, lines, link.url, request);
+      await sendBalanceEmail(env, url.origin, trip, fresh, lines, payUrl, request);
       console.log('admin', email, 'send_balance_email', ref);
     } catch (err) {
       console.error('admin balance email failed', ref, err);
-      return errBack(page, `Link created (${link.url}) but the email failed: ${String(err && err.message).slice(0, 200)}. Use Resend email.`);
+      return errBack(page, `Balance saved but the email failed: ${String(err && err.message).slice(0, 200)}. Use Resend email.`);
     }
-    return back(page, { saved: 1, msg: `Balance link created and emailed: ${link.url}` });
+    return back(page, { saved: 1, msg: `Balance request emailed. Balance page: ${payUrl}` });
   } catch (err) {
     console.error('admin balance failed', ref, err);
-    return errBack(page, `Could not create the balance link: ${String(err && err.message).slice(0, 200)}`);
+    return errBack(page, `Could not send the balance request: ${String(err && err.message).slice(0, 200)}`);
+  }
+}
+
+async function apiTestCheckout(env, request, url, email, slug) {
+  const trip = await getTrip(env, request, slug);
+  if (!trip) return errBack('/admin/', 'Trip not found');
+  try {
+    const session = await createTestCheckout(env, url.origin, trip);
+    console.log('admin', email, 'test_checkout', slug, session.id);
+    return back(`/admin/${slug}`, { test: session.url });
+  } catch (err) {
+    console.error('admin test checkout failed', slug, err);
+    return errBack(`/admin/${slug}`, `Could not create the test payment: ${String(err && err.message).slice(0, 200)}`);
   }
 }
 
@@ -615,6 +640,7 @@ export async function handleAdmin(request, env, url, ctx) {
     }
     if (method !== 'POST') return json({ ok: false, error: 'method not allowed' }, 405);
     if (!sameOrigin(request, url)) return json({ ok: false, error: 'forbidden' }, 403);
+    if (parts.length === 2 && a === 'test-checkout') return await apiTestCheckout(env, request, url, email, slug);
     if (parts.length === 2) return a === 'bookings' ? await apiCreate(env, request, url, email, slug) : await apiEdit(env, request, url, email, slug, a);
     if (parts.length === 3 && c === 'details-link') return await apiDetailsLink(env, request, url, email, slug, a);
     if (parts.length === 3 && c === 'balance') return await apiBalance(env, request, url, email, slug, a);

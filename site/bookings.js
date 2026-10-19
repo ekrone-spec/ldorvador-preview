@@ -1,4 +1,4 @@
-/* Bookings: deposits (Stripe Checkout), traveler details, balances (Stripe Payment Links).
+/* Bookings: deposits and balances (Stripe Checkout; traveler picks card +3% fee or ACH), traveler details.
  *
  * ===== Exported interface (admin.js is written against this) =====
  *
@@ -6,6 +6,8 @@
  *   handleBookPost(request, env, url, ctx)        POST /api/book
  *   handleDetails(request, env, url, ctx)         GET|POST /api/details
  *   handleStripeWebhook(request, env, url, ctx)   POST /api/stripe/webhook
+ *   handleBalance(request, env, url, ctx)         GET /api/balance?ref&t
+ *   handleBalanceCheckout(request, env, url, ctx) POST /api/balance/checkout {ref,t,pay_method}
  *
  * Data helpers:
  *   getTrip(env, request, slug) -> trip | null
@@ -33,11 +35,11 @@
  *       package x travelers + single supplement (single) + confirmed extension nights x
  *       extension_price_per_night x travelers (0 + 'to be confirmed' line if no price) +
  *       selected optionals x travelers - deposit paid.
- *   createBalancePaymentLink(env, trip, booking, amount_cents, lines, origin)
- *       -> {id, url}; creates Price + Payment Link, stores balance_amount_cents, balance_breakdown,
- *       stripe_payment_link_id/url on the booking. Throws on Stripe error.
+ *   balanceUrl(origin, booking, token) -> `${origin}/groups/<slug>/balance/?ref=..&t=..` (hosted balance page)
+ *   cardFeeCents(cents) -> round(cents x 3%)  (card processing fee; ACH has none)
+ *   createTestCheckout(env, origin, trip) -> Stripe session ($1.00 card, metadata kind 'test', no booking row)
  *   sendBalanceEmail(env, origin, trip, booking, lines, url, request?) -> true
- *       Branded email with breakdown + "Pay the balance"; sets status 'balance_sent', balance_sent_at.
+ *       Branded email with breakdown + button to the hosted balance page; sets status 'balance_sent', balance_sent_at.
  *   sendManualConfirmation(env, origin, trip, booking, request?) -> true
  *       Confirmation for a source='manual' booking (no Stripe deposit), incl. details link.
  *   sendDepositConfirmation(env, origin, trip, booking, request?)  (used by the webhook)
@@ -59,6 +61,11 @@ const FROM = "L'Dor Vador Travel <connect@ldorvadortravel.com>";
 const REPLY_TO = 'connect@ldorvadortravel.com';
 const ISO_RE = /^\d{4}-\d{2}-\d{2}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@.]+(\.[^\s@.]+)+$/;
+const CARD_FEE_RATE = 0.03;
+const PAY_METHODS = { card: 'card', ach: 'us_bank_account' };
+export const CARD_FEE_LABEL = 'Card processing fee (3%)';
+
+export function cardFeeCents(cents) { return Math.round((Number(cents) || 0) * CARD_FEE_RATE); }
 
 const UPDATABLE = new Set([
   'status', 'travelers', 'first_name', 'last_name', 'email', 'phone', 'room', 'bed',
@@ -70,7 +77,7 @@ const UPDATABLE = new Set([
   'details_submitted_at', 'optionals_selected', 'deposit_amount_cents', 'stripe_checkout_id', 'stripe_payment_intent',
   'deposit_paid_at', 'balance_amount_cents', 'balance_breakdown', 'stripe_payment_link_id', 'stripe_payment_link_url',
   'balance_sent_at', 'balance_paid_at', 'room_number', 'is_tour_leader', 'notes', 'trip_title',
-  'roommate_separate', 'partner_booking_ref',
+  'roommate_separate', 'partner_booking_ref', 'pay_method', 'fee_cents', 'deposit_charged_cents', 'balance_charged_cents',
 ]);
 
 /* ---------------- small utils ---------------- */
@@ -240,6 +247,10 @@ export function detailsUrl(origin, booking, token) {
   return `${origin}/groups/${booking.slug}/details/?ref=${encodeURIComponent(booking.booking_ref)}&t=${encodeURIComponent(token)}&pax=${booking.travelers}`;
 }
 
+export function balanceUrl(origin, booking, token) {
+  return `${origin}/groups/${booking.slug}/balance/?ref=${encodeURIComponent(booking.booking_ref)}&t=${encodeURIComponent(token)}`;
+}
+
 /* ---------------- exports / rooming ---------------- */
 
 export const EXPORT_COLUMNS = [
@@ -250,7 +261,8 @@ export const EXPORT_COLUMNS = [
   'ec_name', 'ec_email', 'ec_phone', 'dietary',
   'g1_dob', 'g1_passport_number', 'g1_passport_country', 'g1_passport_expiry', 'g1_flight_arrival', 'g1_flight_departure',
   'g2_dob', 'g2_passport_number', 'g2_passport_country', 'g2_passport_expiry', 'g2_flight_arrival', 'g2_flight_departure',
-  'roommate_separate', 'partner_booking_ref', 'optionals_selected', 'deposit_amount', 'deposit_paid_at', 'balance_amount', 'balance_sent_at', 'balance_paid_at',
+  'roommate_separate', 'partner_booking_ref', 'optionals_selected', 'pay_method', 'deposit_amount', 'fee_cents', 'deposit_charged_cents', 'deposit_paid_at',
+  'balance_amount', 'balance_sent_at', 'balance_paid_at', 'balance_charged_cents',
   'stripe_payment_link_url', 'room_number', 'is_tour_leader', 'terms_version', 'terms_accepted_at',
   'details_submitted_at', 'notes', 'created_at', 'updated_at',
 ];
@@ -406,6 +418,7 @@ async function createDepositCheckout(env, origin, trip, booking) {
     ['line_items[0][price_data][currency]', 'usd'],
     ['line_items[0][price_data][unit_amount]', booking.deposit_amount_cents],
     ['line_items[0][price_data][product_data][name]', `Deposit — ${trip.title} (${n} traveler${n > 1 ? 's' : ''})`],
+    ...feeLine(1, booking.pay_method === 'card' ? booking.fee_cents : 0),
     ['customer_email', booking.email],
     ['client_reference_id', ref],
     ['metadata[booking_ref]', ref],
@@ -415,44 +428,70 @@ async function createDepositCheckout(env, origin, trip, booking) {
     ['payment_intent_data[description]', `${ref} deposit`],
     ['payment_intent_data[metadata][booking_ref]', ref],
     ['payment_intent_data[metadata][kind]', 'deposit'],
-    ['payment_method_types[]', 'card'],
-    ['payment_method_types[]', 'us_bank_account'],
-    ['success_url', `${origin}/groups/${trip.slug}/reserved/?ref=${encodeURIComponent(ref)}`],
+    ['metadata[pay_method]', booking.pay_method],
+    ['payment_method_types[]', PAY_METHODS[booking.pay_method]],
+    ['success_url', `${origin}/groups/${trip.slug}/reserved/?ref=${encodeURIComponent(ref)}&pm=${booking.pay_method}`],
     ['cancel_url', `${origin}/groups/${trip.slug}/reserve/?cancelled=1`],
   ]);
 }
 
-export async function createBalancePaymentLink(env, trip, booking, amount_cents, lines, origin) {
+function feeLine(idx, fee) {
+  if (!fee) return [];
+  return [
+    [`line_items[${idx}][quantity]`, 1],
+    [`line_items[${idx}][price_data][currency]`, 'usd'],
+    [`line_items[${idx}][price_data][unit_amount]`, fee],
+    [`line_items[${idx}][price_data][product_data][name]`, CARD_FEE_LABEL],
+  ];
+}
+
+/* Stripe line items cannot be negative (the deposit credit is), so the balance is one line
+   whose description carries the breakdown, plus the card fee line for card payments. */
+async function createBalanceCheckout(env, origin, trip, booking, lines, total, payMethod, token) {
   const ref = booking.booking_ref;
-  const amount = Math.round(Number(amount_cents));
-  if (!Number.isInteger(amount) || amount < 50) throw new Error('balance amount must be at least 50 cents');
-  const price = await stripePost(env, '/v1/prices', [
+  const fee = payMethod === 'card' ? cardFeeCents(total) : 0;
+  const desc = lines.filter((l) => l.cents).map((l) => `${l.label}: ${formatUsd(l.cents)}`).join('; ').slice(0, 480);
+  return stripePost(env, '/v1/checkout/sessions', [
+    ['mode', 'payment'],
     ['currency', 'usd'],
-    ['unit_amount', amount],
-    ['product_data[name]', `${trip.title} — balance for ${ref}`],
-  ]);
-  const link = await stripePost(env, '/v1/payment_links', [
-    ['line_items[0][price]', price.id],
     ['line_items[0][quantity]', 1],
+    ['line_items[0][price_data][currency]', 'usd'],
+    ['line_items[0][price_data][unit_amount]', total],
+    ['line_items[0][price_data][product_data][name]', `Balance — ${trip.title} (${ref})`],
+    ...(desc ? [['line_items[0][price_data][product_data][description]', desc]] : []),
+    ...feeLine(1, fee),
+    ['customer_email', booking.email],
+    ['client_reference_id', ref],
     ['metadata[booking_ref]', ref],
     ['metadata[slug]', trip.slug],
     ['metadata[trip_ref]', trip.trip_ref],
     ['metadata[kind]', 'balance'],
+    ['metadata[pay_method]', payMethod],
+    ['payment_intent_data[description]', `${ref} balance`],
     ['payment_intent_data[metadata][booking_ref]', ref],
     ['payment_intent_data[metadata][kind]', 'balance'],
-    ['payment_intent_data[description]', `${ref} balance`],
-    ['payment_method_types[]', 'card'],
-    ['payment_method_types[]', 'us_bank_account'],
-    ['after_completion[type]', 'redirect'],
-    ['after_completion[redirect][url]', `${origin}/groups/${trip.slug}/reserved/?ref=${encodeURIComponent(ref)}&balance=1`],
+    ['payment_method_types[]', PAY_METHODS[payMethod]],
+    ['success_url', `${origin}/groups/${trip.slug}/reserved/?ref=${encodeURIComponent(ref)}&balance=1&pm=${payMethod}`],
+    ['cancel_url', balanceUrl(origin, booking, token)],
   ]);
-  await updateBooking(env, ref, {
-    balance_amount_cents: amount,
-    balance_breakdown: JSON.stringify(lines || []),
-    stripe_payment_link_id: link.id,
-    stripe_payment_link_url: link.url,
-  });
-  return { id: link.id, url: link.url };
+}
+
+export async function createTestCheckout(env, origin, trip) {
+  return stripePost(env, '/v1/checkout/sessions', [
+    ['mode', 'payment'],
+    ['currency', 'usd'],
+    ['line_items[0][quantity]', 1],
+    ['line_items[0][price_data][currency]', 'usd'],
+    ['line_items[0][price_data][unit_amount]', 100],
+    ['line_items[0][price_data][product_data][name]', `Live test payment — ${trip.title} (not a booking)`],
+    ['metadata[kind]', 'test'],
+    ['metadata[slug]', trip.slug],
+    ['payment_intent_data[description]', 'LDV live test payment (refund in Stripe)'],
+    ['payment_intent_data[metadata][kind]', 'test'],
+    ['payment_method_types[]', 'card'],
+    ['success_url', `${origin}/groups/${trip.slug}/reserved/?ref=TEST&test=1`],
+    ['cancel_url', `${origin}/admin/${trip.slug}`],
+  ]);
 }
 
 /* ---------------- emails ---------------- */
@@ -609,7 +648,7 @@ export async function sendBalanceEmail(env, origin, trip, booking, lines, url, r
       <p style="margin:0 0 16px;">Good news &mdash; <strong>${escapeHtml(trip.title)}</strong> (${escapeHtml(trip.dates)}) is confirmed. Here is the balance for booking <strong>${escapeHtml(booking.booking_ref)}</strong>:</p>
       ${table(linesHtml)}
       ${emailButton(url, 'Pay the balance')}
-      <p style="margin:26px 0 16px;">You can pay by card or directly from a US bank account. ${contactSentence(trip)}</p>
+      <p style="margin:26px 0 16px;">On the payment page you can choose to pay from a US bank account (ACH debit, no added fee; takes a few business days to clear) or by credit or debit card, which adds a 3% card processing fee. ${contactSentence(trip)}</p>
       ${SIGNOFF}`,
     footerNote: 'L&rsquo;Dor Vador Travel',
     origin: request ? emailAssetOrigin(request) : undefined,
@@ -617,7 +656,8 @@ export async function sendBalanceEmail(env, origin, trip, booking, lines, url, r
   const text =
     `Hi ${booking.first_name},\n\n${trip.title} (${trip.dates}) is confirmed. Balance for booking ${booking.booking_ref}:\n\n` +
     (lines || []).map((l) => `${l.label}: ${formatUsd(l.cents)}`).join('\n') +
-    `\nBalance due: ${formatUsd(total)}\n\nPay the balance: ${url}\n\n` +
+    `\nBalance due: ${formatUsd(total)}\n\nPay the balance: ${url}\n` +
+    `You can pay from a US bank account (ACH debit, no added fee) or by card (a 3% card processing fee is added).\n\n` +
     `Questions? Reply to this email${trip.contact_phone ? ` or call ${trip.contact_phone}` : ''}.\n\n${SIGNOFF_TEXT}`;
   await sendResendEmail(env, {
     from: FROM, to: guestRecipients(booking), reply_to: REPLY_TO,
@@ -705,7 +745,7 @@ export async function handleBookPost(request, env, url, ctx) {
   if (!skipCaptcha) {
     const ts = await verifyTurnstile(clampStr(f['cf-turnstile-response'], 3000), ip, env);
     if (ts.unavailable) return json({ ok: false, error: 'captcha_unavailable' }, 503);
-    if (!ts.ok) { console.log('book: captcha failed', slug, ts.codes || ''); return json({ ok: false, error: 'captcha' }, 400); }
+    if (!ts.ok) { console.log('book: captcha failed', clampStr(f.group, 200), ts.codes || ''); return json({ ok: false, error: 'captcha' }, 400); }
   }
 
   const since = new Date(Date.now() - HOUR_MS).toISOString();
@@ -762,6 +802,8 @@ export async function handleBookPost(request, env, url, ctx) {
   }
   if (ec_phone && phoneN && ec_phone === phoneN) errors.push("emergency contact phone must be different from the traveler's");
   if (!truthy(f.terms)) errors.push('terms must be accepted');
+  const pay_method = clampStr(f.pay_method, 10).toLowerCase();
+  if (!PAY_METHODS[pay_method]) errors.push('choose a payment method');
   const nightsMode = f.pre_nights !== undefined || f.post_nights !== undefined;
   let pre_from = null, pre_to = null, post_from = null, post_to = null;
   let preN = 0, postN = 0;
@@ -808,6 +850,7 @@ export async function handleBookPost(request, env, url, ctx) {
     dietary: clampStr(f.dietary, 2000) || null,
     terms_version: clampStr(f.terms_version, 60) || null, terms_accepted_at: nowIso(),
     deposit_amount_cents: trip.deposit_amount_cents * travelers, ip_hash,
+    pay_method, fee_cents: pay_method === 'card' ? cardFeeCents(trip.deposit_amount_cents * travelers) : 0,
   };
 
   let booking_ref;
@@ -855,19 +898,22 @@ async function verifyStripeSignature(rawBody, header, secret) {
   return ok;
 }
 
-async function markDepositPaid(env, ref, paymentIntent) {
+function chargedOf(obj) { return Number.isInteger(obj.amount_total) ? obj.amount_total : null; }
+
+async function markDepositPaid(env, ref, paymentIntent, charged) {
   const res = await env.DB.prepare(
-    `UPDATE bookings SET status = 'deposit_paid', deposit_paid_at = ?, stripe_payment_intent = COALESCE(?, stripe_payment_intent), updated_at = ?
+    `UPDATE bookings SET status = 'deposit_paid', deposit_paid_at = ?, stripe_payment_intent = COALESCE(?, stripe_payment_intent),
+     deposit_charged_cents = COALESCE(?, deposit_charged_cents), updated_at = ?
      WHERE booking_ref = ? AND status IN ('pending','deposit_failed')`
-  ).bind(nowIso(), paymentIntent || null, nowIso(), ref).run();
+  ).bind(nowIso(), paymentIntent || null, charged == null ? null : charged, nowIso(), ref).run();
   return ((res && res.meta && res.meta.changes) || 0) > 0;
 }
 
-async function markBalancePaid(env, ref) {
+async function markBalancePaid(env, ref, charged) {
   const res = await env.DB.prepare(
-    `UPDATE bookings SET status = 'balance_paid', balance_paid_at = ?, updated_at = ?
+    `UPDATE bookings SET status = 'balance_paid', balance_paid_at = ?, balance_charged_cents = COALESCE(?, balance_charged_cents), updated_at = ?
      WHERE booking_ref = ? AND status <> 'balance_paid' AND status <> 'cancelled'`
-  ).bind(nowIso(), nowIso(), ref).run();
+  ).bind(nowIso(), charged == null ? null : charged, nowIso(), ref).run();
   return ((res && res.meta && res.meta.changes) || 0) > 0;
 }
 
@@ -891,25 +937,29 @@ async function processEvent(env, request, url, ctx, event) {
   const ref = md.booking_ref || obj.client_reference_id;
   const kind = md.kind || 'deposit';
   const later = (p, label) => ctx.waitUntil(p.catch((err) => console.error(`${label} failed for ${ref}`, err)));
+  if (kind === 'test') {
+    console.log(`Stripe test payment event ${event.type} ${obj.id || ''} (ignored; refund it in Stripe)`);
+    return 'ignored (test payment)';
+  }
   if (!ref) return 'no booking_ref';
 
   switch (event.type) {
     case 'checkout.session.completed':
       if (kind === 'balance') {
-        if (obj.payment_status === 'paid') { await markBalancePaid(env, ref); return 'balance_paid'; }
+        if (obj.payment_status === 'paid') { await markBalancePaid(env, ref, chargedOf(obj)); return 'balance_paid'; }
         await addNote(env, ref, 'Balance checkout completed — awaiting bank debit');
         return 'balance awaiting';
       }
       if (obj.payment_status === 'paid') {
-        if (await markDepositPaid(env, ref, obj.payment_intent)) later(afterDepositPaid(env, request, url, ref), 'Deposit emails');
+        if (await markDepositPaid(env, ref, obj.payment_intent, chargedOf(obj))) later(afterDepositPaid(env, request, url, ref), 'Deposit emails');
         return 'deposit_paid';
       }
       await updateBooking(env, ref, { stripe_payment_intent: obj.payment_intent || null });
       await addNote(env, ref, 'Deposit checkout completed — awaiting bank debit');
       return 'awaiting bank debit';
     case 'checkout.session.async_payment_succeeded':
-      if (kind === 'balance') { await markBalancePaid(env, ref); return 'balance_paid'; }
-      if (await markDepositPaid(env, ref, obj.payment_intent)) later(afterDepositPaid(env, request, url, ref), 'Deposit emails');
+      if (kind === 'balance') { await markBalancePaid(env, ref, chargedOf(obj)); return 'balance_paid'; }
+      if (await markDepositPaid(env, ref, obj.payment_intent, chargedOf(obj))) later(afterDepositPaid(env, request, url, ref), 'Deposit emails');
       return 'deposit_paid';
     case 'checkout.session.async_payment_failed': {
       if (kind === 'balance') await addNote(env, ref, 'Balance bank debit failed');
@@ -926,7 +976,7 @@ async function processEvent(env, request, url, ctx, event) {
       return 'failed';
     }
     case 'payment_intent.succeeded':
-      if (kind === 'balance') { await markBalancePaid(env, ref); return 'balance_paid'; }
+      if (kind === 'balance') { await markBalancePaid(env, ref, Number.isInteger(obj.amount_received) ? obj.amount_received : null); return 'balance_paid'; }
       return 'ignored (deposit PI)';
     default:
       return 'ignored type';
@@ -1054,4 +1104,69 @@ export async function handleDetails(request, env, url, ctx) {
   ctx.waitUntil(sendInternal(env, `Traveler details received — ${ref}`, 'Traveler details', fresh.trip_title || fresh.slug, text, request)
     .catch((err) => console.error(`Details notification failed for ${ref}`, err)));
   return json({ ok: true }, 200);
+}
+
+/* ---------------- hosted balance page: /api/balance, /api/balance/checkout ---------------- */
+
+function storedLines(b) {
+  try {
+    const a = JSON.parse(b.balance_breakdown || '[]');
+    if (Array.isArray(a) && a.length) return a.map((l) => ({ label: String(l.label || ''), cents: Math.round(Number(l.cents) || 0) }));
+  } catch { /* ignore */ }
+  return null;
+}
+
+/* Lines the traveler pays: the breakdown Hannah sent; payable only once she has sent it. */
+async function balanceState(env, request, b) {
+  const stored = storedLines(b);
+  if (stored && b.balance_amount_cents != null) {
+    return { lines: stored, total_cents: Number(b.balance_amount_cents), payable: true };
+  }
+  const trip = await getTrip(env, request, b.slug);
+  const calc = trip ? computeBalance(trip, b) : { lines: [], total_cents: 0 };
+  return { lines: calc.lines, total_cents: calc.total_cents, payable: false };
+}
+
+export async function handleBalance(request, env, url, ctx) {
+  if (request.method !== 'GET') return json({ ok: false, error: 'method not allowed' }, 405);
+  const ref = clampStr(url.searchParams.get('ref'), 80);
+  const t = clampStr(url.searchParams.get('t'), 80);
+  if (!(await checkToken(env, ref, t))) return json({ ok: false, error: 'forbidden' }, 403);
+  const b = await getBooking(env, ref);
+  if (!b) return json({ ok: false, error: 'not found' }, 404);
+  const st = await balanceState(env, request, b);
+  return json({
+    ok: true, booking_ref: b.booking_ref, status: b.status, lines: st.lines, total_cents: st.total_cents,
+    payable: st.payable && b.status !== 'balance_paid' && b.status !== 'cancelled',
+    card_fee_cents: cardFeeCents(st.total_cents),
+  }, 200);
+}
+
+export async function handleBalanceCheckout(request, env, url, ctx) {
+  if (request.method !== 'POST') return json({ ok: false, error: 'method not allowed' }, 405);
+  if (!sameOrigin(request, url)) return json({ ok: false, error: 'forbidden' }, 403);
+  let f;
+  try { f = await readFields(request); } catch { return json({ ok: false, error: 'invalid body' }, 400); }
+  const ref = clampStr(f.ref, 80);
+  const t = clampStr(f.t, 80);
+  if (!(await checkToken(env, ref, t))) return json({ ok: false, error: 'forbidden' }, 403);
+  const pay_method = clampStr(f.pay_method, 10).toLowerCase();
+  if (!PAY_METHODS[pay_method]) return json({ ok: false, error: 'validation', errors: ['choose a payment method'] }, 400);
+  const b = await getBooking(env, ref);
+  if (!b) return json({ ok: false, error: 'not found' }, 404);
+  if (b.status === 'balance_paid') return json({ ok: false, error: 'already_paid', message: 'This balance has already been paid.' }, 409);
+  if (b.status === 'cancelled') return json({ ok: false, error: 'cancelled', message: 'This booking is cancelled. Please contact us.' }, 409);
+  const st = await balanceState(env, request, b);
+  if (!st.payable || st.total_cents < 50) {
+    return json({ ok: false, error: 'not_ready', message: 'Your balance is not ready to pay yet. We will email you when it is.' }, 409);
+  }
+  const trip = (await getTrip(env, request, b.slug)) || { slug: b.slug, title: b.trip_title || b.slug, trip_ref: b.trip_ref };
+  try {
+    const session = await createBalanceCheckout(env, url.origin, trip, b, st.lines, st.total_cents, pay_method, t);
+    console.log(`Balance checkout ${session.id} created for ${ref} (${pay_method})`);
+    return json({ ok: true, checkout_url: session.url }, 200);
+  } catch (err) {
+    console.error(`Balance checkout failed for ${ref}`, err);
+    return json({ ok: false, error: 'payment_unavailable', message: 'Our payment page is temporarily unavailable. Please try again in a few minutes, or contact us and quote your booking reference.' }, 502);
+  }
 }

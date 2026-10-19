@@ -1,0 +1,39 @@
+<!--
+  Balance page (per trip), opened from the emailed balance link ?ref=..&t=..
+  (same token as the details link). js.tmpl (#balancepage) loads GET /api/balance
+  and posts the chosen method to /api/balance/checkout.
+-->
+__HEADER__
+<main id="main">
+<div class="gcurtain gsolo">
+<div class="page-wrap">
+  <section class="contact group-register" id="balancepage">
+    <div class="sec-head" data-origin="left">
+      <p class="eyebrow">__G_CONGREGATION__</p>
+      <h2>Pay Your Balance</h2>
+    </div>
+    <p class="sub">__G_TITLE__ &middot; __G_DATES__ &middot; Booking <strong class="bref">&hellip;</strong></p>
+    <div class="group-form-card">
+      <p class="sub" id="balmsg" role="status" aria-live="polite">Loading your balance&hellip;</p>
+      <div id="balbody" hidden>
+        <div class="group-summary">
+          <table>
+            <tbody id="ballines"></tbody>
+            <tbody><tr class="total"><td>Balance due</td><td class="num" id="baltotal"></td></tr></tbody>
+          </table>
+        </div>
+        <p class="sub">Pay from a US bank account (ACH debit) with no added fee; it takes a few business days to clear. Or pay by credit or debit card: a 3% card processing fee of <strong id="balfee"></strong> is added, for a total of <strong id="balcardtotal"></strong>.</p>
+        <p class="group-notify-note">The card processing fee is the cost charged to us by the card networks; it is not applied to bank debit payments.</p>
+        <div class="group-form-actions">
+          <button class="btn btn-solid" type="button" data-pay="card">Pay by card</button>
+          <button class="btn btn-solid" type="button" data-pay="ach">Pay by bank account</button>
+        </div>
+        <p class="formnote" role="status" aria-live="polite"></p>
+      </div>
+    </div>
+    <p class="sub"><a class="backlink" href="../">&larr; Back to __G_TITLE__</a></p>
+  </section>
+</div>
+</div>
+</main>
+__FOOTER__

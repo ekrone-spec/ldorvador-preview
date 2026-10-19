@@ -509,7 +509,7 @@ def build_group_subpages(g, slug, gv):
     if not trip_booking_open(g):
         # bookings closed: remove booking pages left over from an earlier open build
         import shutil
-        for sub in ('reserve', 'reserved', 'details'):
+        for sub in ('reserve', 'reserved', 'details', 'balance'):
             shutil.rmtree(os.path.join(os.environ.get('LDV_OUT_DIR') or D, 'groups', slug, sub), ignore_errors=True)
         return
     terms = _terms_data()
@@ -555,7 +555,8 @@ def build_group_subpages(g, slug, gv):
     }
     for tmpl_name, sub, ts in [('reserve.body.html', 'reserve', True),
                                ('reserved.body.html', 'reserved', False),
-                               ('details.body.html', 'details', False)]:
+                               ('details.body.html', 'details', False),
+                               ('balance.body.html', 'balance', False)]:
         tmpl = re.sub(r'^\s*<!--.*?-->\s*', '', R(tmpl_name), count=1, flags=re.S)
         body = tmpl.replace('__HEADER__', header).replace('__FOOTER__', footer)
         body = fill_content(body).replace('__LANGNAV__', '')
@@ -566,7 +567,7 @@ def build_group_subpages(g, slug, gv):
         for k, v in imgmap.items():
             body = body.replace(k, '../../../' + v)
         title = '%s | %s | L\u2019Dor Vador Travel' % (
-            {'reserve': 'Reserve Your Spot', 'reserved': 'Reservation received', 'details': 'Traveler Details'}[sub],
+            {'reserve': 'Reserve Your Spot', 'reserved': 'Reservation received', 'details': 'Traveler Details', 'balance': 'Pay Your Balance'}[sub],
             g.get('title') or slug)
         tail = '\n<script src="../../../assets/app.js?v=' + VER + '" defer></script></body></html>'
         W('groups/%s/%s/index.html' % (slug, sub), entesc(_page_head(title, '../../../', ts) + body + tail))
