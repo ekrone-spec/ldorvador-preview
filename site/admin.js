@@ -387,7 +387,7 @@ async function pageEdit(env, request, url, email, slug, ref) {
 <div class="adm-card"><div class="adm-sec">Stripe and payment (read-only)</div><ul class="adm-facts">
 ${fact('Deposit amount', formatUsd(b.deposit_amount_cents))}${fact('Deposit paid at', b.deposit_paid_at)}${fact('Stripe checkout id', b.stripe_checkout_id)}
 ${fact('Stripe payment intent', b.stripe_payment_intent)}${fact('Deposit payment method', b.pay_method === 'card' ? 'Card' : b.pay_method === 'ach' ? 'US bank account (ACH)' : '')}
-${fact('Credit card convenience fee', Number(b.fee_cents) ? formatUsd(b.fee_cents) : '')}${fact('Deposit charged', b.deposit_charged_cents != null ? formatUsd(b.deposit_charged_cents) : '')}
+${fact('Credit card processing fee', Number(b.fee_cents) ? formatUsd(b.fee_cents) : '')}${fact('Deposit charged', b.deposit_charged_cents != null ? formatUsd(b.deposit_charged_cents) : '')}
 ${b.stripe_payment_link_url ? fact('Old payment link', b.stripe_payment_link_url) : ''}${fact('Balance charged', b.balance_charged_cents != null ? formatUsd(b.balance_charged_cents) : '')}
 ${fact('Balance amount', b.balance_amount_cents != null ? formatUsd(b.balance_amount_cents) : '')}${fact('Balance sent at', b.balance_sent_at)}${fact('Balance paid at', b.balance_paid_at)}
 ${fact('Details submitted at', b.details_submitted_at)}${fact('Terms accepted', b.terms_accepted_at ? `${b.terms_version || ''} ${b.terms_accepted_at}` : '')}</ul></div>
@@ -427,7 +427,7 @@ async function pageBalance(env, request, url, email, slug, ref) {
 <table class="adm-t"><thead><tr><th>Line</th><th>Amount (USD)</th></tr></thead><tbody id="bl">${lines.map(row).join('')}</tbody></table>
 <p style="margin:14px 0 0"><button class="btn btn-line" type="button" id="addline">Add a line</button></p>
 <p style="margin:22px 0 0"><span class="lab" style="display:inline">Total</span> <span class="adm-total" id="total"></span></p>
-<div class="hint">A discount or the deposit credit is a negative amount. The guest sees every line in the email and on the balance page, and chooses card (a 3% credit card convenience fee is added) or US bank account (no added fee).</div>
+<div class="hint">A discount or the deposit credit is a negative amount. The guest sees every line in the email and on the balance page, and chooses card (a 3% credit card processing fee is added) or US bank account (no added fee).</div>
 <div class="adm-actions" style="margin:24px 0 0"><button class="btn btn-solid" type="submit">${sent ? 'Update and resend balance request' : 'Send balance request'}</button></div></form>
 <script>(function(){var bl=document.getElementById('bl');function tot(){var s=0;bl.querySelectorAll('.bl-amt').forEach(function(i){s+=Math.round((parseFloat(i.value)||0)*100)});document.getElementById('total').textContent=(s/100).toLocaleString('en-US',{style:'currency',currency:'USD'});}
 bl.addEventListener('input',tot);document.getElementById('addline').addEventListener('click',function(){var t=document.createElement('tbody');t.innerHTML='<tr class="bl-row"><td><input type="text" name="label" aria-label="Line label"></td><td style="width:160px"><input type="number" step="0.01" name="amount" value="0.00" class="bl-amt" aria-label="Amount in USD"></td></tr>';bl.appendChild(t.firstChild);});
