@@ -40,7 +40,7 @@ GROUPTRIP_FIELD_LABEL = {
     'price_single_supplement': 'Single supplement (USD)',
     'deposit_amount': 'Deposit per traveler (USD)',
     'max_extension_nights': 'Maximum extra nights a traveler may request (before or after)',
-    'optionals': 'Optional tours (offered after confirmation)',
+    'optionals': 'Optional tours (chosen on the reserve form; priced per guest into the balance)',
     'start_finish': 'Start / finish',
     'pace': 'Pace',
     'accommodation': 'Accommodation',
@@ -180,6 +180,16 @@ collections_config:
       price:
         type: text
         label: 'Price (shown under the dates on the page and in At a Glance on the PDF)'
+      # nested keys: the optional-tour price is a number, not the trip's price text
+      'optionals[*].name':
+        type: text
+        label: 'Tour name'
+      'optionals[*].price':
+        type: number
+        label: 'Price per guest (USD)'
+      'optionals[*].description':
+        type: textarea
+        label: 'Description (shown under the dropdown on the reserve form)'
       group_size:
         type: text
         label: 'Group size'
