@@ -33,7 +33,7 @@
   "bookings_open": true,
   "price_package": 3750,
   "price_single_supplement": 900,
-  "deposit_amount": 1,
+  "deposit_amount": 1000,
   "max_extension_nights": 3,
   "optionals": [],
   "start_finish": "Willemstad → Willemstad",
