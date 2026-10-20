@@ -1239,6 +1239,10 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
 .group-check,.field label.group-check,.group-form-card .field label.group-check{display:flex;align-items:center;gap:14px;cursor:pointer;font-weight:400;font-size:16px;text-transform:none;letter-spacing:0;color:var(--ink);margin-bottom:10px}
 .group-check input{flex:none;width:22px;height:22px;margin-top:0;accent-color:var(--sage)}
 .group-check span{display:block}
+/* validation state: warm border + note, no new colours */
+.is-invalid input:not([type=radio]):not([type=checkbox]),.is-invalid select,.is-invalid textarea{border-color:var(--camel)!important;box-shadow:0 0 0 2px rgba(186,154,118,.25)}
+.is-invalid .room-opt span{border-color:var(--camel)}
+.group-check.is-invalid span{color:var(--camel)}
 .group-check + .group-notify-note{margin:-4px 0 14px 36px}   /* note aligns with the option text, not the radio */
 .group-check small{display:block;margin-top:4px}
 .group-check a{text-decoration:underline}

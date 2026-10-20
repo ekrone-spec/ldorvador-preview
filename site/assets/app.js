@@ -665,6 +665,24 @@ document.querySelectorAll('details.group-day').forEach(function(d){
         try { window.turnstile.reset(); } catch (e) {}
       }
     }
+    /* Visible validation: Safari (iOS especially) shows nothing for a required
+       radio that is visually hidden (room / payment tiles), so the submit just
+       dies silently. Mark the field's wrapper, say so in the note, and scroll
+       the first problem into view. Cleared as soon as the field changes. */
+    var MSG_FIELDS = 'Please complete the highlighted fields.';
+    function wrapOf(el){ return el.closest('.field, .pay-options, .room-options, .group-check, fieldset') || el; }
+    f.addEventListener('invalid', function(e){ wrapOf(e.target).classList.add('is-invalid'); }, true);
+    f.addEventListener('input', function(e){ if (e.target.validity && e.target.validity.valid) wrapOf(e.target).classList.remove('is-invalid'); }, true);
+    f.addEventListener('change', function(e){ if (e.target.validity && e.target.validity.valid) wrapOf(e.target).classList.remove('is-invalid'); }, true);
+    var sbtn = f.querySelector('button[type=submit]');
+    if (sbtn) sbtn.addEventListener('click', function(){
+      setTimeout(function(){
+        if (f.checkValidity()) return;
+        say(MSG_FIELDS);
+        var first = f.querySelector('.is-invalid');
+        if (first) first.scrollIntoView({behavior:'smooth', block:'center'});
+      }, 0);
+    });
     f.addEventListener('submit', function(e){
       e.preventDefault();
       if (opts.check) { var bad = opts.check(serialize(f)); if (bad) { say(bad); return; } }
