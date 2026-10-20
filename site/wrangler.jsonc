@@ -32,7 +32,7 @@
     }
   ],
   "vars": {
-    "NOTIFY_TO": "connect@ldorvadortravel.com",
+    "NOTIFY_TO": "hannah@ldorvadortravel.com",
     // ACCESS_TEAM_DOMAIN and ACCESS_AUD: fill in once Erik creates the
     // Cloudflare Access app protecting /api/interest/* exports. Left blank
     // means the export endpoint fails closed (always 404).

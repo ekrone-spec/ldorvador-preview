@@ -742,6 +742,23 @@ def build_groups():
                     .replace('__FOOTER__', footer))
         body = fill_content(body)
         body = body.replace('__LANGNAV__', '')
+        if booking_open:
+            # Bookings open: the interest form, its nav item and hero button go
+            # away; one Reserve section takes the form's place.
+            reserve_section = (
+                '<section class="contact group-register" id="reserve">\n'
+                '    <div class="sec-head" data-origin="left">\n'
+                '      <p class="eyebrow">Reserve Your Spot</p>\n'
+                '      <h2>__G_CONGREGATION__</h2>\n'
+                '    </div>\n'
+                '    <p class="sub">Ready to book? Reserve your spot with a %s deposit per traveler. '
+                'Your deposit is refunded in full if the trip does not reach its minimum number of travelers.</p>\n'
+                '    <a class="btn btn-solid" href="reserve/">Reserve Your Spot</a>\n'
+                '  </section>' % money(g.get('deposit_amount')))
+            body = re.sub(r'<section class="contact group-register" id="register">.*?</section>',
+                          lambda m: reserve_section, body, count=1, flags=re.S)
+            body = body.replace('<a href="#register" data-gnav>Register</a>', '<a href="#reserve" data-gnav>Reserve</a>')
+            body = re.sub(r'\n\s*<a class="btn __G_REGISTER_CLASS__ grouphero-cta" href="#register">Register Your Interest</a>', '', body)
         # header/footer links are root-relative ("index.html", "story.html#x");
         # this page sits two levels down at /groups/<slug>/, so rewrite them.
         body = re.sub(r'href="(?!https?:|mailto:|#|\.\./)([a-z][\w.-]*\.html)',

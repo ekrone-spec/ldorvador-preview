@@ -89,15 +89,17 @@ __HEADER__
       </fieldset>
       <fieldset>
         <legend>Payment method</legend>
-        <div class="field">
-          <label class="group-check"><input type="radio" name="pay_method" value="card" required><span>Credit or debit card &mdash; a 3% credit card processing fee is added</span></label>
-          <p class="group-notify-note">The credit card processing fee is the cost charged to us by the card networks; it is not applied to bank debit payments.</p>
-          <label class="group-check"><input type="radio" name="pay_method" value="ach" required><span>US bank account (ACH debit) &mdash; no added fee; takes a few business days to clear</span></label>
+        <p class="pay-prompt">Choose how you would like to pay your deposit. Select one:</p>
+        <div class="room-options pay-options">
+          <label class="room-opt pay-opt"><input type="radio" name="pay_method" value="card" required><span><b>Credit or debit card</b><small>3% credit card processing fee added</small></span></label>
+          <label class="room-opt pay-opt"><input type="radio" name="pay_method" value="ach" required><span><b>US bank account (ACH debit)</b><small>No added fee &middot; clears in a few business days</small></span></label>
         </div>
+        <p class="group-notify-note pay-note">The credit card processing fee is the cost charged to us by the card networks; it is not applied to bank debit payments.</p>
       </fieldset>
       <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
       <div class="cf-turnstile" data-sitekey="__TURNSTILE_SITEKEY__" data-theme="light" data-size="flexible" data-appearance="interaction-only"></div>
       <p class="group-summary" id="depositsum" data-deposit="__G_DEPOSIT__">Deposit due now: <strong>__G_DEPOSIT_FMT__</strong> per traveler</p>
+      <div class="secure-strip"><svg class="secure-lock" width="22" height="22" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6.2" width="9" height="6.3" rx="1"/><path d="M4.7 6.2V4.3a2.3 2.3 0 0 1 4.6 0v1.9"/></svg><p><strong>Secure checkout.</strong> Payments are processed by Stripe with built-in fraud protection. Your card and bank details are entered on Stripe's secure page and are never stored by L'Dor Vador Travel.</p><img class="secure-badge" src="../../../assets/img/powered-by-stripe.svg" width="130" height="30" alt="Powered by Stripe"></div>
       <div class="group-form-actions">
         <button class="btn btn-solid" type="submit">Continue to Payment</button>
       </div>

@@ -1007,9 +1007,15 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
 .grouphero-with,.grouphero-facts{color:#fff}
 .grouphero-facts,.grouphero-lede .group-price-note{width:max-content;max-width:calc(100vw - 2*clamp(24px,5.5vw,110px))}
 .grouphero-facts{line-height:1.6}
+/* one translucent panel carries the guide line, facts and note so small
+   white type stays legible over the busy waterfront */
+.grouphero-panel{display:block;width:max-content;max-width:calc(100vw - 2*clamp(24px,5.5vw,110px));margin-top:14px;padding:14px 18px;background:rgba(14,16,10,.46);border-radius:2px}
+.grouphero-panel .grouphero-with{margin-top:0}
+.grouphero-panel .grouphero-facts{margin-top:10px;max-width:none;width:auto}
+.grouphero-panel .group-price-note{margin:12px 0 0;padding:0;background:none;display:block;max-width:none;width:auto}
 .grouphero-lede .grouphero-cta{display:inline-flex;margin-top:24px}
 .grouphero-ctas{display:flex;flex-wrap:wrap;gap:16px;align-items:center}
-.grouphero-ctas .grouphero-cta{margin-top:24px}
+.grouphero-ctas .grouphero-cta{margin-top:24px;font-size:16px}   /* same size as the PDF button beside it */
 .grouphero-ctas .grouphero-pdf{margin-top:24px;font-size:16px}
 @media(max-width:820px){.grouphero-lede h1{font-size:clamp(36px,10vw,48px)}.grouphero-ctas{flex-direction:column;align-items:flex-start}}
 
@@ -1194,6 +1200,25 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
   border-radius:2px;font-size:18px;color:var(--ink);cursor:pointer;transition:.2s}
 .room-opt input:checked+span{border-color:var(--sage);background:var(--sage);color:#fff}
 .room-opt input:focus-visible+span{outline:2px solid var(--sage);outline-offset:2px}
+.room-opt:hover input:not(:checked)+span{border-color:var(--sage);background:rgba(125,144,101,.08);cursor:pointer}
+.pay-prompt{margin:0 0 12px;font-size:16px;color:var(--ink)}
+.pay-options{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;align-items:stretch;margin-bottom:18px}
+.pay-opt{flex:1 1 280px;display:flex}
+.pay-opt span{flex-direction:column;gap:4px;min-width:0;text-align:center}
+.pay-opt b{font-weight:400;font-size:18px}
+.pay-opt small{font-size:14px;line-height:1.4;color:var(--ink-soft);transition:.2s}
+.pay-opt input:checked+span small{color:#fff}
+@media(max-width:480px){.pay-opt{flex-basis:auto}}
+.group-form-card fieldset .pay-note{margin:16px 0 22px}
+.secure-strip{display:flex;align-items:center;gap:14px;padding:14px 0;margin:8px 0 22px;border-top:1px solid rgba(40,40,25,.14);border-bottom:1px solid rgba(40,40,25,.14);color:var(--ink)}
+.secure-strip .secure-lock{flex:none}
+.secure-strip p{flex:1;margin:0;font-size:15px;line-height:1.5;color:var(--ink-soft)}
+.secure-strip strong{color:var(--ink);font-weight:700}
+.secure-strip .secure-badge{flex:none;width:130px;height:auto;display:block}
+@media(max-width:720px){.secure-strip{flex-wrap:wrap}.secure-strip p{flex-basis:calc(100% - 36px)}.secure-strip .secure-badge{margin-left:36px}}
+.bal-pay{align-items:flex-start;gap:18px 28px}
+.bal-pay>div{display:flex;flex-direction:column;align-items:center;gap:8px}
+.bal-pay small{font-size:14px;color:var(--ink-soft);text-align:center}
 .group-form-actions{display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin-top:8px}
 .group-form-actions .btn{font-size:16px}
 .gcurtain .btn{font-size:16px}
@@ -1202,7 +1227,7 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
   padding:12px 20px calc(12px + env(safe-area-inset-bottom));transform:translateY(110%);transition:transform .3s ease;
   box-shadow:0 -8px 24px rgba(0,0,0,.14);-webkit-backface-visibility:hidden;backface-visibility:hidden}
 .grouptray.show{transform:translateY(0)}
-.grouptray .btn{display:block;text-align:center}
+.grouptray .btn{display:flex;width:100%;min-height:52px;padding:0 20px;font-size:14px}   /* keeps the base button centring; block broke it */
 @media(min-width:721px){.grouptray{display:none}}
 
 
@@ -1225,11 +1250,14 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
 /* ---- group booking pages (reserve / reserved / details) ---- */
 .group-reserve-line{display:flex;flex-wrap:wrap;align-items:center;gap:18px 24px;margin-top:20px}
 .group-reserve-line p{margin:0;color:var(--ink-soft)}
-.group-check{display:flex;align-items:flex-start;gap:14px;cursor:pointer;font-weight:400;text-transform:none;letter-spacing:0}
-.group-check input{flex:none;width:22px;height:22px;margin-top:3px;accent-color:var(--sage)}
+/* beats `.group-form-card .field label` so the control sits beside its text */
+.group-check,.field label.group-check,.group-form-card .field label.group-check{display:flex;align-items:center;gap:14px;cursor:pointer;font-weight:400;font-size:16px;text-transform:none;letter-spacing:0;color:var(--ink);margin-bottom:10px}
+.group-check input{flex:none;width:22px;height:22px;margin-top:0;accent-color:var(--sage)}
 .group-check span{display:block}
+.group-check + .group-notify-note{margin:-4px 0 14px 36px}   /* note aligns with the option text, not the radio */
 .group-check small{display:block;margin-top:4px}
 .group-check a{text-decoration:underline}
+/* Trust line under payment choices. Badge: official "Powered by Stripe" (black) from stripe.com/newsroom/brand-assets, saved unaltered as assets/img/powered-by-stripe.svg */
 .group-summary{margin:8px 0 22px;padding:20px 24px;border:1px solid var(--line);border-radius:2px;background:var(--cream);color:var(--ink)}
 .group-summary strong{font-weight:700;color:var(--blue)}
 .group-summary table{width:100%;border-collapse:collapse}
@@ -1242,3 +1270,4 @@ body:has(.gsolo) header::before{opacity:0}
 .gsolo .group-register{border-top:0;padding-top:0}
 .group-form-card .group-price-note{margin:18px 0 0}
 .group-form-card fieldset .group-notify-note{margin:0 0 4px}
+.group-form-card fieldset .group-check + .group-notify-note{margin:-4px 0 14px 36px}

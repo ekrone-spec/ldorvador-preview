@@ -1,7 +1,7 @@
 /* Helpers shared by worker.js and bookings.js (and admin.js). Moved out of worker.js because
  * the main module may only export handlers. */
 export const IP_SALT = 'ldv-interest-salt-9f3a1c';
-export const DEFAULT_NOTIFY_TO = 'connect@ldorvadortravel.com,erik@tcstudio.io';
+export const DEFAULT_NOTIFY_TO = 'hannah@ldorvadortravel.com';
 
 export function json(data, status, extraHeaders) {
   const headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });

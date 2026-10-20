@@ -224,6 +224,9 @@ def main():
         else:
             check('name="robots" content="noindex,nofollow"' in html,
                   '%s: missing noindex,nofollow robots meta' % path)
+        if 'id="reserve"' in html:          # bookings open: the interest form is replaced by Reserve
+            check('href="reserve/"' in html, '%s: reserve section missing its link' % path)
+            continue
         check('id="interestform"' in html, '%s: missing form#interestform' % path)
         for field in GROUP_FIELDS:
             check('name="%s"' % field in html,

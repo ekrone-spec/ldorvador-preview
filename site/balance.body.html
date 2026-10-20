@@ -24,9 +24,10 @@ __HEADER__
         </div>
         <p class="sub">Pay from a US bank account (ACH debit) with no added fee; it takes a few business days to clear. Or pay by credit or debit card: a 3% credit card processing fee of <strong id="balfee"></strong> is added, for a total of <strong id="balcardtotal"></strong>.</p>
         <p class="group-notify-note">The credit card processing fee is the cost charged to us by the card networks; it is not applied to bank debit payments.</p>
-        <div class="group-form-actions">
-          <button class="btn btn-solid" type="button" data-pay="card">Pay by card</button>
-          <button class="btn btn-solid" type="button" data-pay="ach">Pay by bank account</button>
+        <div class="secure-strip"><svg class="secure-lock" width="22" height="22" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6.2" width="9" height="6.3" rx="1"/><path d="M4.7 6.2V4.3a2.3 2.3 0 0 1 4.6 0v1.9"/></svg><p><strong>Secure checkout.</strong> Payments are processed by Stripe with built-in fraud protection. Your card and bank details are entered on Stripe's secure page and are never stored by L'Dor Vador Travel.</p><img class="secure-badge" src="../../../assets/img/powered-by-stripe.svg" width="130" height="30" alt="Powered by Stripe"></div>
+        <div class="group-form-actions bal-pay">
+          <div><button class="btn btn-solid" type="button" data-pay="card">Pay by card</button><small>3% credit card processing fee added</small></div>
+          <div><button class="btn btn-solid" type="button" data-pay="ach">Pay by bank account</button><small>No added fee</small></div>
         </div>
         <p class="formnote" role="status" aria-live="polite"></p>
       </div>

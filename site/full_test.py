@@ -285,7 +285,7 @@ def audit_layer():
 
         # the group registration form carries everything the interest
         # endpoint needs (the /groups/ index itself has no such form)
-        if is_group_trip:
+        if is_group_trip and any('travelers' in form for form in p.forms):   # interest form present (bookings closed)
             need = {'full_name', 'email', 'phone', 'travelers', 'room',
                     'comments', 'group', 'group_title', 'botcheck'}
             ok = any(need <= form for form in p.forms)

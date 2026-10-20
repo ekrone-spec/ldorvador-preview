@@ -20,3 +20,4 @@ __pycache__/
 .wrangler/
 node_modules/
 .staging-secrets.env
+.prod-secrets.env
