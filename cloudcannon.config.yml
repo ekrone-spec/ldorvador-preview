@@ -54,19 +54,14 @@ collections_config:
       duration:
         type: text
         label: 'Duration'
-      price:
+      price_line:
         type: text
         label: 'Price (shown under the dates on the page and in At a Glance on the PDF)'
-      # nested keys: the optional-tour price is a number, not the trip's price text
-      'optionals[*].name':
-        type: text
-        label: 'Tour name'
-      'optionals[*].price':
+      # `price` is only used by optional tours (a number per guest); the trip's
+      # price text lives in price_line so the two never share an input type
+      price:
         type: number
         label: 'Price per guest (USD)'
-      'optionals[*].description':
-        type: textarea
-        label: 'Description (shown under the dropdown on the reserve form)'
       group_size:
         type: text
         label: 'Group size'
@@ -1700,7 +1695,7 @@ file_config:
       duration:
         type: text
         label: "Duration"
-      price:
+      price_line:
         type: text
         label: "Price"
       group_size:

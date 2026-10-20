@@ -710,11 +710,11 @@ def build_groups():
 
         def facts_line():
             # one fact per line, directly above the registration note
-            bits = [gv(k) for k in ('dates', 'duration', 'price', 'group_size') if g.get(k)]
+            bits = [gv(k) for k in ('dates', 'duration', 'price_line', 'group_size') if g.get(k)]
             return '<br>'.join(bits)
 
         def facts_list():
-            rows = [('Dates', 'dates'), ('Duration', 'duration'), ('Price', 'price'),
+            rows = [('Dates', 'dates'), ('Duration', 'duration'), ('Price', 'price_line'),
                     ('Group size', 'group_size'),
                     ('Start / finish', 'start_finish'), ('Pace', 'pace'),
                     ('Accommodation', 'accommodation')]
@@ -1051,7 +1051,7 @@ def print_page(g, slug):
     glance_items = ''.join(
         '<div class="glance-item"><span class="gl-label">%s</span><span class="gl-value">%s</span></div>'
         % (label, val) for label, val in [
-            ('Dates', dates), ('Duration', duration), ('Price', pv('price')),
+            ('Dates', dates), ('Duration', duration), ('Price', pv('price_line')),
             ('Group size', group_size),
             ('Start / finish', pv('start_finish')), ('Pace', pv('pace')),
             ('Accommodation', pv('accommodation')),

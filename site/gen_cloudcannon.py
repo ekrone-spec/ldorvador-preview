@@ -32,7 +32,7 @@ GROUPTRIP_FIELD_LABEL = {
     'about_company': "About L'Dor Vador Travel (PDF hosts page)",
     'dates': 'Dates',
     'duration': 'Duration',
-    'price': 'Price',
+    'price_line': 'Price',
     'group_size': 'Group size',
     'trip_ref': 'Trip reference (e.g. 20270303TBE01 — arrival date + organizer code + trip number). Bookings cannot open without it',
     'bookings_open': 'Open bookings (shows the Reserve Your Spot button)',
@@ -177,19 +177,14 @@ collections_config:
       duration:
         type: text
         label: 'Duration'
-      price:
+      price_line:
         type: text
         label: 'Price (shown under the dates on the page and in At a Glance on the PDF)'
-      # nested keys: the optional-tour price is a number, not the trip's price text
-      'optionals[*].name':
-        type: text
-        label: 'Tour name'
-      'optionals[*].price':
+      # `price` is only used by optional tours (a number per guest); the trip's
+      # price text lives in price_line so the two never share an input type
+      price:
         type: number
         label: 'Price per guest (USD)'
-      'optionals[*].description':
-        type: textarea
-        label: 'Description (shown under the dropdown on the reserve form)'
       group_size:
         type: text
         label: 'Group size'

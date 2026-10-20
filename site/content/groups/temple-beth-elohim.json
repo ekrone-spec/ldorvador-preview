@@ -28,14 +28,20 @@
   "dates": "March 3–8, 2027",
   "duration": "6 days/5 nights; option to book 3-night extension through L'Dor Vador Travel",
   "group_size": "",
-  "price": "$3750/guest for double-occupancy; $900 for single supplement (Minimum of 20 travelers)",
+  "price_line": "$3750/guest for double-occupancy; $900 for single supplement (Minimum of 20 travelers)",
   "trip_ref": "20270303TBE01",
   "bookings_open": true,
   "price_package": 3750,
   "price_single_supplement": 900,
   "deposit_amount": 1000,
   "max_extension_nights": 3,
-  "optionals": [{"name":"Day 5 Supplemental Program","price":450,"description":"On Day 5, breakfast and the farewell dinner are included in the package price. There is a full-day optional tour which includes delving into Afro-Curaçaoan history and identity in the rural part of the island, along with a buffet lunch at a rural beach, live music, and an intimate meet-and greet with an internationally-renown artist at his atelier."}],
+  "optionals": [
+    {
+      "name": "Day 5 Supplemental Program",
+      "price": 450,
+      "description": "On Day 5, breakfast and the farewell dinner are included in the package price. There is a full-day optional tour which includes delving into Afro-Curaçaoan history and identity in the rural part of the island, along with a buffet lunch at a rural beach, live music, and an intimate meet-and greet with an internationally-renown artist at his atelier."
+    }
+  ],
   "start_finish": "Willemstad → Willemstad",
   "pace": "4 days guided touring; optional 5th. AM-early afternoon programming with break for relaxation before dinner",
   "accommodation": "Renaissance Wind Creek Curaçao Resort, Willemstad",
