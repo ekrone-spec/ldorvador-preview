@@ -14,7 +14,7 @@ const GLOBAL_EMAIL_DAILY_CAP = 150;
 import {
   DEFAULT_NOTIFY_TO, utcDayStartIso, EMAIL_COLORS, EMAIL_FONT_LINK, EMAIL_SANS, EMAIL_SERIF, IP_SALT, PROD_ORIGIN, base64UrlToBytes, base64UrlToJson, clampStr, csvField, emailAssetOrigin, emailButton, emailFooterLockup, emailHeaderLockup, emailShell, escapeHtml, fetchAccessJwks, json, readFields, sameOrigin, sendResendEmail, sha256Hex, truthy, verifyAccessJwt, verifyTurnstile,
 } from './shared.js';
-import { handleBookPost, handleDetails, handleStripeWebhook } from './bookings.js';
+import { handleBookPost, handleDetails, handleStripeWebhook, handleBalance, handleBalanceCheckout } from './bookings.js';
 
 const MAX_PDF_BYTES = 5 * 1024 * 1024;
 const BASE64_CHUNK = 0x8000;
@@ -457,6 +457,8 @@ async function handleApi(request, env, url, ctx) {
   if (url.pathname === '/api/book') return handleBookPost(request, env, url, ctx);
   if (url.pathname === '/api/details') return handleDetails(request, env, url, ctx);
   if (url.pathname === '/api/stripe/webhook') return handleStripeWebhook(request, env, url, ctx);
+  if (url.pathname === '/api/balance') return handleBalance(request, env, url, ctx);
+  if (url.pathname === '/api/balance/checkout') return handleBalanceCheckout(request, env, url, ctx);
   if (url.pathname === '/api/register' || url.pathname === '/api/interest') {
     if (request.method !== 'POST') return json({ ok: false, error: 'method not allowed' }, 405);
     return handleInterestPost(request, env, url);

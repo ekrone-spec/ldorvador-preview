@@ -15,9 +15,9 @@ Save and publish as usual. The button appears after the site rebuilds, usually w
 
 ## 2. What travelers see
 
-1. They press **Reserve Your Spot** and fill in the form: names, contact details, single or double room (a double asks for the roommate's name, bed type, and whether the traveler is paying for both or the roommate will book and pay separately), how many extra nights they want before or after (0 up to the trip's maximum, a request at the same hotel; the maximum is set per trip in CloudCannon and the question is hidden when it is 0), an emergency contact (who must be a different person from the traveler and roommate), phone numbers (US/Canada, or a full international number with +; stored in international format), dietary needs, and a tick to accept the Terms and Conditions.
-2. They go to a Stripe payment page and pay the deposit by card or US bank account.
-3. They land on a thank-you page showing their booking reference.
+1. They press **Reserve Your Spot** and fill in the form: names, contact details, single or double room (a double asks for the roommate's name, bed type, and whether the traveler is paying for both or the roommate will book and pay separately), how many extra nights they want before or after (0 up to the trip's maximum, a request at the same hotel; the maximum is set per trip in CloudCannon and the question is hidden when it is 0), an emergency contact (who must be a different person from the traveler and roommate), phone numbers (US/Canada, or a full international number with +; stored in international format), dietary needs, a tick to accept the Terms and Conditions, and a payment method: credit or debit card (a 3% credit card processing fee is added and shown as its own line) or US bank account (ACH debit, no added fee; L'Dor Vador absorbs Stripe's capped bank fee). Wire transfers are not offered.
+2. They go to a Stripe payment page for the method they chose and pay the deposit (plus the 3% fee if by card).
+3. They land on a thank-you page showing their booking reference. After a card payment it says the deposit has been received; after a bank payment it says the payment is being processed.
 4. Once the payment clears they get a confirmation email from us. Bank payments can take a few business days, and the email waits until then.
 5. The confirmation email includes a private link to a details form for passport information and flights. You are also emailed when a traveler sends their details.
 
@@ -42,9 +42,10 @@ Statuses: Pending (waiting for payment), Deposit paid, Deposit failed, Balance s
 - **Edit** (click a booking): change names, room, bed, dates, dietary, room number, internal notes or status, then Save changes.
 - **Cancel booking**: marks it Cancelled. It does not refund anything; see section 7.
 - **Confirm extra nights**: on the booking, tick "Extensions confirmed" and enter the confirmed before/after dates. Only confirmed nights are charged in the balance and shown on the rooming list.
-- **Balance**: opens the balance review for that booking. It lists the package, single supplement, confirmed extra nights and optional tours, minus the deposit. You can change any amount or add a line (for example an extension price that is not set yet). **Create link and send** makes a Stripe payment link and emails it to the traveler. **Resend email** sends the same link again.
+- **Balance**: opens the balance review for that booking. It lists the package, single supplement, confirmed extra nights and optional tours, minus the deposit. You can change any amount or add a line (for example an extension price that is not set yet). **Send balance request** saves the breakdown and emails the traveler a button to their own balance page on our website. That page shows the same breakdown and two buttons, **Pay by card** (adds the 3% credit card processing fee) and **Pay by bank account** (no added fee). If you change the lines and send again, the same page shows the new amount. **Resend email** sends the request again. Once the balance is paid the page says so.
+- **Create a $1 live test payment** (on the trip page): makes a real $1.00 card payment page and shows a button to open it. Open it, pay $1 with a real card, and check you land on a page saying "Test payment received — this was not a booking". Then refund the $1 in Stripe (section 7). It creates no booking.
 - **Resend details link**: emails the traveler their private details-form link again.
-- **Export travelers (CSV)**: every booking that is not cancelled, with every field, for your records.
+- **Export travelers (CSV)**: every booking that is not cancelled, with every field, for your records. It includes pay_method (card or ach), fee_cents (the card fee on the deposit, in cents), deposit_charged_cents and balance_charged_cents (what Stripe actually charged, in cents, including any card fee).
 - **Export rooming list (CSV)**: columns are booking reference, guest 1, guest 2, room number, room type, bed type, arrival, departure, dietary requirements/special requests. Cancelled bookings are left out; extra nights show in the arrival and departure columns once confirmed.
 
 ## 5. When to send balances
@@ -57,7 +58,7 @@ The terms live at https://www.ldorvadortravel.com/terms.html and are edited in C
 
 ## 7. Refunds
 
-Refunds are done in the Stripe dashboard (Payments, find the payment, Refund). L'Dor Vador absorbs the Stripe fee, so the traveler gets back the full amount. After refunding, cancel the booking in the admin page so the rooming list stays correct.
+Refunds are done in the Stripe dashboard (Payments, find the payment, Refund). The traveler gets back the amount you refund. For a card payment the amount charged includes the 3% credit card processing fee, so a full refund returns that too; Stripe keeps its own processing fee either way. After refunding, cancel the booking in the admin page so the rooming list stays correct.
 
 ## 8. If a bank debit fails
 
