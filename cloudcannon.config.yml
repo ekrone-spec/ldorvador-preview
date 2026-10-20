@@ -1711,6 +1711,9 @@ file_config:
       deposit_amount:
         type: number
         label: "Deposit per traveler (USD)"
+      max_extension_nights:
+        type: number
+        label: "Maximum extra nights a traveler may request (before or after)"
       optionals:
         type: array
         options:

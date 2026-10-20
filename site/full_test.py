@@ -302,7 +302,10 @@ def audit_layer():
         }
         m = re.match(r'^groups/[^/]+/(reserve|details)/index\.html$', path)
         if m:
-            check(any(need_by[m.group(1)] <= form for form in p.forms),
+            need = set(need_by[m.group(1)])
+            if m.group(1) == "reserve" and not any("pre_nights" in form for form in p.forms):
+                need -= {'pre_nights', 'post_nights'}   # trip with a zero extra-nights cap hides them
+            check(any(need <= form for form in p.forms),
                   '%s: booking form is missing required fields' % path)
 
     # sitemap <-> built pages. /groups/ is always indexable and in the
