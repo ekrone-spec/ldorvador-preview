@@ -261,13 +261,13 @@ export const EXPORT_COLUMNS = [
   'ec_name', 'ec_email', 'ec_phone', 'dietary',
   'g1_dob', 'g1_passport_number', 'g1_passport_country', 'g1_passport_expiry', 'g1_flight_arrival', 'g1_flight_departure',
   'g2_dob', 'g2_passport_number', 'g2_passport_country', 'g2_passport_expiry', 'g2_flight_arrival', 'g2_flight_departure',
-  'roommate_separate', 'partner_booking_ref', 'optionals_selected', 'pay_method', 'deposit_amount', 'fee_cents', 'deposit_charged_cents', 'deposit_paid_at',
+  'roommate_separate', 'partner_booking_ref', 'optionals_selected', 'optionals_total', 'pay_method', 'deposit_amount', 'fee_cents', 'deposit_charged_cents', 'deposit_paid_at',
   'balance_amount', 'balance_sent_at', 'balance_paid_at', 'balance_charged_cents',
   'stripe_payment_link_url', 'room_number', 'is_tour_leader', 'terms_version', 'terms_accepted_at',
   'details_submitted_at', 'notes', 'created_at', 'updated_at',
 ];
 
-export function bookingToExportRow(b) {
+export function bookingToExportRow(b, trip) {
   const out = {};
   for (const c of EXPORT_COLUMNS) {
     if (c === 'deposit_amount') out[c] = b.deposit_amount_cents != null ? (b.deposit_amount_cents / 100).toFixed(2) : '';
@@ -276,6 +276,12 @@ export function bookingToExportRow(b) {
       let arr = [];
       try { arr = JSON.parse(b.optionals_selected || '[]'); } catch { /* ignore */ }
       out[c] = Array.isArray(arr) ? arr.join('; ') : '';
+    } else if (c === 'optionals_total') {
+      let arr = [];
+      try { arr = JSON.parse(b.optionals_selected || '[]'); } catch { /* ignore */ }
+      const by = new Map(((trip && trip.optionals) || []).map((o) => [o.name, o]));
+      const cents = (Array.isArray(arr) ? arr : []).reduce((s, n) => s + ((by.get(n) || {}).price_cents || 0), 0) * (Number(b.travelers) || 1);
+      out[c] = (trip && Array.isArray(arr) && arr.length) ? (cents / 100).toFixed(2) : '';
     } else out[c] = b[c] == null ? '' : b[c];
   }
   return out;
@@ -533,6 +539,7 @@ function bookingSummaryRows(trip, b) {
     row('Dates', escapeHtml(trip.dates)),
     row('Travelers', travelerNames(b)),
     row('Room', escapeHtml(roomLabel(b))),
+    ...(optionalsLine(b) ? [row('Optional tours', escapeHtml(optionalsLine(b)))] : []),
     ...(extraNightsLine(b) ? [row('Extra nights requested', escapeHtml(extraNightsLine(b).replace('Extra nights requested: ', '')))] : []),
   ].join('');
 }
@@ -545,6 +552,7 @@ function internalSummaryText(trip, b) {
     b.travelers > 1 ? `Roommate: ${b.rm_first_name || ''} ${b.rm_last_name || ''} <${b.rm_email || ''}> ${b.rm_phone || ''}` : 'Roommate: none',
     `Travelers: ${b.travelers}`,
     `Room: ${roomLabel(b)}`,
+    `Optional tours: ${optionalsLine(b) || 'none'}`,
     `Pre-trip nights requested: ${b.pre_from || '-'} to ${b.pre_to || '-'}`,
     `Post-trip nights requested: ${b.post_from || '-'} to ${b.post_to || '-'}`,
     `Emergency contact: ${b.ec_name || '-'} ${b.ec_email || ''} ${b.ec_phone || ''}`,
@@ -608,7 +616,7 @@ async function sendGuestConfirmation(env, origin, trip, b, request, manual) {
   const text =
     `Hi ${b.first_name},\n\n` +
     `${manual ? 'Your place is reserved' : 'Thank you - we have received your deposit and your place is reserved'} on ${trip.title}.\n\n` +
-    `Booking reference: ${b.booking_ref}\nTrip: ${trip.title}\nDates: ${trip.dates}\nTravelers: ${b.travelers}\nRoom: ${roomLabel(b)}\n${depositText}${roommateSeparateSentence(b) ? roommateSeparateSentence(b) + '\n' : ''}\n` +
+    `Booking reference: ${b.booking_ref}\nTrip: ${trip.title}\nDates: ${trip.dates}\nTravelers: ${b.travelers}\nRoom: ${roomLabel(b)}\n${optionalsLine(b) ? `Optional tours: ${optionalsLine(b)}\n` : ''}${depositText}${roommateSeparateSentence(b) ? roommateSeparateSentence(b) + '\n' : ''}\n` +
     `What happens next: once the trip is confirmed, we will email you a secure link to pay the remaining balance.` +
     `${manual ? '' : ' If the minimum number of travelers is not reached, your deposit is fully refunded.'}\n\n` +
     `Complete your traveler details: ${link}\n\n` +
@@ -706,6 +714,10 @@ function fmtRange(from, to) {
   return `${fmtMonDay(from)}\u2013${fmtMonDay(to)}`;
 }
 
+export function optionalsLine(b) {
+  try { const a = JSON.parse(b.optionals_selected || '[]'); return Array.isArray(a) ? a.map(String).join(', ') : ''; } catch { return ''; }
+}
+
 export function extraNightsLine(b) {
   const parts = [];
   const pre = nightsBetween(b.pre_from, b.pre_to), post = nightsBetween(b.post_from, b.post_to);
@@ -734,8 +746,8 @@ function validatePair(fields, a, b, errors) {
 export async function handleBookPost(request, env, url, ctx) {
   if (request.method !== 'POST') return json({ ok: false, error: 'method not allowed' }, 405);
   if (!sameOrigin(request, url)) return json({ ok: false, error: 'forbidden' }, 403);
-  let f;
-  try { f = await readFields(request); } catch { return json({ ok: false, error: 'invalid body' }, 400); }
+  let f, optionals;
+  try { ({ f, optionals } = await readFieldsMulti(request)); } catch { return json({ ok: false, error: 'invalid body' }, 400); }
   if (truthy(f.botcheck)) return json({ ok: true }, 200);
 
   const ip = request.headers.get('CF-Connecting-IP') || '';
@@ -850,6 +862,7 @@ export async function handleBookPost(request, env, url, ctx) {
     dietary: clampStr(f.dietary, 2000) || null,
     terms_version: clampStr(f.terms_version, 60) || null, terms_accepted_at: nowIso(),
     deposit_amount_cents: trip.deposit_amount_cents * travelers, ip_hash,
+    optionals_selected: JSON.stringify([...new Set(optionals.map((s) => s.trim()).filter((s) => trip.optionals.some((o) => o.name === s)))]),
     pay_method, fee_cents: pay_method === 'card' ? cardFeeCents(trip.deposit_amount_cents * travelers) : 0,
   };
 
@@ -1052,8 +1065,8 @@ export async function handleDetails(request, env, url, ctx) {
   if (rl && rl.n >= DETAILS_RATE_MAX) return json({ ok: false, error: 'rate limited' }, 429);
   await env.DB.prepare("INSERT INTO rate_events (kind, ip_hash) VALUES ('details', ?)").bind(ip_hash).run();
 
-  let f, optionals;
-  try { ({ f, optionals } = await readFieldsMulti(request)); } catch { return json({ ok: false, error: 'invalid body' }, 400); }
+  let f;
+  try { ({ f } = await readFieldsMulti(request)); } catch { return json({ ok: false, error: 'invalid body' }, 400); }
   const ref = clampStr(f.ref, 80);
   if (!(await checkToken(env, ref, clampStr(f.t, 80)))) return json({ ok: false, error: 'forbidden' }, 403);
   const b = await getBooking(env, ref);
@@ -1082,9 +1095,6 @@ export async function handleDetails(request, env, url, ctx) {
   }
   if (errors.length) { console.log('details: validation', b.slug, errors.join('; ')); return json({ ok: false, error: 'validation', errors }, 400); }
 
-  const trip = await getTrip(env, request, b.slug);
-  const allowed = new Set(trip ? trip.optionals.map((o) => o.name) : []);
-  upd.optionals_selected = JSON.stringify([...new Set(optionals.map((s) => s.trim()).filter((s) => allowed.has(s)))]);
   upd.details_submitted_at = nowIso();
   await updateBooking(env, ref, upd);
 

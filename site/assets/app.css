@@ -1192,6 +1192,9 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
 .group-form-card .two{grid-template-columns:1fr 1fr;gap:24px}
 @media(max-width:640px){.group-form-card .two{grid-template-columns:1fr}}
 .group-notify-note{color:var(--ink-soft);font-size:15px;margin-top:16px}
+.group-subhead{font-size:16px;color:var(--ink);font-weight:600;margin:0 0 8px}
+#optionaladd{margin-top:2px}#optionaladd[hidden],.optional-desc[hidden]{display:none}
+.optional-added{margin:12px 0 0}.optional-added button{background:none;border:0;padding:0;margin-left:6px;font:inherit;color:inherit;text-decoration:underline;cursor:pointer}
 .room-field .room-options{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px}
 @media(max-width:480px){.room-field .room-options{flex-direction:column}}
 .room-opt{position:relative}
@@ -1254,6 +1257,7 @@ form.sent .formnote::before{content:"";display:block;width:56px;height:2px;backg
 .group-check,.field label.group-check,.group-form-card .field label.group-check{display:flex;align-items:center;gap:14px;cursor:pointer;font-weight:400;font-size:16px;text-transform:none;letter-spacing:0;color:var(--ink);margin-bottom:10px}
 .group-check input{flex:none;width:22px;height:22px;margin-top:0;accent-color:var(--sage)}
 .group-check span{display:block}
+.optional-desc{margin-top:14px}
 /* validation state: warm border + note, no new colours */
 .is-invalid input:not([type=radio]):not([type=checkbox]),.is-invalid select,.is-invalid textarea{border-color:var(--camel)!important;box-shadow:0 0 0 2px rgba(186,154,118,.25)}
 .is-invalid .room-opt span{border-color:var(--camel)}

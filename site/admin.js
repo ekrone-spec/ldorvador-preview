@@ -602,7 +602,7 @@ async function exportCsv(env, request, url, slug, kind) {
   if (!trip && !rows.length) return new Response('Not found', { status: 404, headers: { 'Cache-Control': 'no-store' } });
   if (kind === 'export') {
     if (!truthy(url.searchParams.get('all'))) rows = rows.filter((b) => b.status !== 'cancelled');
-    return csvResponse(`${tripRef}-travelers.csv`, EXPORT_COLUMNS, rows.map(bookingToExportRow));
+    return csvResponse(`${tripRef}-travelers.csv`, EXPORT_COLUMNS, rows.map((r) => bookingToExportRow(r, trip)));
   }
   rows = rows.filter((b) => b.status !== 'cancelled');
   const out = roomingRows(rows, trip);

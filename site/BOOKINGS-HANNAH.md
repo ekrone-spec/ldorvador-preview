@@ -23,6 +23,8 @@ Save and publish as usual. The button appears after the site rebuilds, usually w
 
 **Roommate booking separately.** If the traveler picks "My roommate will book and pay separately", the booking counts as 1 traveler, one deposit, and no single supplement (the two share a double). The roommate's name is still required; their email and their booking reference are optional. When the second person books and enters the first person's reference, the two bookings are linked both ways and share one line on the rooming list (both references, joined by +). Unlinked, the rooming list shows the roommate's name followed by (books separately). In the admin edit form you can set or change these two fields. The traveler export has the columns roommate_separate and partner_booking_ref.
 
+**Optional tours.** If the trip has optional tours, travelers tick the ones they want on the reserve form, right after the room choice. They are not part of the deposit; they are priced per traveler and added to the balance. The choice appears in the confirmation email and in your notification. You can change a booking's tours any time in the admin edit form (Optionals selected), and the balance review updates. The traveler details form no longer asks about tours.
+
 **Passports.** On the details form, passport expiry must be at least six months after the trip ends; otherwise the form shows an error.
 
 Extra nights are requests only. The traveler picks a number of nights; the form turns that into dates around the trip (for example 2 nights before a March 3 arrival is March 1 to March 3). They are added to the balance after you confirm them (section 4).

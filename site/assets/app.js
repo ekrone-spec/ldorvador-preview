@@ -638,6 +638,39 @@ document.querySelectorAll('details.group-day').forEach(function(d){
   if (s) s.addEventListener('click', function(e){ e.preventDefault(); });
 });
 
+/* Optional-tour picker: select + Add button; each added tour is a hidden optional[] input. */
+(function(){
+  var fs = document.getElementById('optionals'); if (!fs) return;
+  var data = []; try { data = JSON.parse(fs.getAttribute('data-optionals') || '[]'); } catch(e){}
+  var sel = document.getElementById('optionalchoice'), btn = document.getElementById('optionaladd'),
+      box = document.getElementById('optionaladded'), desc = fs.querySelector('.optional-desc');
+  function find(n){ for (var i=0;i<data.length;i++) if (data[i].name === n) return data[i]; return null; }
+  function usd(v){ return '$' + Number(v||0).toLocaleString('en-US'); }
+  [].slice.call(sel.options).forEach(function(o){ var t = find(o.value); if (t) o.textContent = t.name + ' - ' + usd(t.price) + ' per guest'; });
+  function refresh(){
+    var t = find(sel.value);
+    btn.hidden = !t;
+    if (t) btn.textContent = 'Add ' + t.name;
+    var text = t ? t.description : (data.length === 1 ? data[0].description : '');
+    desc.textContent = text || ''; desc.hidden = !text;
+  }
+  sel.addEventListener('change', refresh);
+  btn.addEventListener('click', function(){
+    var t = find(sel.value); if (!t) return;
+    var dup = [].some.call(fs.querySelectorAll('input[name="optional[]"]'), function(i){ return i.value === t.name; });
+    if (!dup) {
+      var h = document.createElement('input'); h.type = 'hidden'; h.name = 'optional[]'; h.value = t.name;
+      var line = document.createElement('p'); line.className = 'group-notify-note optional-added';
+      line.appendChild(document.createTextNode('Added: ' + t.name + ' \u2014 ' + usd(t.price) + ' per guest.'));
+      var rm = document.createElement('button'); rm.type = 'button'; rm.textContent = 'Remove';
+      rm.addEventListener('click', function(){ h.remove(); line.remove(); });
+      line.appendChild(rm); box.appendChild(h); box.appendChild(line);
+    }
+    sel.value = ''; refresh();
+  });
+  refresh();
+})();
+
 /* Group booking forms (reserve + traveler details). Posts JSON to the Worker:
    named fields, checked boxes/radios only, optional[] collected as the array
    "optional". Reserve success returns {ok:true, checkout_url}. */

@@ -11,6 +11,9 @@ import os, re, json, base64, mimetypes, logging
 import i18n
 
 D = os.path.dirname(os.path.abspath(__file__))
+# Reserve-form optional tours fieldset copy (client copy will replace these).
+OPTIONALS_LEGEND = 'Optional tours'
+OPTIONALS_INTRO = ''   # client supplied no intro line; heading, sub-heading, dropdown, button, description only
 def R(p): return open(os.path.join(D, p), encoding='utf-8').read()
 
 _print_display_face_cache = None
@@ -519,15 +522,22 @@ def build_group_subpages(g, slug, gv):
         opts = [o for o in (g.get('optionals') or []) if (o.get('name') or '').strip()]
         if not opts:
             return ''
-        rows = ''
+        options = '<option value="">None</option>'
+        data = []
         for o in opts:
-            price = ' &mdash; %s' % money(o.get('price')) if o.get('price') else ''
-            desc = ('<small class="group-notify-note">%s</small>' % _cesc(o.get('description'))
-                    if o.get('description') else '')
-            rows += ('<div class="field"><label class="group-check"><input type="checkbox" name="optional[]" value="%s">'
-                     '<span>%s%s%s</span></label></div>'
-                     % (_cesc(o['name']), _cesc(o['name']), price, desc))
-        return '<fieldset><legend>Optional tours</legend>%s</fieldset>' % rows
+            p = o.get('price') or 0
+            options += '<option value="%s">%s - %s per guest</option>' % (_cesc(o['name']), _cesc(o['name']), money(p))
+            data.append({'name': o['name'], 'price': p, 'description': o.get('description') or ''})
+        first = opts[0].get('description') if len(opts) == 1 else ''
+        intro = '<p class="group-notify-note">%s</p>' % _cesc(OPTIONALS_INTRO) if OPTIONALS_INTRO else ''
+        return ('<fieldset id="optionals" data-optionals="%s">\n        <legend>%s</legend>\n        %s'
+                '<p class="group-subhead" id="optionalhead">Select optional tour</p>\n'
+                '        <div class="field"><select name="optional_choice" id="optionalchoice" aria-labelledby="optionalhead">%s</select></div>\n'
+                '        <button type="button" class="btn btn-line" id="optionaladd" hidden>Add</button>\n'
+                '        <div id="optionaladded"></div>\n'
+                '        <p class="group-notify-note optional-desc"%s>%s</p>\n      </fieldset>'
+                % (_cesc(json.dumps(data, ensure_ascii=False)), _cesc(OPTIONALS_LEGEND), intro, options,
+                   '' if first else ' hidden', _cesc(first or '')))
 
     try:
         max_ext = max(0, int(g.get('max_extension_nights') or 0))
