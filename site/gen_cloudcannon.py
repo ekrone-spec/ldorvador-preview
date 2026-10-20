@@ -40,7 +40,7 @@ GROUPTRIP_FIELD_LABEL = {
     'price_single_supplement': 'Single supplement (USD)',
     'deposit_amount': 'Deposit per traveler (USD)',
     'max_extension_nights': 'Maximum extra nights a traveler may request (before or after)',
-    'optionals': 'Optional tours (chosen on the reserve form; priced per guest into the balance)',
+    'optionals': 'Optional tours',
     'start_finish': 'Start / finish',
     'pace': 'Pace',
     'accommodation': 'Accommodation',

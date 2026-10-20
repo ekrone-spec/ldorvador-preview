@@ -1723,7 +1723,7 @@ file_config:
         type: array
         options:
           structures: optional_tour
-        label: "Optional tours (chosen on the reserve form; priced per guest into the balance)"
+        label: "Optional tours"
       start_finish:
         type: text
         label: "Start / finish"
